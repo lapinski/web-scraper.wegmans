@@ -5,11 +5,20 @@ const path = require('path');
 const moment = require('moment');
 const Promise = require('bluebird');
 const actions = require('./actions');
-const config = require('./config');
+const config = require('./resources/config');
+const db = require('./resources/database');
 
 const log = console.log;
 
 const main = async () => {
+
+    try {
+        await db.authenticate();
+    } catch(e) {
+        await db.sync({force: true});
+        await db.authenticate();
+        console.log(e);
+    }
 
     const browser = await puppeteer.launch({headless:config.headless});
     const page = await browser.newPage();

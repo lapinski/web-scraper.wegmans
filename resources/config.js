@@ -23,6 +23,10 @@ const variables = {
     HEADLESS: envalid.bool({
         desc: 'Flag to enable non-headless browser.',
         default: true,
+    }),
+    DATABASE: envalid.url({
+        desc: 'Database connection string. (must be absolute path) ',
+        example: 'sqlite:///Users/alexlapinski/dbs/test.sqlite'
     })
 };
 
@@ -39,6 +43,9 @@ const transformer = (env) => ({
     viewport: {
         width: env.VIEW_WIDTH,
         height: env.VIEW_HEIGHT,
+    },
+    database: {
+        connectionString: env.DATABASE,
     }
 });
 
@@ -49,7 +56,8 @@ const transformer = (env) => ({
  *  baseUrl: String,
  *  paths: {signIn: String},
  *  headless: Boolean,
- *  viewport: {width: Number, height: Number
+ *  viewport: {width: Number, height: Number},
+ *  database: {connectionString: String}
  * }}
  */
 module.exports = envalid.cleanEnv(process.env, variables, {transformer});

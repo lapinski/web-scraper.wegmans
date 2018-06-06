@@ -1,5 +1,5 @@
 const {URL} = require('url');
-const config = require('../config');
+const config = require('../resources/config');
 const {signIn: pom} = require('../pages');
 const Promise = require('bluebird');
 
