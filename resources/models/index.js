@@ -25,4 +25,7 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+/**
+ * @type {{Receipt:SequelizeModel}}
+ */
 module.exports = db;

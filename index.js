@@ -1,24 +1,11 @@
-const _ = require('lodash');
 const puppeteer = require('puppeteer');
-const fs = require('fs');
-const path = require('path');
-const moment = require('moment');
-const Promise = require('bluebird');
 const actions = require('./actions');
 const config = require('./resources/config');
-const db = require('./resources/database');
+const models = require('./resources/models');
 
 const log = console.log;
 
 const main = async () => {
-
-    try {
-        await db.authenticate();
-    } catch(e) {
-        await db.sync({force: true});
-        await db.authenticate();
-        console.log(e);
-    }
 
     const browser = await puppeteer.launch({headless:config.headless});
     const page = await browser.newPage();
@@ -27,35 +14,27 @@ const main = async () => {
     log('Signing In');
     await actions.signIn(page);
 
-    const screenshotDir = path.resolve(process.cwd(), 'screenshots');
-    if (!fs.existsSync(screenshotDir)) {
-        fs.mkdirSync(screenshotDir);
+    log('Navigating to Receipts Page');
+    const receipts = await actions.getReceiptList(page);
+
+    // TODO: Save each row to database, instead of printing them here
+    console.log(JSON.stringify(receipts));
+    try {
+        for(let i = 0, len = receipts.length; i < len; i++) {
+            const receipt = receipts[i];
+            await models.Receipt.create({
+                date: receipt.dateTime,
+                amount: receipt.value,
+                url: receipt.url,
+                store: 'Wegmans',
+            });
+        }
+    } catch (e) {
+        console.log(e);
     }
 
-    await page.screenshot({path: path.resolve(screenshotDir, 'signin.png')});
+    models.Receipt.save();
 
-    log('Navigating to Receipts Page');
-    await page.goto(`${config.baseUrl}/my-receipts.html`);
-
-    await page.screenshot({path: path.resolve(screenshotDir, 'receipts.png')});
-
-
-    // Get table of receipt totals / date
-    const receipts = await page.$$eval('.recall-table-set', (rowParts) =>
-        Array.from(rowParts).map(row => {
-            const dateElem = row.querySelector('.date-time');
-            const valueElem = row.querySelector('.sold-col');
-            const urlElem = row.querySelector('.view-col a');
-
-            return {
-                dateTime: dateElem ? dateElem.innerText : null,
-                value: valueElem ? valueElem.innerText: null,
-                url: urlElem ? urlElem.href : null,
-            };
-        })
-    );
-
-    console.log(JSON.stringify(receipts));
 
     await page.waitFor(240 * 1000);
 

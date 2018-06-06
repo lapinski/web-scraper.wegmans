@@ -27,6 +27,15 @@ const variables = {
     DATABASE: envalid.url({
         desc: 'Database connection string. (must be absolute path) ',
         example: 'sqlite:///Users/alexlapinski/dbs/test.sqlite'
+    }),
+    SCREENSHOTS_DIR: envalid.str({
+        desc: 'Folder name to store screenshots',
+        example: 'screenshots',
+        default: 'screenshots',
+    }),
+    SCREENSHOTS: envalid.bool({
+        desc: 'Flag to enable saving screenshots',
+        default: true,
     })
 };
 
@@ -46,6 +55,10 @@ const transformer = (env) => ({
     },
     database: {
         connectionString: env.DATABASE,
+    },
+    screenshots: {
+        dir: env.SCREENSHOTS_DIR,
+        save: env.SCREENSHOTS,
     }
 });
 
@@ -57,7 +70,8 @@ const transformer = (env) => ({
  *  paths: {signIn: String},
  *  headless: Boolean,
  *  viewport: {width: Number, height: Number},
- *  database: {connectionString: String}
+ *  database: {connectionString: String},
+ *  screenshots: {dir:String, save:Boolean}
  * }}
  */
 module.exports = envalid.cleanEnv(process.env, variables, {transformer});

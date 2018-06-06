@@ -2,6 +2,7 @@ const {URL} = require('url');
 const config = require('../resources/config');
 const {signIn: pom} = require('../pages');
 const Promise = require('bluebird');
+const screenshots = require('../resources/screenshots');
 
 module.exports = async function (page) {
     const url = new URL(pom.path, config.baseUrl);
@@ -22,6 +23,8 @@ module.exports = async function (page) {
         console.log('SignIn Failed');
         console.error(e);
     }
+
+    await screenshots.save(page, 'signin');
 
     return page;
 };
