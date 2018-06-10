@@ -16,11 +16,13 @@ const main = async () => {
     log('Navigating to Receipts Page');
     const receipts = await actions.getReceiptList(page);
 
-    console.log(JSON.stringify(receipts));
-
     log('Saving Receipts to Database');
     await actions.saveReceiptsToDb(receipts, 'Wegmans');
 
+    // TODO: Get all transactions for all receipts
+
+    const transactions = await actions.getReceiptTransactions(page, receipts[0].url);
+    console.log(JSON.stringify(transactions));
     await page.waitFor(240 * 1000);
 
     await browser.close();

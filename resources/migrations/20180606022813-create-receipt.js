@@ -14,11 +14,6 @@ module.exports = {
                 type: Sequelize.DATE,
                 allowNull: false,
             },
-            quantity: {
-                type: Sequelize.INTEGER,
-                allowNull: false,
-                defaultValue: 1,
-            },
             amount: {
                 type: Sequelize.DECIMAL,
                 allowNull: false,
@@ -60,6 +55,11 @@ module.exports = {
                     type: Sequelize.DATE,
                     allowNull: false,
                 },
+                quantity: {
+                    type: Sequelize.INTEGER,
+                    allowNull: false,
+                    defaultValue: 1,
+                },
                 amount: {
                     type: Sequelize.DECIMAL,
                     allowNull: false,
@@ -69,6 +69,10 @@ module.exports = {
                     allowNull: true,
                 },
                 productName: {
+                    type: Sequelize.STRING,
+                    allowNull: true,
+                },
+                productCode: {
                     type: Sequelize.STRING,
                     allowNull: true,
                 },
