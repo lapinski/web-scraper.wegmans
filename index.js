@@ -1,7 +1,6 @@
 const puppeteer = require('puppeteer');
 const actions = require('./actions');
 const config = require('./resources/config');
-const models = require('./resources/models');
 
 const log = console.log;
 
@@ -17,24 +16,10 @@ const main = async () => {
     log('Navigating to Receipts Page');
     const receipts = await actions.getReceiptList(page);
 
-    // TODO: Save each row to database, instead of printing them here
     console.log(JSON.stringify(receipts));
-    try {
-        for(let i = 0, len = receipts.length; i < len; i++) {
-            const receipt = receipts[i];
-            await models.Receipt.create({
-                date: receipt.dateTime,
-                amount: receipt.value,
-                url: receipt.url,
-                store: 'Wegmans',
-            });
-        }
-    } catch (e) {
-        console.log(e);
-    }
 
-    models.Receipt.save();
-
+    log('Saving Receipts to Database');
+    await actions.saveReceiptsToDb(receipts, 'Wegmans');
 
     await page.waitFor(240 * 1000);
 
