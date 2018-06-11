@@ -1,9 +1,8 @@
 const _ = require('lodash');
 const screenshots = require('../resources/screenshots');
-const config = require('../resources/config');
 
 module.exports = async function(page, url) {
-	await page.goto(url.resolve(url.format()));
+	await page.goto(url);
 	await screenshots.save(page, `receipts-${url.query}`);
 
 	// Get table of transactions totals / date

@@ -17,12 +17,19 @@ const main = async () => {
     const receipts = await actions.getReceiptList(page);
 
     log('Saving Receipts to Database');
-    await actions.saveReceiptsToDb(receipts, 'Wegmans');
+    const savedReceipts = await actions.saveReceiptsToDb(receipts, 'Wegmans');
 
     // TODO: Get all transactions for all receipts
+    for (let savedReceipt of savedReceipts) {
+        log('Fetching Receipt Transaction');
+        const transactions = await actions.getReceiptTransactions(page, savedReceipt.url);
+        console.log(JSON.stringify(transactions));
 
-    const transactions = await actions.getReceiptTransactions(page, receipts[0].url);
-    console.log(JSON.stringify(transactions));
+        log('Saving Transactions to Database');
+        await actions.saveTransactionsToDb(transactions, savedReceipt.id);
+    }
+
+    log('Waiting for debug');
     await page.waitFor(240 * 1000);
 
     await browser.close();

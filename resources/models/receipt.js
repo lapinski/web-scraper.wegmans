@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
             isUrl: true,
         },
+        // TODO: Parse this as a Node URL Object instead of raw string.
     },
     store: {
         type: DataTypes.STRING,

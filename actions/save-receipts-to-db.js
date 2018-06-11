@@ -1,6 +1,7 @@
 const models = require('../resources/models');
 
 module.exports = async function (receipts, storeName) {
+	const storedReceipts = [];
 	try {
 		for(let i = 0, len = receipts.length; i < len; i++) {
 			const receipt = receipts[i];
@@ -18,10 +19,14 @@ module.exports = async function (receipts, storeName) {
 					url: receipt.url.format(),
 					store: storeName,
 				});
-				await newReceipt.save();
+				const savedReceipt = await newReceipt.save();
+				storedReceipts.push(savedReceipt.get({plain: true}));
+			} else {
+				storedReceipts.push(existingReceipt.get({plain: true}));
 			}
 		}
 	} catch (e) {
 		throw new Error(`Error saving receipts: ${e.message}`);
 	}
+	return storedReceipts;
 };
