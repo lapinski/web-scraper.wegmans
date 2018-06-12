@@ -1,2 +1,16 @@
 image: node:alpine
 
+cache:
+  paths:
+  - node_modules/
+
+stages:
+  - lint
+
+lint_code:
+  stage: test
+  script:
+   - yarn
+   - yarn run lint
+  tags:
+    - docker
