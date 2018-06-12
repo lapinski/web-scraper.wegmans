@@ -9,9 +9,9 @@ const saveTransactionsToDb = require('./save-transactions-to-db');
  * @type {{signIn: (*|(function(): page))}}
  */
 module.exports = {
-    getReceiptList,
-    getReceiptTransactions,
-    saveReceiptsToDb,
-    saveTransactionsToDb,
-    signIn,
+  getReceiptList,
+  getReceiptTransactions,
+  saveReceiptsToDb,
+  saveTransactionsToDb,
+  signIn,
 };

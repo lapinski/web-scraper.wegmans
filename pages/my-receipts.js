@@ -1,3 +1,3 @@
 module.exports = {
-    path: '/my-receipts.html'
+  path: '/my-receipts.html',
 };
