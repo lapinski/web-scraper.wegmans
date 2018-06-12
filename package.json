@@ -6,7 +6,8 @@
   "repository": "git@gitlab.com:alex.lapinski/web-scraper-wegmans.git",
   "scripts": {
     "start": "node ./index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "precommit": "lint-staged"
   },
   "keywords": [
     "web-scraper",
@@ -23,8 +24,21 @@
     "sqlite3": "^4.0.0"
   },
   "devDependencies": {
+    "husky": "^0.14.3",
+    "lint-staged": "^7.2.0",
     "lodash": "^4.17.10",
     "mocha": "^5.2.0",
+    "prettier": "1.13.5",
     "sequelize-cli": "^4.0.0"
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
   }
 }
