@@ -1,15 +1,16 @@
+/* eslint-disable no-await-in-loop */
 const models = require('../resources/models');
 
 module.exports = async function(transactions, receiptId) {
-  let storedTransactions = [];
+  const storedTransactions = [];
   try {
-    for (let i = 0, len = transactions.length; i < len; i++) {
+    for (let i = 0, len = transactions.length; i < len; i += 1) {
       const transaction = transactions[i];
 
       const existingTransaction = await models.Transaction.findOne({
         where: {
           productCode: transaction.productCode,
-          receiptId: receiptId,
+          receiptId,
           // TODO: Find better matching criteria
         },
       });

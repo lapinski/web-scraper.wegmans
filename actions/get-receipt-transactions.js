@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const screenshots = require('../resources/screenshots');
 
 module.exports = async function(page, url) {

@@ -3,7 +3,7 @@ const path = require('path');
 const config = require('./config');
 
 module.exports = {
-  save: async function(page, name) {
+  async save(page, name) {
     if (!config.screenshots.save) {
       return;
     }

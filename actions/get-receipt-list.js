@@ -19,7 +19,7 @@ const sanitizeNumber = _.flow(
   _.toNumber,
 );
 
-module.exports = async function(page) {
+module.exports = async function getReceiptList(page) {
   await page.goto(`${config.baseUrl}/my-receipts.html`);
   await screenshots.save(page, 'receipts');
 
@@ -44,7 +44,7 @@ module.exports = async function(page) {
     let urlValue = null;
 
     try {
-      let parsedDateValue = sanitizeDate(rawReceipt.date);
+      const parsedDateValue = sanitizeDate(rawReceipt.date);
       if (parsedDateValue.isValid()) {
         dateValue = parsedDateValue;
       }
@@ -53,7 +53,7 @@ module.exports = async function(page) {
     }
 
     try {
-      let parsedAmountValue = sanitizeNumber(rawReceipt.amount);
+      const parsedAmountValue = sanitizeNumber(rawReceipt.amount);
       if (!_.isNaN(parsedAmountValue)) {
         amountValue = parsedAmountValue;
       }
@@ -76,8 +76,8 @@ module.exports = async function(page) {
     };
   });
 
-  const isReceiptNull = ({ dateTime, value, url }) =>
-    _.isNull(dateTime) && _.isNull(url);
+  const isReceiptNull = input =>
+    _.isNull(input.dateTime) && _.isNull(input.url);
 
   return _.reject(parsedReceipts, isReceiptNull);
 };

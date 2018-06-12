@@ -1,9 +1,10 @@
+/* eslint-disable no-await-in-loop */
 const models = require('../resources/models');
 
 module.exports = async function(receipts, storeName) {
   const storedReceipts = [];
   try {
-    for (let i = 0, len = receipts.length; i < len; i++) {
+    for (let i = 0, len = receipts.length; i < len; i += 1) {
       const receipt = receipts[i];
 
       const existingReceipt = await models.Receipt.findOne({

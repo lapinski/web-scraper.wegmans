@@ -9,9 +9,9 @@ module.exports = async function(page) {
   await page.goto(url);
   await page.waitFor(pom.signInButton);
 
-  //await page.click(pom.usernameInput);
+  // await page.click(pom.usernameInput);
   await page.type(pom.usernameInput, config.user.username);
-  //await page.click(pom.passwordInput);
+  // await page.click(pom.passwordInput);
   await page.type(pom.passwordInput, config.user.password);
 
   try {
