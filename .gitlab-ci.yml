@@ -8,7 +8,7 @@ stages:
   - lint
 
 lint_code:
-  stage: test
+  stage: lint
   script:
    - yarn
    - yarn run lint
