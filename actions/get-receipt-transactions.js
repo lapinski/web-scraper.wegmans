@@ -1,6 +1,12 @@
 const screenshots = require('../resources/screenshots');
 
-module.exports = async function(page, url) {
+/**
+ *
+ * @param page
+ * @param url
+ * @returns {Promise<void>}
+ */
+module.exports = async function getReceiptTransactions(page, url) {
   await page.goto(url);
   await screenshots.save(page, `receipts-${url.query}`);
 

@@ -1,10 +1,16 @@
 const { URL } = require('url');
-const config = require('../resources/config');
 const { signIn: pom } = require('../pages');
 const Promise = require('bluebird');
+const config = require('../resources/config');
+const logger = require('../resources/logger');
 const screenshots = require('../resources/screenshots');
 
-module.exports = async function(page) {
+/**
+ *
+ * @param page
+ * @returns {Promise<*>}
+ */
+module.exports = async function signIn(page) {
   const url = new URL(pom.path, config.baseUrl);
   await page.goto(url);
   await page.waitFor(pom.signInButton);
@@ -17,8 +23,7 @@ module.exports = async function(page) {
   try {
     await Promise.all([page.waitForNavigation(), page.click(pom.signInButton)]);
   } catch (e) {
-    console.log('SignIn Failed');
-    console.error(e);
+    logger.error('SignIn Failed', { error: e });
   }
 
   await screenshots.save(page, 'signin');

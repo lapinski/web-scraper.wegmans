@@ -40,6 +40,7 @@ const variables = {
 };
 
 const transformer = env => ({
+  env: env.NODE_ENV,
   user: {
     username: env.USERNAME,
     password: env.PASSWORD,

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 const url = require('url');
+const logger = require('../resources/logger');
 const screenshots = require('../resources/screenshots');
 const config = require('../resources/config');
 
@@ -19,6 +20,11 @@ const sanitizeNumber = _.flow(
   _.toNumber,
 );
 
+/**
+ *
+ * @param page
+ * @returns {Promise<Array>}
+ */
 module.exports = async function getReceiptList(page) {
   await page.goto(`${config.baseUrl}/my-receipts.html`);
   await screenshots.save(page, 'receipts');
@@ -49,7 +55,7 @@ module.exports = async function getReceiptList(page) {
         dateValue = parsedDateValue;
       }
     } catch (e) {
-      console.log(`Error parsing date: ${rawReceipt.date}`);
+      logger.error(`Error parsing date: ${rawReceipt.date}`, { rawReceipt });
     }
 
     try {
@@ -58,7 +64,7 @@ module.exports = async function getReceiptList(page) {
         amountValue = parsedAmountValue;
       }
     } catch (e) {
-      console.log(`Error parsing dollar amount: ${rawReceipt.amount}`);
+      logger.error(`Error parsing dollar amount: ${rawReceipt.amount}`);
     }
 
     try {
@@ -66,7 +72,7 @@ module.exports = async function getReceiptList(page) {
         urlValue = url.parse(rawReceipt.url);
       }
     } catch (e) {
-      console.log(`Error parsing url: ${rawReceipt.url}`);
+      logger.error(`Error parsing url: ${rawReceipt.url}`);
     }
 
     return {
