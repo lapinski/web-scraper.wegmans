@@ -1,8 +1,10 @@
+import { QueryInterface } from 'sequelize';
+
 const receiptsTableName = 'Receipts';
 const transactionsTableName = 'Transactions';
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface: QueryInterface, Sequelize: any) => {
     const createReceiptsTable = () =>
       queryInterface.createTable(receiptsTableName, {
         id: {

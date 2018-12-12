@@ -1,8 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-const Sequelize = require('sequelize');
+import fs from 'fs';
+import path from 'path';
+import Sequelize from 'sequelize';
+
 const basename = path.basename(__filename);
-const db = {};
+const db:any = {};
 
 let sequelize = require('../database');
 

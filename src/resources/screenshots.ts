@@ -1,18 +1,18 @@
-const fs = require('fs');
-const path = require('path');
-const config = require('./config');
+import fs from 'fs';
+import path from 'path';
+import config from './config';
 
-module.exports = {
-  async save(page, name) {
-    if (!config.screenshots.save) {
-      return;
-    }
+export async function save(page, name:string):Promise<void> {
+  // @ts-ignore
+  if (!config.screenshots.save) {
+    return;
+  }
 
-    const screenshotDir = path.resolve(process.cwd(), config.screenshots.dir);
-    if (!fs.existsSync(screenshotDir)) {
-      fs.mkdirSync(screenshotDir);
-    }
+  // @ts-ignore
+  const screenshotDir = path.resolve(process.cwd(), config.screenshots.dir);
+  if (!fs.existsSync(screenshotDir)) {
+    fs.mkdirSync(screenshotDir);
+  }
 
-    await page.screenshot({ path: path.resolve(screenshotDir, `${name}.png`) });
-  },
-};
+  await page.screenshot({ path: path.resolve(screenshotDir, `${name}.png`) });
+}

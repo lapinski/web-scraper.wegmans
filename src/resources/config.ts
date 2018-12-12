@@ -1,4 +1,4 @@
-const envalid = require('envalid');
+import envalid from 'envalid';
 
 const variables = {
   USERNAME: envalid.str({
@@ -39,7 +39,31 @@ const variables = {
   }),
 };
 
-const transformer = env => ({
+export interface Configuration {
+  env: string;
+  user: {
+    username: string;
+    password: string;
+  };
+  baseUrl: string;
+  paths: {
+    signIn: string;
+  };
+  headless: boolean;
+  viewport: {
+    width: number;
+    height: number;
+  };
+  database: {
+    connectionString: string;
+  };
+  screenshots: {
+    dir: string;
+    save: string;
+  };
+}
+
+const transformer = (env: any): any => ({
   env: env.NODE_ENV,
   user: {
     username: env.USERNAME,
@@ -75,4 +99,4 @@ const transformer = env => ({
  *  screenshots: {dir:String, save:Boolean}
  * }}
  */
-module.exports = envalid.cleanEnv(process.env, variables, { transformer });
+export default envalid.cleanEnv(process.env, variables, { transformer });

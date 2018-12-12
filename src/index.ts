@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
-const logger = require('./resources/logger');
-const actions = require('./actions');
-const config = require('./resources/config');
+import puppeteer from 'puppeteer';
+import logger from './resources/logger';
+import actions from './actions';
+import config from './resources/config';
 
 const main = async () => {
   const browser = await puppeteer.launch({ headless: config.headless });

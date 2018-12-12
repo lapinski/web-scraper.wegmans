@@ -1,9 +1,9 @@
-const { URL } = require('url');
-const { signIn: pom } = require('../pages');
-const Promise = require('bluebird');
-const config = require('../resources/config');
-const logger = require('../resources/logger');
-const screenshots = require('../resources/screenshots');
+import { URL } from 'url';
+import { signIn as pom } from ' ../pages/index';
+import Promise from 'bluebird';
+import config  from '../resources/config';
+import logger from '../resources/logger';
+import screenshots from '../resources/screenshots';
 
 /**
  *
