@@ -5,9 +5,12 @@
   "main": "index.js",
   "repository": "git@gitlab.com:alex.lapinski/web-scraper-wegmans.git",
   "scripts": {
-    "start": "node ./dist/index.js",
     "prestart": "npm run build",
-    "build": "tsc",
+    "start": "node ./dist/index.js",
+    "debug": "ts-node ./src/index.ts",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "build": "npm run lint && npm run build-ts",
+    "build-ts": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -35,6 +38,8 @@
     "husky": "^0.14.3",
     "mocha": "^5.2.0",
     "sequelize-cli": "^4.0.0",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
     "typescript": "^3.2.2"
   }
 }
