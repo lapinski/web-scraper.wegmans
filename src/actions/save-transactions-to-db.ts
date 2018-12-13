@@ -1,13 +1,8 @@
 /* eslint-disable no-await-in-loop */
-const models = require('../resources/models');
+import models from '../resources/models';
+import { Transaction } from '../types/receipt';
 
-/**
- *
- * @param transactions
- * @param receiptId
- * @returns {Promise<void>}
- */
-module.exports = async function saveTransactionsToDb(transactions, receiptId) {
+export default async function saveTransactionsToDb(transactions:ReadonlyArray<Transaction>, receiptId:number) {
   const storedTransactions = [];
   try {
     for (let i = 0, len = transactions.length; i < len; i += 1) {

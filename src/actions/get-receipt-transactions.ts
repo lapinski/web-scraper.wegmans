@@ -1,13 +1,11 @@
+import { Transaction } from '../types/receipt';
+import { Page } from 'puppeteer';
+import { Url } from 'url';
+
 const screenshots = require('../resources/screenshots');
 
-/**
- *
- * @param page
- * @param url
- * @returns {Promise<void>}
- */
-module.exports = async function getReceiptTransactions(page, url) {
-  await page.goto(url);
+export default async function getReceiptTransactions(page: Page, url: Url):Promise<ReadonlyArray<Transaction>> {
+  await page.goto(url.toString());
   await screenshots.save(page, `receipts-${url.query}`);
 
   // Get table of transactions totals / date
@@ -21,13 +19,13 @@ module.exports = async function getReceiptTransactions(page, url) {
         '.myreceipt-savings-row .save-price',
       );
 
-      return {
-        quantity: quantityElem ? quantityElem.innerText : null,
-        productName: productElem ? productElem.innerText : null,
-        productUrl: productElem ? productElem.href : null,
-        productCode: productCodeElem ? productCodeElem.innerText : null,
-        amount: amountElem ? amountElem.innerText : null,
-        discount: discountElem ? discountElem.innerText : null,
+      return <Transaction>{
+        quantity: quantityElem ? quantityElem.textContent.toString() : null,
+        productName: productElem ? productElem.textContent.toString() : null,
+        productUrl: productElem ? productElem.getAttribute('href') : null,
+        productCode: productCodeElem ? productCodeElem.textContent.toString() : null,
+        amount: amountElem ? parseFloat(amountElem.textContent.toString()) : null,
+        discount: discountElem ? discountElem.textContent.toString() : null,
       };
     }),
   );

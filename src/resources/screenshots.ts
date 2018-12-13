@@ -1,8 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import config from './config';
+import { Page } from 'puppeteer';
 
-export async function save(page, name:string):Promise<void> {
+export async function save(page: Page, name:string):Promise<void> {
   // @ts-ignore
   if (!config.screenshots.save) {
     return;

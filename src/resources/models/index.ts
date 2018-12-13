@@ -30,4 +30,4 @@ db.Sequelize = Sequelize;
 /**
  * @type {{Receipt:SequelizeModel}}
  */
-module.exports = db;
+export = db;

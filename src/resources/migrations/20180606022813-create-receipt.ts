@@ -96,7 +96,7 @@ module.exports = {
 
     return createReceiptsTable().then(createTransactionsTable);
   },
-  down: queryInterface => {
+  down: (queryInterface: QueryInterface) => {
     const dropTransactionsTable = () =>
       queryInterface.dropTable(transactionsTableName);
     const dropReceiptsTable = () => queryInterface.dropTable(receiptsTableName);

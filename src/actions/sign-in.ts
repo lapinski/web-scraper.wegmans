@@ -1,27 +1,29 @@
 import { URL } from 'url';
-import { signIn as pom } from ' ../pages/index';
-import Promise from 'bluebird';
 import config  from '../resources/config';
 import logger from '../resources/logger';
-import screenshots from '../resources/screenshots';
+import * as screenshots from '../resources/screenshots';
+import { Page } from 'puppeteer';
+import { PageObjectModel } from '../types/content-types';
 
-/**
- *
- * @param page
- * @returns {Promise<*>}
- */
-module.exports = async function signIn(page) {
-  const url = new URL(pom.path, config.baseUrl);
-  await page.goto(url);
-  await page.waitFor(pom.signInButton);
+const signInPage = <PageObjectModel>{
+  path: '/sign-in.html',
+  signInButton: '#body-signin button',
+  usernameInput: '#body-signin input[type="email"]',
+  passwordInput: '#body-signin input[type="password"]',
+};
+
+export default async function signIn(page: Page) {
+  const url = new URL(signInPage.path, config.baseUrl);
+  await page.goto(url.toString());
+  await page.waitFor(signInPage.signInButton);
 
   // await page.click(pom.usernameInput);
-  await page.type(pom.usernameInput, config.user.username);
+  await page.type(signInPage.usernameInput, config.user.username);
   // await page.click(pom.passwordInput);
-  await page.type(pom.passwordInput, config.user.password);
+  await page.type(signInPage.passwordInput, config.user.password);
 
   try {
-    await Promise.all([page.waitForNavigation(), page.click(pom.signInButton)]);
+    await Promise.all([page.waitForNavigation(), page.click(signInPage.signInButton)]);
   } catch (e) {
     logger.error('SignIn Failed', { error: e });
   }

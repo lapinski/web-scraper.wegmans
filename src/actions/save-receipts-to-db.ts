@@ -1,13 +1,8 @@
 /* eslint-disable no-await-in-loop */
-const models = require('../resources/models');
+import models from '../resources/models';
+import { Receipt } from '../types/receipt';
 
-/**
- *
- * @param receipts
- * @param storeName
- * @returns {Promise<Array>}
- */
-module.exports = async function saveReceiptsToDatabase(receipts, storeName) {
+export default async function saveReceiptsToDatabase(receipts: ReadonlyArray<Receipt>, storeName: string) {
   const storedReceipts = [];
   try {
     for (let i = 0, len = receipts.length; i < len; i += 1) {
@@ -23,7 +18,7 @@ module.exports = async function saveReceiptsToDatabase(receipts, storeName) {
         const newReceipt = await models.Receipt.create({
           date: receipt.dateTime,
           amount: receipt.value,
-          url: receipt.url.format(),
+          url: receipt.url.toString(),
           store: storeName,
         });
         const savedReceipt = await newReceipt.save();

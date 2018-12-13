@@ -1,5 +1,7 @@
 import envalid from 'envalid';
 
+// TODO: Convert to 'convict'
+
 const variables = {
   USERNAME: envalid.str({
     desc: 'Username for Wegmans.com account.',
@@ -63,7 +65,7 @@ export interface Configuration {
   };
 }
 
-const transformer = (env: any): any => ({
+const transformer = (env: any): Configuration => ({
   env: env.NODE_ENV,
   user: {
     username: env.USERNAME,
@@ -99,4 +101,4 @@ const transformer = (env: any): any => ({
  *  screenshots: {dir:String, save:Boolean}
  * }}
  */
-export default envalid.cleanEnv(process.env, variables, { transformer });
+export default <Configuration><unknown>envalid.cleanEnv(process.env, variables, { transformer });;

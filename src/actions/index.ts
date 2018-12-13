@@ -1,14 +1,10 @@
-const signIn = require('./sign-in');
-const getReceiptList = require('./get-receipt-list');
-const getReceiptTransactions = require('./get-receipt-transactions');
-const saveReceiptsToDb = require('./save-receipts-to-db');
-const saveTransactionsToDb = require('./save-transactions-to-db');
+import signIn from './sign-in';
+import getReceiptList from './get-receipt-list';
+import getReceiptTransactions from './get-receipt-transactions';
+import saveReceiptsToDb from './save-receipts-to-db';
+import saveTransactionsToDb from './save-transactions-to-db';
 
-/**
- *
- * @type {{signIn: (*|(function(): page))}}
- */
-module.exports = {
+export default {
   getReceiptList,
   getReceiptTransactions,
   saveReceiptsToDb,

@@ -1,20 +1,28 @@
-const _ = require('lodash');
-const moment = require('moment');
-const url = require('url');
-const logger = require('../resources/logger');
-const screenshots = require('../resources/screenshots');
-const config = require('../resources/config');
+import * as _ from 'lodash';
+import moment, { Moment } from 'moment';
+import url from 'url';
+import logger from '../resources/logger';
+import * as screenshots from '../resources/screenshots';
+import config from '../resources/config';
+import { Page } from 'puppeteer';
+import { Receipt } from '../types/receipt';
+import { PageObjectModel } from '../types/content-types';
 
-const removeNewline = input => _.replace(input, /\r?\n|\r/g, '');
-const maybe = (test, value) => (test(value) ? value : null);
+const myReceiptsPage: PageObjectModel = {
+  path: '/my-receipts.html',
+};
+
+
+const removeNewline = (input:string) => _.replace(input, /\r?\n|\r/g, '');
+const maybe = (test: (input:string) => string|null, value:string) => (test(value) ? value : null);
 const parseDate = _.partial(moment, _, 'MMM. DD, YYYY hh:mma');
 
-const sanitizeDate = _.flow(
+const sanitizeDate:(input:string) => Moment = _.flow(
   _.partial(maybe, _.isString),
   removeNewline,
   parseDate,
 );
-const sanitizeNumber = _.flow(
+const sanitizeNumber:(input:string) => number = _.flow(
   _.partial(maybe, _.isString),
   removeNewline,
   _.toNumber,
@@ -25,21 +33,22 @@ const sanitizeNumber = _.flow(
  * @param page
  * @returns {Promise<Array>}
  */
-module.exports = async function getReceiptList(page) {
-  await page.goto(`${config.baseUrl}/my-receipts.html`);
+export default async function getReceiptList(page: Page):Promise<ReadonlyArray<Receipt>> {
+  await page.goto(`${config.baseUrl}${myReceiptsPage.path}`);
   await screenshots.save(page, 'receipts');
 
   // Get table of receipt totals / date
   const rawReceipts = await page.$$eval('.recall-table-set', rowParts =>
+
     Array.from(rowParts).map(row => {
       const dateElem = row.querySelector('.date-time');
       const amountElem = row.querySelector('.sold-col');
       const urlElem = row.querySelector('.view-col a');
 
       return {
-        date: dateElem ? dateElem.innerText : null,
-        amount: amountElem ? amountElem.innerText : null,
-        url: urlElem ? urlElem.href : null,
+        date: dateElem ? dateElem.textContent.toString() : null,
+        amount: amountElem ? amountElem.textContent.toString() : null,
+        url: urlElem ? urlElem.getAttribute('href') : null,
       };
     }),
   );
@@ -75,15 +84,14 @@ module.exports = async function getReceiptList(page) {
       logger.error(`Error parsing url: ${rawReceipt.url}`);
     }
 
-    return {
+    return <Receipt>{
       dateTime: dateValue,
       value: amountValue,
       url: urlValue,
     };
   });
 
-  const isReceiptNull = input =>
-    _.isNull(input.dateTime) && _.isNull(input.url);
+  const isReceiptNull = (input:Receipt):boolean => _.isNull(input.dateTime) && _.isNull(input.url);
 
   return _.reject(parsedReceipts, isReceiptNull);
 };
