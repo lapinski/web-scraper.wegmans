@@ -31,4 +31,4 @@ export default async function saveReceiptsToDatabase(receipts: ReadonlyArray<Rec
     throw new Error(`Error saving receipts: ${e.message}`);
   }
   return storedReceipts;
-};
+}

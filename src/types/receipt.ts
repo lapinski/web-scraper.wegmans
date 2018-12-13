@@ -5,13 +5,13 @@ export interface Receipt {
   readonly dateTime: Moment;
   readonly value: number;
   readonly url: UrlWithStringQuery;
-};
+}
 
 export interface Transaction {
-  readonly quantity: string | null;
-  readonly productName: string | null;
-  readonly productUrl: string | null;
-  readonly productCode: string | null;
-  readonly amount: number | null;
-  readonly discount: string | null;
+  readonly quantity: string | undefined;
+  readonly productName: string | undefined;
+  readonly productUrl: string | undefined;
+  readonly productCode: string | undefined;
+  readonly amount: number | undefined;
+  readonly discount: string | undefined;
 }

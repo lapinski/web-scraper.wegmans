@@ -13,16 +13,16 @@ const myReceiptsPage: PageObjectModel = {
 };
 
 
-const removeNewline = (input:string) => _.replace(input, /\r?\n|\r/g, '');
-const maybe = (test: (input:string) => string|null, value:string) => (test(value) ? value : null);
+const removeNewline = (input: string) => _.replace(input, /\r?\n|\r/g, '');
+const maybe = (test: (input: string) => string|undefined, value: string) => (test(value) ? value : undefined);
 const parseDate = _.partial(moment, _, 'MMM. DD, YYYY hh:mma');
 
-const sanitizeDate:(input:string) => Moment = _.flow(
+const sanitizeDate: (input: string) => Moment = _.flow(
   _.partial(maybe, _.isString),
   removeNewline,
   parseDate,
 );
-const sanitizeNumber:(input:string) => number = _.flow(
+const sanitizeNumber: (input: string) => number = _.flow(
   _.partial(maybe, _.isString),
   removeNewline,
   _.toNumber,
@@ -33,7 +33,7 @@ const sanitizeNumber:(input:string) => number = _.flow(
  * @param page
  * @returns {Promise<Array>}
  */
-export default async function getReceiptList(page: Page):Promise<ReadonlyArray<Receipt>> {
+export default async function getReceiptList(page: Page): Promise<ReadonlyArray<Receipt>> {
   await page.goto(`${config.baseUrl}${myReceiptsPage.path}`);
   await screenshots.save(page, 'receipts');
 
@@ -46,17 +46,17 @@ export default async function getReceiptList(page: Page):Promise<ReadonlyArray<R
       const urlElem = row.querySelector('.view-col a');
 
       return {
-        date: dateElem ? dateElem.textContent.toString() : null,
-        amount: amountElem ? amountElem.textContent.toString() : null,
-        url: urlElem ? urlElem.getAttribute('href') : null,
+        date: dateElem ? dateElem.textContent.toString() : undefined,
+        amount: amountElem ? amountElem.textContent.toString() : undefined,
+        url: urlElem ? urlElem.getAttribute('href') : undefined,
       };
     }),
   );
 
   const parsedReceipts = _.map(rawReceipts, rawReceipt => {
-    let dateValue = null;
-    let amountValue = null;
-    let urlValue = null;
+    let dateValue = undefined;
+    let amountValue = undefined;
+    let urlValue = undefined;
 
     try {
       const parsedDateValue = sanitizeDate(rawReceipt.date);
@@ -91,7 +91,7 @@ export default async function getReceiptList(page: Page):Promise<ReadonlyArray<R
     };
   });
 
-  const isReceiptNull = (input:Receipt):boolean => _.isNull(input.dateTime) && _.isNull(input.url);
+  const isReceiptNull = (input: Receipt): boolean => _.isNull(input.dateTime) && _.isNull(input.url);
 
   return _.reject(parsedReceipts, isReceiptNull);
-};
+}

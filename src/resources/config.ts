@@ -101,4 +101,4 @@ const transformer = (env: any): Configuration => ({
  *  screenshots: {dir:String, save:Boolean}
  * }}
  */
-export default <Configuration><unknown>envalid.cleanEnv(process.env, variables, { transformer });;
+export default <Configuration><unknown>envalid.cleanEnv(process.env, variables, { transformer });

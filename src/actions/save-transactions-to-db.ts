@@ -2,7 +2,7 @@
 import models from '../resources/models';
 import { Transaction } from '../types/receipt';
 
-export default async function saveTransactionsToDb(transactions:ReadonlyArray<Transaction>, receiptId:number) {
+export default async function saveTransactionsToDb(transactions: ReadonlyArray<Transaction>, receiptId: number) {
   const storedTransactions = [];
   try {
     for (let i = 0, len = transactions.length; i < len; i += 1) {
@@ -35,4 +35,4 @@ export default async function saveTransactionsToDb(transactions:ReadonlyArray<Tr
   } catch (e) {
     throw new Error(`Error saving receipts: ${e.message}`);
   }
-};
+}

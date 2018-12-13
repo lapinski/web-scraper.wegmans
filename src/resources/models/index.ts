@@ -3,9 +3,9 @@ import path from 'path';
 import Sequelize from 'sequelize';
 
 const basename = path.basename(__filename);
-const db:any = {};
+const db: any = {};
 
-let sequelize = require('../database');
+const sequelize = require('../database');
 
 fs.readdirSync(__dirname)
   .filter(file => {
@@ -14,7 +14,7 @@ fs.readdirSync(__dirname)
     );
   })
   .forEach(file => {
-    var model = sequelize['import'](path.join(__dirname, file));
+    const model = sequelize['import'](path.join(__dirname, file));
     db[model.name] = model;
   });
 

@@ -31,4 +31,4 @@ export default async function signIn(page: Page) {
   await screenshots.save(page, 'signin');
 
   return page;
-};
+}

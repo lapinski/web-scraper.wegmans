@@ -4,7 +4,7 @@ import { Url } from 'url';
 
 const screenshots = require('../resources/screenshots');
 
-export default async function getReceiptTransactions(page: Page, url: Url):Promise<ReadonlyArray<Transaction>> {
+export default async function getReceiptTransactions(page: Page, url: Url): Promise<ReadonlyArray<Transaction>> {
   await page.goto(url.toString());
   await screenshots.save(page, `receipts-${url.query}`);
 
@@ -20,16 +20,16 @@ export default async function getReceiptTransactions(page: Page, url: Url):Promi
       );
 
       return <Transaction>{
-        quantity: quantityElem ? quantityElem.textContent.toString() : null,
-        productName: productElem ? productElem.textContent.toString() : null,
-        productUrl: productElem ? productElem.getAttribute('href') : null,
-        productCode: productCodeElem ? productCodeElem.textContent.toString() : null,
-        amount: amountElem ? parseFloat(amountElem.textContent.toString()) : null,
-        discount: discountElem ? discountElem.textContent.toString() : null,
+        quantity: quantityElem ? quantityElem.textContent.toString() : undefined,
+        productName: productElem ? productElem.textContent.toString() : undefined,
+        productUrl: productElem ? productElem.getAttribute('href') : undefined,
+        productCode: productCodeElem ? productCodeElem.textContent.toString() : undefined,
+        amount: amountElem ? parseFloat(amountElem.textContent.toString()) : undefined,
+        discount: discountElem ? discountElem.textContent.toString() : undefined,
       };
     }),
   );
 
   // TODO: Parse Transactions
   return rawTransactions;
-};
+}
