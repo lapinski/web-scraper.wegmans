@@ -45,27 +45,16 @@ const config = convict({
     },
   },
   database: {
-    name: {
-      doc: 'Database Name',
-      format: '*',
-      default: 'wegmans',
-    },
-    username: {
-      doc: 'Database Username',
-      format: 'email',
-      env: 'DB_USERNAME',
-    },
-    password: {
-      doc: 'Database Password',
-      format: '*',
-      sensitive: true,
-      env: 'DB_PASSWORD',
-    },
     url: {
-      doc: 'Database URL',
+      doc: 'Database URL, eg. postgres://test:test@domain:port/dbname',
       format: 'url',
       env: 'DB_URL',
     },
+    type: {
+      doc: 'Database type e.g. postgres',
+      format: ['postgres', 'mysql'],
+      env: 'DB_TYPE',
+    }
   },
   screenshots: {
     dir: {

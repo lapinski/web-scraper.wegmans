@@ -1,7 +1,9 @@
-import Sequelize from 'sequelize';
+import {createConnection, Connection} from "typeorm";
 import config from './config';
 
-// @ts-ignore
-module.exports = new Sequelize(config.database.connectionString, {
-  operatorsAliases: false,
+const connection = await createConnection({
+  type: config.get('db.type'),
+  url: config.get('db.url'),
 });
+
+export = connection;

@@ -1,5 +1,4 @@
 /* eslint-disable no-await-in-loop */
-import models from '../resources/models';
 import { Receipt } from '../types/receipt';
 
 export default async function saveReceiptsToDatabase(receipts: ReadonlyArray<Receipt>, storeName: string) {

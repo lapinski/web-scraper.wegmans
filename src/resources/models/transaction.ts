@@ -1,44 +1,28 @@
-import { DataTypes, Sequelize } from 'sequelize';
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 
-module.exports = (sequelize: Sequelize, DataTypes: DataTypes) => {
-  const Transaction = sequelize.define(
-    'Transaction',
-    {
-      date: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
-      quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      amount: {
-        type: DataTypes.DECIMAL,
-        allowNull: false,
-      },
-      discountAmount: {
-        type: DataTypes.DECIMAL,
-        allowNull: true,
-      },
-      productName: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      produtCode: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      productUrl: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-    },
-    {},
-  );
+@Entity()
+export class Transaction {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  Transaction.associate = function(models) {
-    Transaction.belongsTo(models.Receipt);
-  };
+  @Column({type: 'date'})
+  date: Date;
 
-  return Transaction;
+  @Column({type: 'int'})
+  quantity: number;
+
+  @Column({type: 'decimal'})
+  amount: number;
+
+  @Column({type: 'decimal'})
+  discountAmount: number;
+
+  @Column()
+  productName: string;
+
+  @Column()
+  produtCode: string;
+
+  @Column()
+  productUrl: string;
 };
