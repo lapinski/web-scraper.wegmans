@@ -4,11 +4,11 @@ import actions from './actions';
 import config from './resources/config';
 
 const main = async () => {
-  const browser = await puppeteer.launch({ headless: config.headless });
+  const browser = await puppeteer.launch({ headless: config.get('puppeteer.headless') });
   const page = await browser.newPage();
   await page.setViewport({
-    width: config.viewport.width,
-    height: config.viewport.height,
+    width: config.get('puppeteer.viewport.width'),
+    height: config.get('puppeteer.viewport.height'),
   });
 
   logger.info('Signing In');

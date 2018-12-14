@@ -34,7 +34,7 @@ const sanitizeNumber: (input: string) => number = _.flow(
  * @returns {Promise<Array>}
  */
 export default async function getReceiptList(page: Page): Promise<ReadonlyArray<Receipt>> {
-  await page.goto(`${config.baseUrl}${myReceiptsPage.path}`);
+  await page.goto(`${config.get('wegmans').baseUrl}${myReceiptsPage.path}`);
   await screenshots.save(page, 'receipts');
 
   // Get table of receipt totals / date

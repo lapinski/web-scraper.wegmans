@@ -13,14 +13,14 @@ const signInPage = <PageObjectModel>{
 };
 
 export default async function signIn(page: Page) {
-  const url = new URL(signInPage.path, config.baseUrl);
+  const url = new URL(signInPage.path, config.get('wegmans.baseUrl'));
   await page.goto(url.toString());
   await page.waitFor(signInPage.signInButton);
 
   // await page.click(pom.usernameInput);
-  await page.type(signInPage.usernameInput, config.user.username);
+  await page.type(signInPage.usernameInput, config.get('wegmans.username'));
   // await page.click(pom.passwordInput);
-  await page.type(signInPage.passwordInput, config.user.password);
+  await page.type(signInPage.passwordInput, config.get('wegmans.username'));
 
   try {
     await Promise.all([page.waitForNavigation(), page.click(signInPage.signInButton)]);
