@@ -9,3 +9,4 @@ services:
     environment:
       POSTGRES_PASSWORD: password123
       POSTGRES_USER: dbuser
+      POSTGRES_DB: wegmans

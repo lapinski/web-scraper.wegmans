@@ -1,29 +1,32 @@
 /* eslint-disable no-await-in-loop */
-import { Receipt } from '../types/receipt';
+import { RawReceipt } from '../types/receipt';
+import Receipt from '../entities/Receipt';
+import {getRepository} from '../resources/database';
 
-export default async function saveReceiptsToDatabase(receipts: ReadonlyArray<Receipt>, storeName: string) {
-  const storedReceipts = [];
+export default async function saveReceiptsToDatabase(receipts: ReadonlyArray<RawReceipt>, storeName: string): Promise<Array<Receipt>> {
+  const receiptRepo = await getRepository(Receipt);
+  const storedReceipts:Array<Receipt> = [];
   try {
     for (let i = 0, len = receipts.length; i < len; i += 1) {
       const receipt = receipts[i];
 
-      const existingReceipt = await models.Receipt.findOne({
+      const existingReceipt = await receiptRepo.findOne({
         where: {
           date: receipt.dateTime,
         },
       });
 
       if (!existingReceipt) {
-        const newReceipt = await models.Receipt.create({
-          date: receipt.dateTime,
-          amount: receipt.value,
-          url: receipt.url.toString(),
-          store: storeName,
-        });
-        const savedReceipt = await newReceipt.save();
-        storedReceipts.push(savedReceipt.get({ plain: true }));
+        const newReceipt = new Receipt();
+        newReceipt.date = receipt.dateTime.toDate();
+        newReceipt.amount = receipt.value;
+        newReceipt.url = receipt.url.toString();
+        newReceipt.store = storeName;
+
+        const savedReceipt = await receiptRepo.save(newReceipt);
+        storedReceipts.push(savedReceipt);
       } else {
-        storedReceipts.push(existingReceipt.get({ plain: true }));
+        storedReceipts.push(existingReceipt);
       }
     }
   } catch (e) {

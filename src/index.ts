@@ -2,6 +2,7 @@ import puppeteer from 'puppeteer';
 import logger from './resources/logger';
 import actions from './actions';
 import config from './resources/config';
+import { RawTransaction } from './types/receipt';
 
 const main = async () => {
   const browser = await puppeteer.launch({ headless: config.get('puppeteer.headless') });
@@ -29,9 +30,9 @@ const main = async () => {
     logger.info('Queueing Fetching Receipt Transaction');
     queue.push(
       actions
-        .getReceiptTransactions(page, savedReceipt.url)
-        .then(transactions =>
-          actions.saveTransactionsToDb(transactions, savedReceipt.id),
+        .getReceiptTransactions(page, new URL(savedReceipt.url))
+        .then((transactions:Array<RawTransaction>) =>
+          actions.saveTransactionsToDb(transactions, savedReceipt),
         ),
     );
   }

@@ -5,7 +5,7 @@ import logger from '../resources/logger';
 import * as screenshots from '../resources/screenshots';
 import config from '../resources/config';
 import { Page } from 'puppeteer';
-import { Receipt } from '../types/receipt';
+import { RawReceipt } from '../types/receipt';
 import { PageObjectModel } from '../types/content-types';
 
 const myReceiptsPage: PageObjectModel = {
@@ -33,7 +33,7 @@ const sanitizeNumber: (input: string) => number = _.flow(
  * @param page
  * @returns {Promise<Array>}
  */
-export default async function getReceiptList(page: Page): Promise<ReadonlyArray<Receipt>> {
+export default async function getReceiptList(page: Page): Promise<ReadonlyArray<RawReceipt>> {
   await page.goto(`${config.get('wegmans').baseUrl}${myReceiptsPage.path}`);
   await screenshots.save(page, 'receipts');
 
@@ -84,14 +84,14 @@ export default async function getReceiptList(page: Page): Promise<ReadonlyArray<
       logger.error(`Error parsing url: ${rawReceipt.url}`);
     }
 
-    return <Receipt>{
+    return <RawReceipt>{
       dateTime: dateValue,
       value: amountValue,
       url: urlValue,
     };
   });
 
-  const isReceiptNull = (input: Receipt): boolean => _.isNull(input.dateTime) && _.isNull(input.url);
+  const isReceiptNull = (input: RawReceipt): boolean => _.isNull(input.dateTime) && _.isNull(input.url);
 
   return _.reject(parsedReceipts, isReceiptNull);
 }

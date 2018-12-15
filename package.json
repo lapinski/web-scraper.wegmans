@@ -12,7 +12,8 @@
     "lint-fix": "npm run lint -- --fix",
     "build": "npm run lint && npm run build-ts",
     "build-ts": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require ts-node/register --require source-map-support/register --recursive tests/**/*.ts",
+    "test:coverage": "nyc npm run test"
   },
   "keywords": [
     "web-scraper",
@@ -25,7 +26,9 @@
     "dotenv": "^6.2.0",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
+    "pg": "^7.7.1",
     "puppeteer": "^1.4.0",
+    "reflect-metadata": "^0.1.12",
     "sqlite3": "^4.0.0",
     "typeorm": "^0.2.9",
     "winston": "^3.1.0"
@@ -41,8 +44,22 @@
     "@types/winston": "^2.4.4",
     "husky": "^0.14.3",
     "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "source-map-support": "^0.5.9",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "typescript": "^3.2.2"
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true
   }
 }
