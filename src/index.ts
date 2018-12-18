@@ -1,22 +1,19 @@
-import puppeteer from 'puppeteer';
-import logger from './resources/logger';
 import actions from './actions';
-import config from './resources/config';
-import { RawTransaction } from './types/receipt';
+import { container } from './container.config';
+import { RawTransaction } from './types';
+import { IBrowser, IBrowserType } from './resources/browser';
+import { ILogger, ILoggerType } from './resources/logger';
 
 const main = async () => {
-  const browser = await puppeteer.launch({ headless: config.get('puppeteer.headless') });
-  const page = await browser.newPage();
-  await page.setViewport({
-    width: config.get('puppeteer.viewport.width'),
-    height: config.get('puppeteer.viewport.height'),
-  });
+  const logger = container.get<ILogger>(ILoggerType);
+  const browser = container.get<IBrowser>(IBrowserType);
+  const page = await browser.getPage();
 
   logger.info('Signing In');
   await actions.signIn(page);
 
   logger.info('Navigating to Receipts Page');
-  const receipts = await actions.getReceiptList(page);
+  const receipts = await actions.getReceipts(page);
 
   logger.info('Saving Receipts to Database');
   const savedReceipts = await actions.saveReceiptsToDb(receipts, 'Wegmans');
@@ -30,7 +27,7 @@ const main = async () => {
     logger.info('Queueing Fetching Receipt Transaction');
     queue.push(
       actions
-        .getReceiptTransactions(page, new URL(savedReceipt.url))
+        .getTransactions(page, new URL(savedReceipt.url))
         .then((transactions:Array<RawTransaction>) =>
           actions.saveTransactionsToDb(transactions, savedReceipt),
         ),

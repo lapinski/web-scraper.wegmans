@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import { RawReceipt } from '../types/receipt';
+import { RawReceipt } from '../types';
 import Receipt from '../entities/Receipt';
 import {getRepository} from '../resources/database';
 

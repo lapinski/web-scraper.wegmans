@@ -1,10 +1,10 @@
-import { RawTransaction } from '../types/receipt';
+import { RawTransaction } from '../types';
 import { Page } from 'puppeteer';
 import { Url } from 'url';
 
 const screenshots = require('../resources/screenshots');
 
-export default async function getReceiptTransactions(page: Page, url: Url): Promise<ReadonlyArray<RawTransaction>> {
+export default async function getTransactions(page: Page, url: Url):Promise<ReadonlyArray<RawTransaction>> {
   await page.goto(url.toString());
   await screenshots.save(page, `receipts-${url.query}`);
 

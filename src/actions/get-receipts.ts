@@ -5,36 +5,29 @@ import logger from '../resources/logger';
 import * as screenshots from '../resources/screenshots';
 import config from '../resources/config';
 import { Page } from 'puppeteer';
-import { RawReceipt } from '../types/receipt';
-import { PageObjectModel } from '../types/content-types';
-
-const myReceiptsPage: PageObjectModel = {
-  path: '/my-receipts.html',
-};
+import { RawReceipt } from '../types';
 
 
+const maybe = (test: (input: string) => string | undefined, value: string) => (test(value) ? value : undefined);
 const removeNewline = (input: string) => _.replace(input, /\r?\n|\r/g, '');
-const maybe = (test: (input: string) => string|undefined, value: string) => (test(value) ? value : undefined);
 const parseDate = _.partial(moment, _, 'MMM. DD, YYYY hh:mma');
 
-const sanitizeDate: (input: string) => Moment = _.flow(
+const sanitizeDate:(input: string) => Moment = _.flow(
   _.partial(maybe, _.isString),
   removeNewline,
   parseDate,
 );
-const sanitizeNumber: (input: string) => number = _.flow(
-  _.partial(maybe, _.isString),
-  removeNewline,
-  _.toNumber,
-);
 
-/**
- *
- * @param page
- * @returns {Promise<Array>}
- */
-export default async function getReceiptList(page: Page): Promise<ReadonlyArray<RawReceipt>> {
-  await page.goto(`${config.get('wegmans').baseUrl}${myReceiptsPage.path}`);
+const sanitizeNumber: (input: string) => number = _.flow(
+    _.partial(maybe, _.isString),
+    removeNewline,
+    _.toNumber,
+  );
+
+const pagePath:string = '/my-receipts.html';
+
+export default async function getReceipts(page: Page):Promise<ReadonlyArray<RawReceipt>> {
+  await page.goto(`${config.get('wegmans').baseUrl}${pagePath}`);
   await screenshots.save(page, 'receipts');
 
   // Get table of receipt totals / date
@@ -94,4 +87,4 @@ export default async function getReceiptList(page: Page): Promise<ReadonlyArray<
   const isReceiptNull = (input: RawReceipt): boolean => _.isNull(input.dateTime) && _.isNull(input.url);
 
   return _.reject(parsedReceipts, isReceiptNull);
-}
+};

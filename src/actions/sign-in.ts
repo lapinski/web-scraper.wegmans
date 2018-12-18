@@ -3,7 +3,7 @@ import config  from '../resources/config';
 import logger from '../resources/logger';
 import * as screenshots from '../resources/screenshots';
 import { Page } from 'puppeteer';
-import { PageObjectModel } from '../types/content-types';
+import { PageObjectModel } from '../types';
 
 const signInPage = <PageObjectModel>{
   path: '/sign-in.html',
