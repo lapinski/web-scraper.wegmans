@@ -1,24 +1,42 @@
 import convict from 'convict';
 import dotenv from 'dotenv';
+import { DatabaseType, LogicalEnvironment, LogLevel } from '../types/enums';
 
 dotenv.config();
 
 const config = convict({
   env: {
     doc: 'The application environment',
-    format: ['test', 'development', 'production'],
-    default: 'development',
+    format: [LogicalEnvironment.Production, LogicalEnvironment.Development, LogicalEnvironment.Test],
+    default: LogicalEnvironment.Development,
     env: 'NODE_ENV',
+  },
+  logging: {
+    level: {
+      doc: 'Min level to write to logs',
+      format: [ LogLevel.Debug, LogLevel.Info, LogLevel.Warn, LogLevel.Error ],
+      default: LogLevel.Error,
+    },
+    filename: {
+      doc: 'Filename/path to write log messages',
+      format: String,
+      default: 'wegmans-web-scraper.log',
+    },
+    console: {
+      doc: 'Flag indicating if log messages should be written to the console.',
+      format: Boolean,
+      default: true,
+    }
   },
   wegmans: {
     username: {
       doc: 'Username for Wegmans.com account.',
-      format: '*',
+      format: String,
       env: 'WEGMANS_USERNAME',
     },
     password: {
       doc: 'Password for wegmans.com',
-      format: '*',
+      format: String,
       env: 'WEGMANS_PASSWORD',
       sensitive: true,
     },
@@ -32,15 +50,18 @@ const config = convict({
     viewport: {
       width: {
         doc: 'Viewport width',
+        format: Number,
         default: 800,
       },
       height: {
         doc: 'Viewport height',
+        format: Number,
         default: 600,
       },
     },
     headless: {
       doc: 'Flag to enable non-headless browser.',
+      format: Boolean,
       default: true,
     },
   },
@@ -52,23 +73,26 @@ const config = convict({
     },
     type: {
       doc: 'Database type e.g. postgres',
-      format: ['postgres', 'mysql'],
+      format: [DatabaseType.Postgres, DatabaseType.MySql],
+      default: DatabaseType.Postgres,
       env: 'DB_TYPE',
     }
   },
   screenshots: {
     dir: {
       doc: 'Folder name to store screenshots',
+      format: String,
       default: 'screenshots',
     },
     enabled: {
       doc: 'Flag to enable saving screenshots',
+      format: Boolean,
       default: true,
     },
   },
 });
 
 // Perform validation
-config.validate({allowed: 'strict'});
+config.validate({ allowed: 'strict' });
 
 export = config;
