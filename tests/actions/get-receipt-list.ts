@@ -1,3 +1,4 @@
-describe('get-receipt-list', () => {
+
+describe('get-receipt-list action', () => {
 
 });
