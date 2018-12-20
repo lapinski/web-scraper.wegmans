@@ -32,11 +32,13 @@ const config = convict({
     username: {
       doc: 'Username for Wegmans.com account.',
       format: String,
+      default: null,
       env: 'WEGMANS_USERNAME',
     },
     password: {
       doc: 'Password for wegmans.com',
       format: String,
+      default: null,
       env: 'WEGMANS_PASSWORD',
       sensitive: true,
     },
@@ -66,10 +68,36 @@ const config = convict({
     },
   },
   database: {
-    url: {
-      doc: 'Database URL, eg. postgres://test:test@domain:port/dbname',
-      format: 'url',
-      env: 'DB_URL',
+    username: {
+      doc: 'Database Username',
+      format: String,
+      default: '',
+      env: 'DB_USERNAME',
+    },
+    password: {
+      doc: 'Database Password',
+      format: String,
+      default: '',
+      env: 'DB_PASSWORD',
+      sensitive: true,
+    },
+    host: {
+      doc: 'Database Host e.g. localhost',
+      format: String,
+      default: 'localhost',
+      env: 'DB_HOST',
+    },
+    name: {
+      doc: 'Database Name',
+      format: String,
+      default: 'wegmans',
+      env: 'DB_NAME',
+    },
+    port: {
+      doc: 'Database Port',
+      format: 'port',
+      default: 5432,
+      env: 'DB_PORT',
     },
     type: {
       doc: 'Database type e.g. postgres',
