@@ -4,16 +4,31 @@ import * as receiptParser from '../../src/parsers/receipt-parser';
 describe('receipt parser', () => {
   describe('removeNewLine', () => {
 
-    describe('when given null input', () => {
-      let output:any;
-      beforeEach(() => {
-        output = receiptParser.removeNewline(null);
-      });
+    const positiveCases = [
+      {in: null, out: ''},
+      {in:'\n', out:''},
+      {in:'\r', out:''},
+      {in:'\r\n', out: ''},
+      {in:'\n\r', out: ''},
+      {in:'a\nb', out: 'ab'},
+      {in:'a\rb', out: 'ab'},
+      {in:'a\n\rb', out: 'ab'},
+    ];
 
-      it('should return null', () => {
-        expect(output).to.equal('');
+    for(let i = 0, len = positiveCases.length; i < len; i++) {
+      const testCase = positiveCases[i];
+      describe(`when given '${testCase.in}' input`, () => {
+        let output:any;
+        beforeEach(() => {
+          output = receiptParser.removeNewline(testCase.in);
+        });
+
+        it(`should return '${testCase.out}'`, () => {
+          expect(output).to.equal(testCase.out);
+        });
       });
-    });
+    }
+
   });
 
   describe('maybe', () => {
