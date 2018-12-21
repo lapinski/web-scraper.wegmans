@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import url, { UrlWithStringQuery } from 'url';
 import { Moment } from 'moment';
 import moment from 'moment';
+import { RawReceipt } from '../pages/my-receipts-page';
 
 export const removeNewline = (input: string) =>
   _.replace(input, /\r?\n|\r/g, '');
@@ -27,19 +28,13 @@ export const sanitizeNumber: (input: string) => number = _.flow(
 export const isReceiptNull = (input: ReceiptParserOutput): boolean =>
   _.isNull(input.dateTime) && _.isNull(input.url);
 
-export interface ReceiptParserInput {
-  date: string;
-  amount: string;
-  url: string;
-}
-
 export interface ReceiptParserOutput {
   readonly dateTime: Moment;
   readonly value: number;
   readonly url: UrlWithStringQuery;
 }
 
-export function parseOne(rawReceipt:ReceiptParserInput):ReceiptParserOutput {
+export function parseOne(rawReceipt:RawReceipt):ReceiptParserOutput {
   let dateValue = undefined;
   let amountValue = undefined;
   let urlValue = undefined;
@@ -77,7 +72,7 @@ export function parseOne(rawReceipt:ReceiptParserInput):ReceiptParserOutput {
   };
 }
 
-export function parseMany(input:ReadonlyArray<ReceiptParserInput>):ReadonlyArray<ReceiptParserOutput> {
+export function parseMany(input:ReadonlyArray<RawReceipt>):ReadonlyArray<ReceiptParserOutput> {
   const output = _.map(input, parseOne);
   return _.reject(output, isReceiptNull);
 };

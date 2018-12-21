@@ -1,12 +1,10 @@
 import { Page } from 'puppeteer';
 import * as screenshots from '../resources/screenshots';
 import config from '../resources/config';
-import { ReceiptParserOutput } from '../parsers/receipt-parser';
-import { PageObjectModel } from '../types/content-types';
+import { parseMany, ReceiptParserOutput } from '../parsers/receipt-parser';
+import { MyReceiptsPage } from '../pages/my-receipts-page';
 
-const myReceiptsPage: PageObjectModel = {
-  path: '/my-receipts.html',
-};
+const pathConfig = config.get('wegmans.path');
 
 /**
  *
@@ -14,24 +12,12 @@ const myReceiptsPage: PageObjectModel = {
  * @returns {Promise<Array>}
  */
 export default async function getReceiptList(page: Page): Promise<ReadonlyArray<ReceiptParserOutput>> {
-  await page.goto(`${config.get('wegmans').baseUrl}${myReceiptsPage.path}`);
+  await page.goto(`${pathConfig.baseUrl}${pathConfig.myReceiptsPage}`);
   await screenshots.save(page, 'receipts');
 
-  // Get table of receipt totals / date
-  const rawReceipts = await page.$$eval('.recall-table-set', rowParts =>
+  const pageModel = new MyReceiptsPage(page);
 
-    Array.from(rowParts).map(row => {
-      const dateElem = row.querySelector('.date-time');
-      const amountElem = row.querySelector('.sold-col');
-      const urlElem = row.querySelector('.view-col a');
+  const rawReceipts = await pageModel.getReceipts();
 
-      return {
-        date: dateElem ? dateElem.textContent.toString() : undefined,
-        amount: amountElem ? amountElem.textContent.toString() : undefined,
-        url: urlElem ? urlElem.getAttribute('href') : undefined,
-      };
-    }),
-  );
-
-  return receiptParser.parseMany(rawReceipts);
+  return parseMany(rawReceipts);
 }

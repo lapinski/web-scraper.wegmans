@@ -42,10 +42,17 @@ const config = convict({
       env: 'WEGMANS_PASSWORD',
       sensitive: true,
     },
-    baseUrl: {
-      doc: 'Base URL for Wegmans.com',
-      format: 'url',
-      default: 'https://www.wegmans.com',
+    paths: {
+      baseUrl: {
+        doc: 'Base URL for Wegmans.com',
+        format: 'url',
+        default: 'https://www.wegmans.com',
+      },
+      myReceiptsPage: {
+        doc: 'Path to the \'My Receipts\' page relative to the baseUrl',
+        default: '/my-receipts.html',
+        format: String,
+      }
     }
   },
   puppeteer: {
