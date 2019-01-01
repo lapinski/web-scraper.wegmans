@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { Moment } from 'moment';
 import * as receiptParser from '../../src/parsers/receipt-parser';
 
 describe('receipt parser', () => {
@@ -54,7 +55,13 @@ describe('receipt parser', () => {
   });
 
   describe('parseDate', () => {
-
+    const testCases:{in:string, out:Moment | null}[] = [
+      {in: null, out: null}, // Null Input
+      {in: '', out: null}, // Empty String
+      {in: 'something-random', out: null}, // Malformed Date
+      {in: 'Jan. 32, 2020 10:20pm', out: null}, // Valid Date Format (invalid actual date)
+      {in: 'Jan. 31, 2018 10:00pm', out: null}, // Valid Date
+    ]
   });
 
   describe('sanitizeDate', () => {
