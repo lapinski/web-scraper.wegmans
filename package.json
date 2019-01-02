@@ -13,7 +13,11 @@
     "build": "npm run lint && npm run build-ts",
     "build-ts": "tsc",
     "test": "mocha --require ts-node/register test/**/*.ts",
-    "test:coverage": "nyc npm run test"
+    "test:coverage": "nyc npm run test",
+    "db": "typeorm",
+    "db:migrate:create": "typeorm migration:create",
+    "predb:migrate": "npm run build",
+    "db:migrate": "typeorm migration:run"
   },
   "keywords": [
     "web-scraper",
