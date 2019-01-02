@@ -21,7 +21,9 @@ A tool to scrape the wegmans.com website and download receipt information for a 
     npm install
     ```
 
-3. Start Postgres DB Image
+3. Start Postgres DB Image (*or use any other Postgres Server*)
     ```bash
     docker stack deploy -c docker-compose.db.yml 
     ```
+    
+4. Run DB Migrations -- **TODO**
