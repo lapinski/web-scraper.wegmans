@@ -1,6 +1,6 @@
-version: '3'
+version: '3.1'
 services:
-  app:
+  scraper:
     build: .
   db:
     image: "postgres:alpine"
