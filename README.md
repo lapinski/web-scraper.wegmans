@@ -27,3 +27,24 @@ A tool to scrape the wegmans.com website and download receipt information for a 
     ```
     
 4. Run DB Migrations -- **TODO**
+
+## Infrastructure
+This project uses Google Cloud Platform and Terraform.
+
+1. Create project in GCP
+2. Update project id in main.tf
+3. [Create GCP Service User](https://cloud.google.com/docs/authentication/getting-started)
+    In order to run the included terraform scripts, you must first setup the service user 
+    and then download the associated credentials (json key file).
+4. Download keyfile
+    ```bash
+    mv ~/Downloads/{{keyfile}}.json ~/.gcp/
+    ```
+5. Export ENV Variable with keyfile location
+    ```bash
+    export GOOGLE_CLOUD_KEYFILE_JSON={{path}}    
+    ```
+6. Run terraform
+```bash
+terraform apply
+```
