@@ -24,3 +24,17 @@ resource "google_compute_network" "vpc_network" {
   name = "terraform-network"
   auto_create_subnetworks = "true"
 }
+
+resource "google_sql_database_instance" "master" {
+  name = "master-instance"
+  database_version = "POSTGRES_9_6"
+
+  settings {
+    tier = "D0"
+  }
+}
+
+resource "google_sql_database" "wegmans" {
+  name = "wegmans-db"
+  instance = "${google_sql_database_instance.master.self_link}"
+}
