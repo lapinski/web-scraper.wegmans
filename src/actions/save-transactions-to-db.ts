@@ -1,8 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { RawTransaction } from '../types/receipt';
-import Transaction from '../entities/Transaction';
+import { Receipt, Transaction } from '../entities';
 import { getRepository } from '../resources/database';
-import Receipt from '../entities/receipt';
 
 export default async function saveTransactionsToDb(transactions: ReadonlyArray<RawTransaction>, receipt: Receipt) {
   const transactionRepo = await getRepository(Transaction);

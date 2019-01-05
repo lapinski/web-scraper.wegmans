@@ -1,13 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import Transaction from './transaction';
+import { Transaction } from './transaction';
 
 @Entity()
-export default class Receipt {
+export class Receipt {
 
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({type: 'datetime'})
+  @Column({type: 'date'})
   date: Date;
 
   @Column({type: 'decimal'})

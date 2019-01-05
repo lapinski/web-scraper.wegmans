@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import Receipt from '../entities/Receipt';
+import { Receipt } from '../entities/Receipt';
 import { getRepository } from '../resources/database';
 import { ReceiptParserOutput } from '../parsers/receipt-parser';
 

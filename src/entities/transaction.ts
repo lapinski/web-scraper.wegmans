@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import Receipt from './receipt';
+import { Receipt } from './receipt';
 
 @Entity()
-export default class Transaction {
+export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -15,16 +15,16 @@ export default class Transaction {
   @Column({type: 'decimal'})
   amount: number;
 
-  @Column({type: 'decimal', name: 'discount_amount'})
+  @Column({type: 'decimal'})
   discountAmount: number;
 
-  @Column({name: 'product_name'})
+  @Column()
   productName: string;
 
-  @Column({name: 'product_code'})
+  @Column()
   productCode: string;
 
-  @Column({name: 'product_url'})
+  @Column()
   productUrl: string;
 
   @ManyToOne(type => Receipt, receipt => receipt.transactions)
