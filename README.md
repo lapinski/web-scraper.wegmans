@@ -26,7 +26,29 @@ A tool to scrape the wegmans.com website and download receipt information for a 
     docker stack deploy -c docker-compose.db.yml 
     ```
     
-4. Run DB Migrations -- **TODO**
+4. Run DB Migrations **(see note on TypeORM & Typescript)**
+    ```bash
+    npm run db:migrate
+    ```
+    OR
+    ```bash
+    yarn run db:migrate
+    ```
+
+## Generating Migrations
+**(see note on TypeORM & Typescript)**
+Run the following command:
+```bash
+npm run db:generate -- "-n <EntityName>"
+```
+Where <EntityName> is the exported class name of an entity to generate a new migration from.
+
+
+## Note on TypeORM CLI & Typescript
+Typeorm loads JS files, so we need to build the TS files first, and the paths for entities,migrations,etc used by
+the CLI must target the ```dist/``` folder.
+
+The NPM scripts in this package are setup to build first, so just execute the ```db:*``` commands included.
 
 ## Infrastructure
 This project uses Google Cloud Platform and Terraform.
