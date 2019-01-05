@@ -15,16 +15,16 @@ export default class Transaction {
   @Column({type: 'decimal'})
   amount: number;
 
-  @Column({type: 'decimal'})
+  @Column({type: 'decimal', name: 'discount_amount'})
   discountAmount: number;
 
-  @Column()
+  @Column({name: 'product_name'})
   productName: string;
 
-  @Column()
+  @Column({name: 'product_code'})
   productCode: string;
 
-  @Column()
+  @Column({name: 'product_url'})
   productUrl: string;
 
   @ManyToOne(type => Receipt, receipt => receipt.transactions)

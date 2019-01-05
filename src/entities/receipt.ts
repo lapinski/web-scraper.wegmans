@@ -10,7 +10,7 @@ export default class Receipt {
   @Column({type: 'datetime'})
   date: Date;
 
-  @Column()
+  @Column({type: 'decimal'})
   amount: number;
 
   @Column()
