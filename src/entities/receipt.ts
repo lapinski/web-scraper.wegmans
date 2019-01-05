@@ -21,4 +21,4 @@ export default class Receipt {
 
   @OneToMany(type => Transaction, transaction => transaction.receipt)
   transactions: Array<Transaction>;
-};
+}

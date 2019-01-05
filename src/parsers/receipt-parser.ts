@@ -34,7 +34,7 @@ export interface ReceiptParserOutput {
   readonly url: UrlWithStringQuery;
 }
 
-export function parseOne(rawReceipt:RawReceipt):ReceiptParserOutput {
+export function parseOne(rawReceipt: RawReceipt): ReceiptParserOutput {
   let dateValue = undefined;
   let amountValue = undefined;
   let urlValue = undefined;
@@ -72,7 +72,7 @@ export function parseOne(rawReceipt:RawReceipt):ReceiptParserOutput {
   };
 }
 
-export function parseMany(input:ReadonlyArray<RawReceipt>):ReadonlyArray<ReceiptParserOutput> {
+export function parseMany(input: ReadonlyArray<RawReceipt>): ReadonlyArray<ReceiptParserOutput> {
   const output = _.map(input, parseOne);
   return _.reject(output, isReceiptNull);
-};
+}

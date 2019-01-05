@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { RawTransaction } from '../types/receipt';
 import Transaction from '../entities/Transaction';
-import {getRepository} from '../resources/database';
+import { getRepository } from '../resources/database';
 import Receipt from '../entities/receipt';
 
 export default async function saveTransactionsToDb(transactions: ReadonlyArray<RawTransaction>, receipt: Receipt) {

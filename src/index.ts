@@ -31,7 +31,7 @@ const main = async () => {
     queue.push(
       actions
         .getReceiptTransactions(page, new URL(savedReceipt.url))
-        .then((transactions:Array<RawTransaction>) =>
+        .then((transactions: Array<RawTransaction>) =>
           actions.saveTransactionsToDb(transactions, savedReceipt),
         ),
     );

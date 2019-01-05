@@ -14,8 +14,11 @@
     "build-ts": "tsc",
     "test": "mocha --require ts-node/register test/**/*.ts",
     "test:coverage": "nyc npm run test",
-    "db:migrate": "ts-node ./node_modules/typeorm/cli.js migration:run",
-    "db:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert"
+    "predb": "npm run build",
+    "db": "typeorm",
+    "db:generate": "npm run db -- migration:generate",
+    "db:migrate": "npm run db -- migration:run",
+    "db:revert": "npm run db --  migration:revert"
   },
   "keywords": [
     "web-scraper",

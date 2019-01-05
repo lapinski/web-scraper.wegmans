@@ -13,7 +13,7 @@ export default class PageObject {
     return this._page;
   }
 
-  protected extractTextContent(element: Element):string {
+  protected extractTextContent(element: Element): string {
     if (!element || !element.textContent) {
       return undefined;
     }
@@ -21,11 +21,11 @@ export default class PageObject {
     return element.textContent.toString();
   }
 
-  protected extractAnchorUrl(element: Element):URL {
+  protected extractAnchorUrl(element: Element): URL {
     if (!element || !element.hasAttribute('href')) {
       return undefined;
     }
 
     return new URL(element.getAttribute('href'));
   }
-};
+}

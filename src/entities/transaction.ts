@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, ManyToOne} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import Receipt from './receipt';
 
 @Entity()
@@ -29,4 +29,4 @@ export default class Transaction {
 
   @ManyToOne(type => Receipt, receipt => receipt.transactions)
   receipt: Receipt;
-};
+}

@@ -1,4 +1,4 @@
-import { MigrationInterface, Table, TableForeignKey, QueryRunner} from "typeorm";
+import { MigrationInterface, Table, TableForeignKey, QueryRunner } from 'typeorm';
 
 const TransactionTableName = 'transactions';
 const ReceiptTableName = 'receipts';
@@ -24,7 +24,7 @@ export class inital1546397308317 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<any> {
       const transactionTable = await queryRunner.getTable(TransactionTableName);
-      const isReceiptIdCol = (fk:TableForeignKey) => fk.columnNames.indexOf(ReceiptIdColumnName) !== -1;
+      const isReceiptIdCol = (fk: TableForeignKey) => fk.columnNames.indexOf(ReceiptIdColumnName) !== -1;
       const foreignKey = transactionTable.foreignKeys.find(isReceiptIdCol);
 
       await queryRunner.dropForeignKey(TransactionTableName, foreignKey);

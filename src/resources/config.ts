@@ -32,13 +32,13 @@ const config = convict({
     username: {
       doc: 'Username for Wegmans.com account.',
       format: String,
-      default: null,
+      default: undefined,
       env: 'WEGMANS_USERNAME',
     },
     password: {
       doc: 'Password for wegmans.com',
       format: String,
-      default: null,
+      default: undefined,
       env: 'WEGMANS_PASSWORD',
       sensitive: true,
     },

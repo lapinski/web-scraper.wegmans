@@ -14,14 +14,14 @@ export class MyReceiptsPage extends PageObject {
   private static readonly _amountFieldSelector = '.sold-col';
   private static readonly _productUrlSelector = '.view-col a';
 
-  constructor(page:PuppetPage) {
+  constructor(page: PuppetPage) {
     super(page);
   }
 
   /**
    * Get table of receipt totals / date
    */
-  public async getReceipts():Promise<ReadonlyArray<RawReceipt>> {
+  public async getReceipts(): Promise<ReadonlyArray<RawReceipt>> {
     return this.page
       .$$eval(MyReceiptsPage._receiptTableSelector,
           rowParts => Array.from(rowParts)
