@@ -1,9 +1,9 @@
 {
   "name": "web-scraper-wegmans",
   "version": "1.0.0",
-  "description": "A web scraper for wegmans receipt data.",
+  "description": "A web scraper for Wegman's receipt data.",
   "main": "index.js",
-  "repository": "git@gitlab.com:alex.lapinski/web-scraper-wegmans.git",
+  "repository": "git@gitlab.com:lapinski/web-scraper.wegmans.git",
   "scripts": {
     "prestart": "npm run build",
     "start": "node ./dist/index.js",
@@ -35,7 +35,6 @@
     "pg": "^7.7.1",
     "puppeteer": "^1.4.0",
     "reflect-metadata": "^0.1.12",
-    "sqlite3": "^4.0.0",
     "typeorm": "^0.2.9",
     "winston": "^3.1.0"
   },
@@ -47,11 +46,8 @@
     "@types/mocha": "^5.2.5",
     "@types/moment": "^2.13.0",
     "@types/puppeteer": "^1.11.1",
-    "@types/sequelize": "^4.27.33",
-    "@types/sqlite3": "^3.1.3",
     "@types/winston": "^2.4.4",
     "chai": "^4.2.0",
-    "husky": "^0.14.3",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
     "source-map-support": "^0.5.9",
