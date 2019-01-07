@@ -1,19 +1,31 @@
 import fs from 'fs';
 import path from 'path';
 import config from './config';
+import logger from './logger';
 import { Page } from 'puppeteer';
 
-export async function save(page: Page, name: string): Promise<void> {
-  // @ts-ignore
-  if (!config.screenshots.save) {
-    return;
-  }
+/**
+ * Save a screenshot of the viewport for the page at the current time.
+ *
+ * @param page - Puppeteer Page object
+ * @param name - Name of the screenshot (without extension or path)
+ */
+export async function save(page: Page, name: string): Promise<string> {
+    const screenshotsConfig = config.get('screenshots');
 
-  // @ts-ignore
-  const screenshotDir = path.resolve(process.cwd(), config.screenshots.dir);
-  if (!fs.existsSync(screenshotDir)) {
-    fs.mkdirSync(screenshotDir);
-  }
+    if (!screenshotsConfig.enabled) {
+        return undefined;
+    }
 
-  await page.screenshot({ path: path.resolve(screenshotDir, `${name}.png`) });
+    const screenshotDir = path.resolve(process.cwd(), screenshotsConfig.dir);
+    if (!fs.existsSync(screenshotDir)) {
+        logger.info('Screenshots Directory did not exist, creating it now.', { screenshotDir });
+        fs.mkdirSync(screenshotDir);
+    }
+
+    const outputPath = path.resolve(screenshotDir, `${name}.png`);
+    logger.info('Saving screenshot', { path: outputPath });
+    await page.screenshot({ path: outputPath });
+
+    return outputPath;
 }
