@@ -14,7 +14,7 @@ const signInPage = {
 const wegmansConfig = config.get('wegmans');
 
 export default async function signIn(page: Page) {
-  const url = new URL(signInPage.path, config.get('wegmans.baseUrl'));
+  const url = new URL(signInPage.path, wegmansConfig.paths.baseUrl);
 
   logger.info('Navigating to Login Page', { url });
   await page.goto(url.toString());

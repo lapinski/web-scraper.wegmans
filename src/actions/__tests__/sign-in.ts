@@ -1,11 +1,29 @@
-jest.mock('puppeteer');
-jest.mock('../resources/config');
-jest.mock('../resources/logger');
-jest.mock('../resources/screenshots');
+jest.mock('../../resources/config', () => {
+    return {
+        get: jest.fn()
+            .mockReturnValueOnce({
+                paths: {
+                    baseUrl: 'https://base.url',
+                },
+                username: 'defaultUsername',
+                password: 'defaultPassword'
+            })
+    }
+});
+jest.mock('../../resources/logger', () => {
+    return {
+        info: jest.fn(),
+        error: jest.fn()
+    }
+});
+jest.mock('../../resources/screenshots', () => {
+    return {
+        save: jest.fn()
+    }
+});
 
 import signIn from '../sign-in';
 import { Page } from 'puppeteer';
-
 
 describe('Sign In Action', () => {
 
@@ -14,16 +32,27 @@ describe('Sign In Action', () => {
 
     beforeAll(async () => {
         let MockPage = jest.fn<Page>(() => ({
-            goto: jest.fn().mockResolvedValue(undefined),
-            waitFor: jest.fn().mockResolvedValue(undefined),
-            type: jest.fn().mockResolvedValue(undefined),
-            waitForNavigation: jest.fn().mockResolvedValue(undefined),
-            click: jest.fn().mockResolvedValue(undefined)
+            goto: jest
+                .fn(() => Promise.resolve())
+                .mockName('Mocked goto()'),
+            waitFor: jest
+                .fn(() => Promise.resolve())
+                .mockName('mocked waitFor()'),
+            type: jest
+                .fn(() => Promise.resolve())
+                .mockName('mocked type()'),
+            waitForNavigation: jest
+                .fn(() => Promise.resolve())
+                .mockName('mocked waitForNavigation()'),
+            click: jest
+                .fn(() => Promise.resolve())
+                .mockName('mocked click()')
+            // TODO: Figure out how to track these mocks (in assertions)
         }));
 
         // TODO: Mock imports of actions/sign-in.ts
 
-        let inputPage = new MockPage();
+        inputPage = new MockPage();
 
         outputPage = await signIn(inputPage);
     });
