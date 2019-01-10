@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { Moment } from 'moment';
-import * as receiptParser from '../../src/parsers/receipt-parser';
+import * as receiptParser from '../receipt-parser';
 
 describe('receipt parser', () => {
   describe('removeNewLine', () => {
