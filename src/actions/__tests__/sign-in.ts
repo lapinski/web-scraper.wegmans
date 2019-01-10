@@ -1,26 +1,21 @@
-jest.mock('../../resources/config', () => {
-    return {
-        get: jest.fn()
-            .mockReturnValueOnce({
-                paths: {
-                    baseUrl: 'https://base.url',
-                },
-                username: 'defaultUsername',
-                password: 'defaultPassword'
-            })
-    }
-});
-jest.mock('../../resources/logger', () => {
-    return {
-        info: jest.fn(),
-        error: jest.fn()
-    }
-});
-jest.mock('../../resources/screenshots', () => {
-    return {
-        save: jest.fn()
-    }
-});
+jest.mock('../../resources/config', () => ({
+    get: jest.fn()
+        .mockReturnValueOnce({
+            paths: {
+                baseUrl: 'https://base.url',
+            },
+            username: 'defaultUsername',
+            password: 'defaultPassword'
+        })
+}));
+
+jest.mock('../../resources/logger', () => ({
+    info: jest.fn()
+}));
+
+jest.mock('../../resources/screenshots', () => ({
+    save: jest.fn()
+}));
 
 import signIn from '../sign-in';
 import { Page } from 'puppeteer';
