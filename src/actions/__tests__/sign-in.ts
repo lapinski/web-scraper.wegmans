@@ -29,9 +29,10 @@ describe('Sign In Action', () => {
 
     let inputPage: Page;
     let outputPage: Page;
+    let MockPage:jest.Mock<Page>;
 
     beforeAll(async () => {
-        let MockPage = jest.fn<Page>(() => ({
+        MockPage = jest.fn<Page>(() => ({
             goto: jest
                 .fn(() => Promise.resolve())
                 .mockName('Mocked goto()'),
@@ -51,11 +52,16 @@ describe('Sign In Action', () => {
         }));
 
         // TODO: Mock imports of actions/sign-in.ts
+    });
 
+    beforeEach(async () => {
         inputPage = new MockPage();
-
         outputPage = await signIn(inputPage);
     });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    })
 
     it('should navigate to the signin URL', () => {
         expect(inputPage.goto).toHaveBeenCalledWith(
