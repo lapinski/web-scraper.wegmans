@@ -1,13 +1,13 @@
 jest.mock('../../resources/screenshots', () => ({
-   save: jest.fn()
-});
+   save: jest.fn(),
+}));
 
 jest.mock('../../parsers/receipt-parser', () => ({
-    parseMany: jest.fn()
+    parseMany: jest.fn(),
 }));
 
 jest.mock('../../pages/my-receipts-page', () => ({
-    MyReceiptsPage: jest.fn()
+    MyReceiptsPage: jest.fn(),
 }))
 
 describe('get-receipt-list action', () => {
