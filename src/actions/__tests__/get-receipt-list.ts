@@ -12,11 +12,15 @@ jest.mock('../../pages/my-receipts-page', () => ({
 
 describe('get-receipt-list action', () => {
 
-    beforeAll();
+    beforeAll(() => {
 
-    beforeEach();
+    });
 
-    it();
+    beforeEach(() => {
 
-    it();
+    });
+
+    it('', () => {
+
+    });
 });
