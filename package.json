@@ -49,6 +49,7 @@
     "@types/lodash": "^4.14.119",
     "@types/moment": "^2.13.0",
     "@types/puppeteer": "^1.11.1",
+    "@types/ramda": "types/npm-ramda#dist",
     "@types/winston": "^2.4.4",
     "jest": "^23.6.0",
     "nyc": "^13.1.0",

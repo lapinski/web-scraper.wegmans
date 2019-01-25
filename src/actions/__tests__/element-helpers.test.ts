@@ -7,6 +7,7 @@ import {
     sanitizeDate,
     sanitizeNumber,
 } from '../element-helpers';
+import { Just, Nothing } from 'purify-ts/adts/Maybe';
 
 describe('puppeteer element helpers', () => {
 
@@ -14,18 +15,21 @@ describe('puppeteer element helpers', () => {
         it('should extract text content from valid input', () => {
            const input = <Element>{ textContent: 'content' };
            const output = extractTextContent(input);
-           expect(output).toEqual('content');
+            expect(output.isJust()).toBe(true);
+           expect(output.extract()).toEqual('content');
         });
 
         it('should return undefined from invalid input', () => {
             const input = <Element>{ };
             const output = extractTextContent(input);
-            expect(output).toBeUndefined();
+            expect(output.isNothing()).toBe(true);
+            expect(output.extract()).toBeNull()
         });
 
         it('should return undefined for null input', () => {
             const output = extractTextContent(null);
-            expect(output).toBeUndefined();
+            expect(output.isNothing()).toBe(true);
+            expect(output.extract()).toBeNull();
         });
     });
 
@@ -65,30 +69,36 @@ describe('puppeteer element helpers', () => {
     describe('removeNewline()', () => {
         it('should remove a newline from input', () => {
             const input = '\n';
-            const output = removeNewline(input);
-            expect(output).toEqual('');
+            const output = removeNewline(Just(input));
+            expect(output.isJust()).toBe(true);
+            expect(output.extract()).toEqual('');
         });
 
         it('should remove a carriage return from input', () => {
             const input = '\r';
-            const output = removeNewline(input);
-            expect(output).toEqual('');
+            const output = removeNewline(Just(input));
+            expect(output.isJust()).toBe(true);
+            expect(output.extract()).toEqual('');
         });
 
         it('should remove a carriage return and newline from input', () => {
             const input = '\r\n';
-            const output = removeNewline(input);
-            expect(output).toEqual('');
+            const output = removeNewline(Just(input));
+            expect(output.isJust()).toBe(true);
+            expect(output.extract()).toEqual('');
         });
 
         it('should remove all newlines from input', () => {
             const input = 'a\nb\nc';
-            const output = removeNewline(input);
-            expect(output).toEqual('abc');
+            const output = removeNewline(Just(input));
+            expect(output.isJust()).toBe(true);
+            expect(output.extract()).toEqual('abc');
         });
 
-        it('should return empty string, when input is null', () => {
-           expect(removeNewline(null)).toEqual('');
+        it('should return empty string, when input is Nothing', () => {
+            const output = removeNewline(Nothing);
+            expect(output.isNothing()).toBe(true);
+            expect(output.extract()).toBeNull();
         });
     });
 

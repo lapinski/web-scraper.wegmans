@@ -1,18 +1,15 @@
 import { URL } from 'url';
-import * as _ from 'lodash';
-import moment, { Moment } from 'moment';
+import { curry, is, pipe, prop, replace } from 'ramda';
+import { Just, Maybe, Nothing } from 'purify-ts/adts/maybe';
+import moment from 'moment';
 
-const maybe = (test: (input: string) => string|undefined, value: string) =>
-    (test(value) ? value : undefined);
+const maybe = curry(<T>(test: (input: T) => Maybe<T>, value: T) =>
+    (test(value) ? Just(value) : Nothing));
 
-
-export function extractTextContent(element: Element): string {
-    if (!element || !element.textContent) {
-        return undefined;
-    }
-
-    return element.textContent.toString();
-}
+export const extractTextContent = (element: Element) =>
+    (!element || !prop('textContent', element))
+        ? Nothing
+        : Just(prop('textContent', element));
 
 export function extractAnchorUrl(element: Element): URL {
     if (!element || !element.hasAttribute('href')) {
@@ -26,20 +23,31 @@ export function extractAnchorUrl(element: Element): URL {
     }
 }
 
-export function removeNewline(input: string):string {
-    return _.replace(input, /\r?\n|\r/g, '');
-}
+export const removeNewline = (input: Maybe<string>) =>
+    input.isJust()
+        ? Just(replace(/\r?\n|\r/g, '', input.extract()))
+        : Nothing;
 
-export const parseDate = _.partial(moment, _, 'MMM. DD, YYYY hh:mma');
+export const parseDate = (input: Maybe<string>) =>
+    input.isJust()
+        ? moment(input.extract(), 'MMM. DD, YYYY hh:mma')
+        : Nothing;
 
-export const sanitizeDate: (input: string) => Moment = _.flow(
-    _.partial(maybe, _.isString), // TODO: Move to input
-    removeNewline, // TODO: Move to input
-    parseDate, // TODO: Move to input
-);
+export const sanitizeDate =
+    pipe(
+        maybe(is(String)),
+        removeNewline,
+        parseDate,
+    );
 
-export const sanitizeNumber: (input: string) => number = _.flow(
-    _.partial(maybe, _.isString),
-    removeNewline,
-    _.toNumber,
-);
+const maybeParseFloat = (input: Maybe<string>) =>
+    input.isJust()
+        ? parseFloat(input.extract())
+        : Nothing;
+
+export const sanitizeNumber =
+    pipe(
+        maybe(is(String)),
+        removeNewline,
+        maybeParseFloat,
+    );
