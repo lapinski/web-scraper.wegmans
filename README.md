@@ -70,3 +70,12 @@ This project uses Google Cloud Platform and Terraform.
 ```bash
 terraform apply
 ```
+
+## Travis Builds
+If you need to change the encrypted secrets used within the travi-ci build environment
+the following command needs to be run localy. See [Travis Docs](https://docs.travis-ci.com/user/environment-variables/#encrypting-environment-variables)
+```sh
+travis encrypt TYPEORM_PASSWORD=<secret> --add
+travis encrypt WEGMANS_USERNAME=<secret> --add
+travis encrypt WEGMANS_PASSWORD=<secret> --add
+```
