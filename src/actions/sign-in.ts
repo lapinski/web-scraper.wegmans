@@ -1,8 +1,9 @@
 import { URL } from 'url';
 import config  from '../resources/config';
-import logger from '../resources/logger';
+import { log, LogLevel } from '../resources/logger';
 import * as screenshots from '../resources/screenshots';
 import { Page } from 'puppeteer';
+import * as logger from '../resources/logger';
 
 const signInPage = {
   path: '/sign-in.html',
@@ -16,13 +17,13 @@ const wegmansConfig = config.get('wegmans');
 export default async function signIn(page: Page) {
   const url = new URL(signInPage.path, wegmansConfig.paths.baseUrl);
 
-  logger.info('Navigating to Login Page', { url });
+  log(LogLevel.Info, 'Navigating to Login Page', { url });
   await page.goto(url.toString());
 
-  logger.info('Waiting for Sign In Button to appear', { selector: signInPage.signInButton });
+  log(LogLevel.Info, 'Waiting for Sign In Button to appear', { selector: signInPage.signInButton });
   await page.waitFor(signInPage.signInButton);
 
-  logger.info('Filling out Sign-In Form', { username: wegmansConfig.username });
+  log(LogLevel.Info, 'Filling out Sign-In Form', { username: wegmansConfig.username });
   await page.type(signInPage.usernameInput, wegmansConfig.username);
   await page.type(signInPage.passwordInput, wegmansConfig.password);
 
@@ -31,13 +32,13 @@ export default async function signIn(page: Page) {
         page.waitForNavigation(),
         page.click(signInPage.signInButton),
     ]);
-    logger.info('Sign-In Succeeded');
+      log(LogLevel.Info, 'Sign-In Succeeded');
   } catch (e) {
-    logger.error('SignIn Failed', { error: e });
+      log(LogLevel.Info, 'SignIn Failed', { error: e });
   }
 
-  logger.info('Saving screenshot');
-  await screenshots.save(page, 'signin');
+  log(LogLevel.Info, 'Saving screenshot');
+  await screenshots.save(config.get('screenshots'), page, 'signin');
 
   return page;
 }

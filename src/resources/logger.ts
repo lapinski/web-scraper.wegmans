@@ -1,25 +1,29 @@
 import winston from 'winston';
-import config from './config';
+import TransportStream from 'winston-transport';
 
-const logConfig = config.get('logging');
-
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.json(),
-  transports: [
-    new winston.transports.File({
-      filename: logConfig.filename,
-      level: logConfig.level,
-    }),
-  ],
-});
-
-if (logConfig.console) {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.simple(),
-    }),
-  );
+export enum LogLevel {
+    Debug = 'debug',
+    Info = 'info',
+    Warn = 'warn',
+    Error = 'error',
 }
 
-export default logger;
+const logger = winston.createLogger();
+
+const getConsoleTransport = (level:LogLevel) => new winston.transports.Console({
+    format: winston.format.cli()
+});
+const getFileTransport = (filename:string, level:LogLevel) =>
+    new winston.transports.File({
+       filename,
+       level,
+    });
+const addTransport = (transport: TransportStream) => logger.add(transport);
+const log = (level:LogLevel, msg: string, meta?: object) => logger.log(level, msg, meta);
+
+export {
+    getConsoleTransport,
+    getFileTransport,
+    addTransport,
+    log,
+}

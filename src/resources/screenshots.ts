@@ -1,8 +1,6 @@
 import fs, { PathLike, Stats } from 'fs';
 import R from 'ramda';
 import path from 'path';
-import config from './config';
-import logger from './logger';
 import { Page } from 'puppeteer';
 import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 

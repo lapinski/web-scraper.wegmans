@@ -1,8 +1,16 @@
 import puppeteer from 'puppeteer';
-import logger from './resources/logger';
+import * as logger from './resources/logger';
+import { log, LogLevel } from './resources/logger';
 import actions from './actions';
-import config from './resources/config';
 import { RawTransaction } from './types/receipt';
+import config from './resources/config';
+
+// Setup Logging
+const logConfig = config.get('logging');
+logger.addTransport(logger.getFileTransport(logConfig.filename, logConfig.level));
+if (logConfig.console) {
+    logger.addTransport(logger.getConsoleTransport(LogLevel.Info));
+}
 
 const main = async () => {
   const browser = await puppeteer.launch({ headless: config.get('puppeteer.headless') });
@@ -12,13 +20,13 @@ const main = async () => {
     height: config.get('puppeteer.viewport.height'),
   });
 
-  logger.info('Signing In');
+  logger.log(LogLevel.Info, 'Signing In');
   await actions.signIn(page);
 
-  logger.info('Navigating to Receipts Page');
+  logger.log(LogLevel.Info, 'Navigating to Receipts Page');
   const receipts = await actions.getReceiptList(page);
 
-  logger.info('Saving Receipts to Database');
+    logger.log(LogLevel.Info, 'Saving Receipts to Database');
   const savedReceipts = await actions.saveReceiptsToDb(receipts, 'Wegmans');
 
   // TODO: Get all transactions for all receipts
@@ -27,7 +35,7 @@ const main = async () => {
 
   for (let i = 0, len = savedReceipts.length; i < len; i += 1) {
     const savedReceipt = savedReceipts[i];
-    logger.info('Queueing Fetching Receipt Transaction');
+      logger.log(LogLevel.Info, 'Queueing Fetching Receipt Transaction');
     queue.push(
       actions
         .getReceiptTransactions(page, new URL(savedReceipt.url))
@@ -37,20 +45,20 @@ const main = async () => {
     );
   }
 
-  logger.info('Waiting for queue to complete');
+    logger.log(LogLevel.Info, 'Waiting for queue to complete');
   try {
     await Promise.all(queue);
   } catch (error) {
-    logger.error('An error occurred waiting for all queued tasks', { error });
+      logger.log(LogLevel.Error, 'An error occurred waiting for all queued tasks', { error });
   }
 
-  logger.info('closing browser');
+    logger.log(LogLevel.Info, 'closing browser');
   await browser.close();
 };
 
 try {
   main();
 } catch (e) {
-  logger.error('A top-level error occurred', { error: e });
+  logger.log(LogLevel.Error, 'A top-level error occurred', { error: e });
   process.exit(1);
 }
