@@ -1,6 +1,6 @@
 import { URL } from 'url';
 import { curry, is, pipe, prop, replace } from 'ramda';
-import { Just, Maybe, Nothing } from 'purify-ts/adts/maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import moment from 'moment';
 
 const maybe = curry(<T>(test: (input: T) => Maybe<T>, value: T) =>
