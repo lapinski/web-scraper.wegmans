@@ -53,3 +53,6 @@ export {
     fillOutSignInForm,
     signInAction,
 }
+
+// Entry Point
+export default signInAction;
