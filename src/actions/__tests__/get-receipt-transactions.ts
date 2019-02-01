@@ -1,3 +1,0 @@
-describe('get-receipt-transactions', () => {
-
-});
