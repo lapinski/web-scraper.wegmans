@@ -21,13 +21,15 @@ expect.extend({
             };
         } else {
             return {
-                message: () =>`Expected ${received} to be Nothing`,
+                message: () => `Expected ${received} to be Nothing`,
                 pass: false,
-            }
+            };
         }
     },
     toBeJust<T>(received: Maybe<T>, expected: Maybe<T>) {
-        const pass = received.isJust() && received.extract() === expected.extract();
+        const areBothJust = received.isJust() && expected.isJust();
+        const areEqual = this.equals(received.extract(), expected.extract());
+        const pass = areBothJust && areEqual;
 
         if (pass) {
             return {
@@ -40,5 +42,5 @@ expect.extend({
                 pass: false,
             };
         }
-    }
+    },
 });
