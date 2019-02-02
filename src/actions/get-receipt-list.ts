@@ -1,11 +1,9 @@
 import { Page } from 'puppeteer';
 import * as screenshots from '../resources/screenshots';
-import config from '../resources/config';
-import * as _ from 'lodash';
-import logger from '../resources/logger';
-import url, { Url } from 'url';
-import { sanitizeDate, sanitizeNumber } from './element-helpers';
-import { Moment } from 'moment';
+import config, { getScreenshotsConfig } from '../resources/config';
+import R from 'ramda';
+import { log, LogLevel } from '../resources/logger';
+import { extractTextContent, extractAnchorUrl, sanitizeDate, sanitizeNumber } from './element-helpers';
 
 
 const pathConfig = config.get('wegmans.path');
@@ -15,15 +13,15 @@ const _dateFieldSelector = '.date-time';
 const _amountFieldSelector = '.sold-col';
 const _productUrlSelector = '.view-col a';
 
-function extractReceiptSummary(row: Element) {
+function extractReceiptSummary(row: Element): {date: string, amount: string, url: string} {
     const dateElem = row.querySelector(_dateFieldSelector);
     const amountElem = row.querySelector(_amountFieldSelector);
     const urlElem = row.querySelector(_productUrlSelector);
 
     return {
-        date: this.extractTextContent(dateElem),
-        amount: this.extractTextContent(amountElem),
-        url: this.extractAnchorUrl(urlElem),
+        date: extractTextContent(dateElem).orDefault(undefined),
+        amount: extractTextContent(amountElem).orDefault(undefined),
+        url: extractAnchorUrl(urlElem).orDefault(undefined),
     };
 }
 
@@ -34,11 +32,11 @@ function parseReceiptSummary(input: { date: string, amount: string, url: string}
 
     try {
         const parsedDateValue = sanitizeDate(input.date);
-        if (parsedDateValue.isValid()) {
+        if (parsedDateValue) {
             dateValue = parsedDateValue;
         }
     } catch (e) {
-        logger.error(`Error parsing date: ${input.date}`, { rawReceipt: input });
+        log(LogLevel.Error, `Error parsing date: ${input.date}`, { rawReceipt: input });
     }
 
     try {
@@ -47,7 +45,7 @@ function parseReceiptSummary(input: { date: string, amount: string, url: string}
             amountValue = parsedAmountValue;
         }
     } catch (e) {
-        logger.error(`Error parsing dollar amount: ${input.amount}`);
+        log(LogLevel.Error, `Error parsing dollar amount: ${input.amount}`);
     }
 
     try {
@@ -55,7 +53,7 @@ function parseReceiptSummary(input: { date: string, amount: string, url: string}
             urlValue = url.parse(input.url);
         }
     } catch (e) {
-        logger.error(`Error parsing url: ${input.url}`);
+        log(LogLevel.Error, `Error parsing url: ${input.url}`);
     }
 
     return {
@@ -70,15 +68,15 @@ function parseReceiptSummary(input: { date: string, amount: string, url: string}
  * @param page
  * @returns {Promise<Array>}
  */
-export default async function getReceiptList(page: Page): Promise<ReadonlyArray<{dateTime: Moment, value: number, url: Url}>> {
+export default async function getReceiptList(page: Page) {
   await page.goto(`${pathConfig.baseUrl}${pathConfig.myReceiptsPage}`);
-  await screenshots.save(page, 'receipts');
+  await screenshots.save(getScreenshotsConfig(), page, 'receipts');
 
   const receiptSummaries = await page
       .$$eval(_receiptTableSelector,
           (rowParts: Element[]) => Array.from(rowParts)
-              .map(this.extractReceiptSummary),
+              .map(extractReceiptSummary),
       );
 
-  return _.map(receiptSummaries, parseReceiptSummary);
+  return R.map(parseReceiptSummary, receiptSummaries);
 }

@@ -1,12 +1,13 @@
 import { RawTransaction } from '../types/receipt';
 import { Page } from 'puppeteer';
 import { Url } from 'url';
+import { getScreenshotsConfig } from '../resources/config';
 
 const screenshots = require('../resources/screenshots');
 
 export default async function getReceiptTransactions(page: Page, url: Url): Promise<ReadonlyArray<RawTransaction>> {
   await page.goto(url.toString());
-  await screenshots.save(page, `receipts-${url.query}`);
+  await screenshots.save(getScreenshotsConfig(), page, `receipts-${url.query}`);
 
   // Get table of transactions totals / date
   const rawTransactions = await page.$$eval('.recall-table-set', rowParts =>

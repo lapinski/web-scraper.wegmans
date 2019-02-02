@@ -3,6 +3,7 @@ import R from 'ramda';
 import path from 'path';
 import { Page } from 'puppeteer';
 import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
+import { ScreenshotsConfig } from './config';
 
 //
 // Stat's 'Does not Exist' status code
@@ -37,7 +38,7 @@ const makeDirectory = (path: PathLike) => new Promise((resolve, reject) => {
  * @param page - Puppeteer Page object
  * @param name - Name of the screenshot (without extension or path)
  */
-function save(config: object, page: Page, name: string): Promise<Maybe<string>> {
+function save(config: ScreenshotsConfig, page: Page, name: string): Promise<Maybe<string>> {
     // const screenshotsConfig = config.get('screenshots');
 
     if (!R.prop('enabled', config)) {
