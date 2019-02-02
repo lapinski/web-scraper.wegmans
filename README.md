@@ -1,4 +1,7 @@
-# Wegmans.com Web Scraper
+# Wegmans.com Web Scraper 
+[![Build Status](https://travis-ci.org/lapinski/web-scraper.wegmans.svg?branch=master)](https://travis-ci.org/lapinski/web-scraper.wegmans)
+[![Coverage Status](https://coveralls.io/repos/github/lapinski/web-scraper.wegmans/badge.svg?branch=master)](https://coveralls.io/github/lapinski/web-scraper.wegmans?branch=master)
+
 A tool to scrape the wegmans.com website and download receipt information for a given user.
 
 ## Prerequisites
