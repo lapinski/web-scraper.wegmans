@@ -1,9 +1,8 @@
 /* eslint-disable no-await-in-loop */
 import { Receipt } from '../entities/Receipt';
 import { getRepository } from '../resources/database';
-import { ReceiptParserOutput } from '../parsers/receipt-parser';
 
-export default async function saveReceiptsToDatabase(receipts: ReadonlyArray<ReceiptParserOutput>, storeName: string): Promise<Array<Receipt>> {
+export default async function saveReceiptsToDatabase(receipts: any[], storeName: string): Promise<Array<Receipt>> {
   const receiptRepo = await getRepository(Receipt);
   const storedReceipts: Array<Receipt> = [];
   try {

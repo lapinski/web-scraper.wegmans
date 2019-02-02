@@ -3,7 +3,8 @@ import * as logger from './resources/logger';
 import { log, LogLevel } from './resources/logger';
 import actions from './actions';
 import { RawTransaction } from './types/receipt';
-import config from './resources/config';
+import config, { getScreenshotsConfig, getWegmansConfig } from './resources/config';
+import signInPage from './page-objects/sign-in.page';
 
 // Setup Logging
 const logConfig = config.get('logging');
@@ -21,7 +22,7 @@ const main = async () => {
   });
 
   logger.log(LogLevel.Info, 'Signing In');
-  await actions.signIn(page);
+  await actions.signIn(page, signInPage, getWegmansConfig(), getScreenshotsConfig());
 
   logger.log(LogLevel.Info, 'Navigating to Receipts Page');
   const receipts = await actions.getReceiptList(page);

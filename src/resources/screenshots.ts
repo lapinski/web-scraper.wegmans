@@ -24,7 +24,7 @@ const doesDirectoryExist = (path: PathLike) => new Promise((resolve, reject) => 
    );
 });
 
-const makeDirectory = (path: PathLike) => new Promise((resolve, reject) => {
+const makeDirectory = (path: PathLike) => new Promise<void>((resolve, reject) => {
     fs.mkdir(path, (err) =>
        err
            ? reject(err)

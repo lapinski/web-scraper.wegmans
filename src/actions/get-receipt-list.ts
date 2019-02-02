@@ -4,6 +4,7 @@ import config, { getScreenshotsConfig } from '../resources/config';
 import R from 'ramda';
 import { log, LogLevel } from '../resources/logger';
 import { extractTextContent, extractAnchorUrl, sanitizeDate, sanitizeNumber } from './element-helpers';
+import url, { URL } from 'url';
 
 
 const pathConfig = config.get('wegmans.path');
@@ -13,7 +14,7 @@ const _dateFieldSelector = '.date-time';
 const _amountFieldSelector = '.sold-col';
 const _productUrlSelector = '.view-col a';
 
-function extractReceiptSummary(row: Element): {date: string, amount: string, url: string} {
+function extractReceiptSummary(row: Element): {date: string, amount: string, url: URL} {
     const dateElem = row.querySelector(_dateFieldSelector);
     const amountElem = row.querySelector(_amountFieldSelector);
     const urlElem = row.querySelector(_productUrlSelector);
@@ -25,7 +26,7 @@ function extractReceiptSummary(row: Element): {date: string, amount: string, url
     };
 }
 
-function parseReceiptSummary(input: { date: string, amount: string, url: string}) {
+function parseReceiptSummary(input: { date: string, amount: string, url: URL}) {
     let dateValue = undefined;
     let amountValue = undefined;
     let urlValue = undefined;
@@ -41,7 +42,7 @@ function parseReceiptSummary(input: { date: string, amount: string, url: string}
 
     try {
         const parsedAmountValue = sanitizeNumber(input.amount);
-        if (!_.isNaN(parsedAmountValue)) {
+        if (!parsedAmountValue) {
             amountValue = parsedAmountValue;
         }
     } catch (e) {
@@ -49,8 +50,8 @@ function parseReceiptSummary(input: { date: string, amount: string, url: string}
     }
 
     try {
-        if (_.isString(input.url) && !_.isNull(input.url)) {
-            urlValue = url.parse(input.url);
+        if (!input || !input.url) {
+            urlValue = url;
         }
     } catch (e) {
         log(LogLevel.Error, `Error parsing url: ${input.url}`);
