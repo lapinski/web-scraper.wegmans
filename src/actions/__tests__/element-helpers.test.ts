@@ -16,23 +16,20 @@ describe('puppeteer element helpers', () => {
         it('should extract text content from valid input', () => {
            const input = <Element>{ textContent: 'content' };
            const output = extractTextContent(input);
-            expect(output.isJust()).toBe(true);
-           expect(output.extract()).toEqual('content');
+           expect(output).toBeJust(Just('content'));
         });
 
         // TODO: Convert to Property Test
         it('should return undefined from invalid input', () => {
             const input = <Element>{ };
             const output = extractTextContent(input);
-            expect(output.isNothing()).toBe(true);
-            expect(output.extract()).toBeNull();
+            expect(output).toBeNothing();
         });
 
         // TODO: Convert to Property Test
         it('should return undefined for undefined input', () => {
             const output = extractTextContent(undefined);
-            expect(output.isNothing()).toBe(true);
-            expect(output.extract()).toBeNull();
+            expect(output).toBeNothing();
         });
     });
 
@@ -43,7 +40,7 @@ describe('puppeteer element helpers', () => {
                getAttribute: jest.fn().mockReturnValueOnce('http://aUrl'),
            }));
            const output = extractAnchorUrl(input());
-           expect(output).toEqual(new URL('http://aUrl'));
+           expect(output).toBeJust(Just(new URL('http://aUrl')));
         });
 
         it('should return the null for valid input, but invalid Url', () => {
@@ -52,7 +49,7 @@ describe('puppeteer element helpers', () => {
                 getAttribute: jest.fn().mockReturnValueOnce('aUrl'),
             }));
             const output = extractAnchorUrl(input());
-            expect(output).toBeUndefined();
+            expect(output).toBeNothing();
         });
 
         it('should return undefined when no href exists', () => {
@@ -60,12 +57,12 @@ describe('puppeteer element helpers', () => {
                hasAttribute: jest.fn().mockReturnValueOnce(false),
            }));
            const output = extractAnchorUrl(input());
-           expect(output).toBeUndefined();
+            expect(output).toBeNothing();
         });
 
         it('should return undefined for undefined input', () => {
             const output = extractAnchorUrl(undefined);
-            expect(output).toBeUndefined();
+            expect(output).toBeNothing();
         });
     });
 
@@ -73,35 +70,30 @@ describe('puppeteer element helpers', () => {
         it('should remove a newline from input', () => {
             const input = '\n';
             const output = removeNewline(Just(input));
-            expect(output.isJust()).toBe(true);
-            expect(output.extract()).toEqual('');
+            expect(output).toBeJust(Just(''));
         });
 
         it('should remove a carriage return from input', () => {
             const input = '\r';
             const output = removeNewline(Just(input));
-            expect(output.isJust()).toBe(true);
-            expect(output.extract()).toEqual('');
+            expect(output).toBeJust(Just(''));
         });
 
         it('should remove a carriage return and newline from input', () => {
             const input = '\r\n';
             const output = removeNewline(Just(input));
-            expect(output.isJust()).toBe(true);
-            expect(output.extract()).toEqual('');
+            expect(output).toBeJust(Just(''));
         });
 
         it('should remove all newlines from input', () => {
             const input = 'a\nb\nc';
             const output = removeNewline(Just(input));
-            expect(output.isJust()).toBe(true);
-            expect(output.extract()).toEqual('abc');
+            expect(output).toBeJust(Just('abc'));
         });
 
         it('should return empty string, when input is Nothing', () => {
             const output = removeNewline(Nothing);
-            expect(output.isNothing()).toBe(true);
-            expect(output.extract()).toBeNull();
+            expect(output).toBeNothing();
         });
     });
 
