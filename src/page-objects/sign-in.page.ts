@@ -1,9 +1,9 @@
 export interface SignInPageObjectModel {
-    path: string,
-    signInButton: string,
-    usernameInput: string,
-    passwordInput: string
-};
+    path: string;
+    signInButton: string;
+    usernameInput: string;
+    passwordInput: string;
+}
 
 export default {
     path: '/sign-in.html',

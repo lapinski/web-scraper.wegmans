@@ -9,21 +9,21 @@ import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 //
 const NOT_EXISTS = 34;
 
-const getScreenshotDir = (cwd:string, dir:string) => path.join(cwd, dir);
-const getScreenshotPath = (dir:string, name:string) => path.resolve(dir, `${name}.png`);
-const isErrNotExists = (err:object) => R.prop('errno', err) === NOT_EXISTS;
-const isDirectory = (stats:Stats) => stats && stats.isDirectory();
-const doesDirectoryExist = (path:PathLike) => new Promise((resolve, reject) => {
+const getScreenshotDir = (cwd: string, dir: string) => path.join(cwd, dir);
+const getScreenshotPath = (dir: string, name: string) => path.resolve(dir, `${name}.png`);
+const isErrNotExists = (err: object) => R.prop('errno', err) === NOT_EXISTS;
+const isDirectory = (stats: Stats) => stats && stats.isDirectory();
+const doesDirectoryExist = (path: PathLike) => new Promise((resolve, reject) => {
    fs.stat(path, (err, stats) =>
        isDirectory(stats)
         ? resolve(true)
         : isErrNotExists(err)
             ? resolve(false)
             : reject(err)
-   )
+   );
 });
 
-const makeDirectory = (path:PathLike) => new Promise((resolve, reject) => {
+const makeDirectory = (path: PathLike) => new Promise((resolve, reject) => {
     fs.mkdir(path, (err) =>
        err
            ? reject(err)
@@ -37,7 +37,7 @@ const makeDirectory = (path:PathLike) => new Promise((resolve, reject) => {
  * @param page - Puppeteer Page object
  * @param name - Name of the screenshot (without extension or path)
  */
-function save(config:object, page: Page, name: string): Promise<Maybe<string>> {
+function save(config: object, page: Page, name: string): Promise<Maybe<string>> {
     // const screenshotsConfig = config.get('screenshots');
 
     if (!R.prop('enabled', config)) {

@@ -14,9 +14,9 @@
     "build": "npm run lint && npm run build-ts",
     "build-ts": "tsc",
     "test": "jest",
-    "test:unit": "jest --require ts-node/register /**/*.ts",
-    "test:integration": "jest --require ts-node/register test/integration/**/*.ts",
-    "test:coverage": "nyc npm run test",
+    "test:unit": "npm run test -- .*\\.test\\.ts",
+    "test:integration": "npm run test -- .*\\.int\\.test\\.ts",
+    "test:cov": "npm run test -- */*.test.ts && cat ./tests/coverage/lcov.info | coveralls",
     "predb": "npm run build",
     "db": "typeorm",
     "db:generate": "npm run db -- migration:generate",
@@ -29,6 +29,12 @@
   ],
   "author": "Alex Lapinski <contact@alexlapinski.name>",
   "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run test:unit"
+    }
+  },
   "dependencies": {
     "convict": "^4.4.0",
     "dotenv": "^6.2.0",
@@ -51,26 +57,15 @@
     "@types/puppeteer": "^1.11.1",
     "@types/ramda": "types/npm-ramda#dist",
     "@types/winston": "^2.4.4",
+    "coveralls": "^3.0.2",
+    "husky": "^1.3.1",
     "jest": "^23.6.0",
     "jsverify": "^0.8.4",
-    "nyc": "^13.1.0",
     "source-map-support": "^0.5.9",
     "substitute.js": "^1.0.3",
     "ts-jest": "^23.10.5",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "typescript": "^3.2.2"
-  },
-  "nyc": {
-    "extension": [
-      ".ts"
-    ],
-    "exclude": [
-      "**/*.d.ts"
-    ],
-    "reporter": [
-      "html"
-    ],
-    "all": true
   }
 }

@@ -18,7 +18,7 @@ export function extractAnchorUrl(element: Element): URL {
 
     try {
         return new URL(element.getAttribute('href'));
-    } catch(error) {
+    } catch (error) {
         return undefined;
     }
 }

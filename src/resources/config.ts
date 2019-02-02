@@ -132,29 +132,29 @@ config.validate({ allowed: 'strict' });
 
 export interface BaseConfig { }
 
-export interface WegmansConfig extends BaseConfig{
+export interface WegmansConfig extends BaseConfig {
     paths: {
         baseUrl: string,
-    },
-    username: string,
-    password: string,
-};
-
-export interface ScreenshotsConfig extends BaseConfig{
-    dir: string,
-    enabled: boolean,
-};
-
-export interface GetConfig<T extends BaseConfig> {
-    ():T
+    };
+    username: string;
+    password: string;
 }
 
-const getWegmansConfig:GetConfig<WegmansConfig> = () => config.get('wegmans');
-const getScreenshotsConfig:GetConfig<ScreenshotsConfig> = () => config.get('screenshotsConfig');
+export interface ScreenshotsConfig extends BaseConfig {
+    dir: string;
+    enabled: boolean;
+}
+
+export interface GetConfig<T extends BaseConfig> {
+    (): T;
+}
+
+const getWegmansConfig: GetConfig<WegmansConfig> = () => config.get('wegmans');
+const getScreenshotsConfig: GetConfig<ScreenshotsConfig> = () => config.get('screenshotsConfig');
 
 export {
     getWegmansConfig,
     getScreenshotsConfig,
-}
+};
 
 export default config;

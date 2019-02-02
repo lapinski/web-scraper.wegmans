@@ -24,7 +24,7 @@ describe('Sign In Action', () => {
 
     let inputPage: Page;
     let outputPage: Page;
-    let MockPage:jest.Mock<Page>;
+    let MockPage: jest.Mock<Page>;
 
     beforeAll(async () => {
         MockPage = jest.fn<Page>(() => ({
@@ -56,7 +56,7 @@ describe('Sign In Action', () => {
 
     afterEach(() => {
         jest.restoreAllMocks();
-    })
+    });
 
     it('should navigate to the signin URL', () => {
         expect(inputPage.goto).toHaveBeenCalledWith(

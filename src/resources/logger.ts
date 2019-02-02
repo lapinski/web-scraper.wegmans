@@ -10,21 +10,21 @@ export enum LogLevel {
 
 const logger = winston.createLogger();
 
-const getConsoleTransport = (level:LogLevel) => new winston.transports.Console({
+const getConsoleTransport = (level: LogLevel) => new winston.transports.Console({
     level,
     format: winston.format.cli(),
 });
-const getFileTransport = (filename:string, level:LogLevel) =>
+const getFileTransport = (filename: string, level: LogLevel) =>
     new winston.transports.File({
        filename,
        level,
     });
 const addTransport = (transport: TransportStream) => logger.add(transport);
-const log = (level:LogLevel, msg: string, meta?: object) => logger.log(level, msg, meta);
+const log = (level: LogLevel, msg: string, meta?: object) => logger.log(level, msg, meta);
 
 export {
     getConsoleTransport,
     getFileTransport,
     addTransport,
     log,
-}
+};

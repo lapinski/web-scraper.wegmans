@@ -6,11 +6,11 @@ import { save } from '../resources/screenshots';
 import { Page } from 'puppeteer';
 import R from 'ramda';
 
-const getSignInUrl = (baseUrl:string, relativePagePath:string) => (new URL(baseUrl, relativePagePath)).toString();
+const getSignInUrl = (baseUrl: string, relativePagePath: string) => (new URL(baseUrl, relativePagePath)).toString();
 const navigateToSignInPage = (baseUrl: string, relativePagePath: string, page: Page) => page.goto(getSignInUrl(baseUrl, relativePagePath));
 const waitForSignInButton = (buttonSelector: string, page: Page) => page.waitFor(buttonSelector);
 
-const fillOutSignInForm = (usernameSelector:string, passwordSelector: string, formSubmitSelector: string,  username:string, password:string, page: Page) =>
+const fillOutSignInForm = (usernameSelector: string, passwordSelector: string, formSubmitSelector: string,  username: string, password: string, page: Page) =>
     Promise.all([
         page.type(usernameSelector, username),
         page.type(passwordSelector, password)
@@ -52,7 +52,7 @@ export {
     waitForSignInButton,
     fillOutSignInForm,
     signInAction,
-}
+};
 
 // Entry Point
 export default signInAction;

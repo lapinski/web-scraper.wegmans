@@ -12,6 +12,7 @@ import { Just, Nothing } from 'purify-ts/adts/Maybe';
 describe('puppeteer element helpers', () => {
 
     describe('extractTextContent()', () => {
+        // TODO: Convert to Property Test
         it('should extract text content from valid input', () => {
            const input = <Element>{ textContent: 'content' };
            const output = extractTextContent(input);
@@ -19,15 +20,17 @@ describe('puppeteer element helpers', () => {
            expect(output.extract()).toEqual('content');
         });
 
+        // TODO: Convert to Property Test
         it('should return undefined from invalid input', () => {
             const input = <Element>{ };
             const output = extractTextContent(input);
             expect(output.isNothing()).toBe(true);
-            expect(output.extract()).toBeNull()
+            expect(output.extract()).toBeNull();
         });
 
-        it('should return undefined for null input', () => {
-            const output = extractTextContent(null);
+        // TODO: Convert to Property Test
+        it('should return undefined for undefined input', () => {
+            const output = extractTextContent(undefined);
             expect(output.isNothing()).toBe(true);
             expect(output.extract()).toBeNull();
         });
@@ -60,8 +63,8 @@ describe('puppeteer element helpers', () => {
            expect(output).toBeUndefined();
         });
 
-        it('should return undefined for null input', () => {
-            const output = extractAnchorUrl(null);
+        it('should return undefined for undefined input', () => {
+            const output = extractAnchorUrl(undefined);
             expect(output).toBeUndefined();
         });
     });

@@ -76,7 +76,7 @@ export default async function getReceiptList(page: Page): Promise<ReadonlyArray<
 
   const receiptSummaries = await page
       .$$eval(_receiptTableSelector,
-          (rowParts:Element[]) => Array.from(rowParts)
+          (rowParts: Element[]) => Array.from(rowParts)
               .map(this.extractReceiptSummary),
       );
 
