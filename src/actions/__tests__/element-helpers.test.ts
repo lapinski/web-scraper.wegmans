@@ -7,7 +7,8 @@ import {
     sanitizeDate,
     sanitizeNumber,
 } from '../element-helpers';
-import { Just, Nothing } from 'purify-ts/adts/Maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
+import { Moment } from 'moment';
 
 describe('puppeteer element helpers', () => {
 
@@ -98,7 +99,53 @@ describe('puppeteer element helpers', () => {
     });
 
     describe('parseDate()', () => {
-        // TODO: Figure out how to test this, if at all
+        describe('When input is valid', () => {
+            let output: Maybe<Moment>;
+            beforeAll(() => {
+                const input = 'Aug. 11, 2001 01:02 am';
+                output = parseDate(Just(input));
+            });
+
+            it('should return something', () => {
+               expect(output).not.toBeNothing();
+            });
+
+            it('should equal the expected date', () => {
+                const value = output.extract();
+                expect(value.month()).toEqual(7); // August == 7
+                expect(value.date()).toEqual(11);
+                expect(value.year()).toEqual(2001);
+            });
+
+            it('should return the correct time', () => {
+                const value = output.extract();
+                expect(value.hour()).toEqual(1);
+                expect(value.minute()).toEqual(2);
+            });
+        });
+
+        describe('When input is null', () => {
+            let output: Maybe<Moment>;
+            beforeAll(() => {
+                output = parseDate(Nothing);
+            });
+
+            it('should return nothing', () => {
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('When input is invalid', () => {
+            let output: Maybe<Moment>;
+            beforeAll(() => {
+                const invalidInput = 'AAA. 1231';
+                output = parseDate(Just(invalidInput));
+            });
+
+            it('should return nothing', () => {
+                expect(output).toBeNothing();
+            });
+        });
     });
 
     describe('sanitizeDate()', () => {

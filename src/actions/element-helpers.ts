@@ -1,7 +1,7 @@
 import { URL } from 'url';
 import { tryCatch, curry, is, pipe, prop, replace } from 'ramda';
 import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 
 // TODO: Refactor away this 'pseudo maybe'
 const maybe = curry(<T>(test: (input: T) => Maybe<T>, value: T) =>
@@ -30,7 +30,10 @@ export const removeNewline = (input: Maybe<string>) =>
 
 export const parseDate = (input: Maybe<string>) =>
     input.isJust()
-        ? moment(input.extract(), 'MMM. DD, YYYY hh:mma')
+        ? pipe(
+            (input: Maybe<string>) => moment(input.extract(), 'MMM. DD, YYYY hh:mma'),
+            (input: Moment) => input.isValid() ? Just(input) : Nothing
+          )(input)
         : Nothing;
 
 export const sanitizeDate =
