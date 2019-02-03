@@ -4,7 +4,7 @@ import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import moment, { Moment } from 'moment';
 
 // TODO: Refactor away this 'pseudo maybe'
-const maybe = curry(<T>(test: (input: T) => Maybe<T>, value: T) =>
+export const maybe = curry(<T>(test: (input: T) => Maybe<T>, value: T) =>
     (test(value) ? Just(value) : Nothing));
 
 export const extractTextContent = (element: Element) =>
@@ -45,7 +45,7 @@ export const sanitizeDate =
 
 const maybeParseFloat = (input: Maybe<string>) =>
     input.isJust()
-        ? parseFloat(input.extract())
+        ? Just(parseFloat(input.extract()))
         : Nothing;
 
 export const sanitizeNumber =

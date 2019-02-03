@@ -9,6 +9,7 @@ import {
 } from '../element-helpers';
 import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import { Moment } from 'moment';
+import moment = require('moment');
 
 describe('puppeteer element helpers', () => {
 
@@ -149,10 +150,117 @@ describe('puppeteer element helpers', () => {
     });
 
     describe('sanitizeDate()', () => {
-        // TODO: Figure out how to test this, if at all
+        describe('when given undefined', () => {
+            let output: Maybe<Moment>;
+            beforeAll(() => {
+                output = sanitizeDate(undefined);
+            });
+
+            it('should return Nothing', () => {
+               expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given a boolean', () => {
+            let output: Maybe<Moment>;
+            beforeAll(() => {
+                output = sanitizeDate(true);
+            });
+
+            it('should return Nothing', () => {
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given a string with no newlines', () => {
+            let output: Maybe<Moment>;
+            beforeAll(() => {
+                output = sanitizeDate('Aug. 11 2000 01:02am');
+            });
+
+            it('should return Just()', () => {
+                expect(output).not.toBeNothing();
+            });
+
+            it('should return Just(Moment)', () => {
+                const value = output.extract();
+                expect(value).toBeInstanceOf(moment);
+            });
+        });
+
+        describe('when given a string with newline', () => {
+            let output: Maybe<Moment>;
+            beforeAll(() => {
+                output = sanitizeDate('Aug. 11 2000 01:02am\n');
+            });
+
+            it('should return Just()', () => {
+                expect(output).not.toBeNothing();
+            });
+
+            it('should return Just(Moment)', () => {
+                const value = output.extract();
+                expect(value).toBeInstanceOf(moment);
+            });
+
+            it('should return a valid date', () => {
+                const value = output.extract();
+                expect(value.isValid()).toBeTruthy();
+            });
+        });
     });
 
     describe('sanitizeNumber()', () => {
-        // TODO: Figure out how to test this, if at all
+        describe('when given undefined', () => {
+            let output: Maybe<number>;
+            beforeAll(() => {
+                output = sanitizeNumber(undefined);
+            });
+
+            it('should return Nothing', () => {
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given a boolean', () => {
+            let output: Maybe<number>;
+            beforeAll(() => {
+                output = sanitizeNumber(true);
+            });
+
+            it('should return Nothing', () => {
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given a string with no newlines', () => {
+            let output: Maybe<number>;
+            beforeAll(() => {
+                output = sanitizeNumber('1.2');
+            });
+
+            it('should return Just()', () => {
+                expect(output).not.toBeNothing();
+            });
+
+            it('should return Just(number)', () => {
+                expect(output).toBeJust(Just(1.2));
+            });
+        });
+
+        describe('when given a string with newline', () => {
+            let output: Maybe<number>;
+            beforeAll(() => {
+                output = sanitizeNumber('1.2\n');
+            });
+
+            it('should return Just()', () => {
+                expect(output).not.toBeNothing();
+            });
+
+            it('should return Just(number)', () => {
+                expect(output).toBeJust(Just(1.2));
+            });
+        });
     });
 });
