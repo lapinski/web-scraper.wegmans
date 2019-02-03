@@ -1,20 +1,18 @@
 import { Page } from 'puppeteer';
 import * as screenshots from '../resources/screenshots';
-import config, { getScreenshotsConfig } from '../resources/config';
-import R from 'ramda';
-import { log, LogLevel } from '../resources/logger';
+import { getScreenshotsConfig, WegmansConfig } from '../resources/config';
+import { prop, map } from 'ramda';
 import { extractTextContent, extractAnchorUrl, sanitizeDate, sanitizeNumber } from './element-helpers';
 import url, { URL } from 'url';
+import { Maybe } from 'purify-ts/adts/Maybe';
 
-
-const pathConfig = config.get('wegmans.path');
 
 const _receiptTableSelector = '.recall-table-set';
 const _dateFieldSelector = '.date-time';
 const _amountFieldSelector = '.sold-col';
 const _productUrlSelector = '.view-col a';
 
-function extractReceiptSummary(row: Element): {date: string, amount: string, url: URL} {
+export const extractReceiptSummary = (row: Element): {date: string, amount: string, url: URL} => {
     const dateElem = row.querySelector(_dateFieldSelector);
     const amountElem = row.querySelector(_amountFieldSelector);
     const urlElem = row.querySelector(_productUrlSelector);
@@ -24,53 +22,28 @@ function extractReceiptSummary(row: Element): {date: string, amount: string, url
         amount: extractTextContent(amountElem).orDefault(undefined),
         url: extractAnchorUrl(urlElem).orDefault(undefined),
     };
-}
+};
 
-function parseReceiptSummary(input: { date: string, amount: string, url: URL}) {
-    let dateValue = undefined;
-    let amountValue = undefined;
-    let urlValue = undefined;
+export const parseReceiptSummary = (input: { date: string, amount: string, url: URL}) =>
+    ({
+        dateTime: sanitizeDate(input.date),
+        value: sanitizeNumber(input.amount),
+        url: Maybe.fromNullable(url),
+    });
 
-    try {
-        const parsedDateValue = sanitizeDate(input.date);
-        if (parsedDateValue) {
-            dateValue = parsedDateValue;
-        }
-    } catch (e) {
-        log(LogLevel.Error, `Error parsing date: ${input.date}`, { rawReceipt: input });
-    }
-
-    try {
-        const parsedAmountValue = sanitizeNumber(input.amount);
-        if (!parsedAmountValue) {
-            amountValue = parsedAmountValue;
-        }
-    } catch (e) {
-        log(LogLevel.Error, `Error parsing dollar amount: ${input.amount}`);
-    }
-
-    try {
-        if (!input || !input.url) {
-            urlValue = url;
-        }
-    } catch (e) {
-        log(LogLevel.Error, `Error parsing url: ${input.url}`);
-    }
-
-    return {
-        dateTime: dateValue,
-        value: amountValue,
-        url: urlValue,
-    };
-}
+export const constructPageUrl = (config: WegmansConfig) => {
+    const basePath = prop('path.baseUrl', config);
+    const pagePath = prop('path.myReceiptsPage', config);
+    return `${basePath}${pagePath}`;
+};
 
 /**
  *
  * @param page
  * @returns {Promise<Array>}
  */
-export default async function getReceiptList(page: Page) {
-  await page.goto(`${pathConfig.baseUrl}${pathConfig.myReceiptsPage}`);
+export default async function getReceiptList(config: WegmansConfig, page: Page) {
+  await page.goto(constructPageUrl(config));
   await screenshots.save(getScreenshotsConfig(), page, 'receipts');
 
   const receiptSummaries = await page
@@ -79,5 +52,5 @@ export default async function getReceiptList(page: Page) {
               .map(extractReceiptSummary),
       );
 
-  return R.map(parseReceiptSummary, receiptSummaries);
+  return map(parseReceiptSummary, receiptSummaries);
 }

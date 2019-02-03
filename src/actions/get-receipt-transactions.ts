@@ -1,16 +1,34 @@
-import { RawTransaction } from '../types/receipt';
 import { Page } from 'puppeteer';
 import { Url } from 'url';
+import { prop, pipe } from 'ramda';
+import { Just, Nothing } from 'purify-ts/adts/Maybe';
 import { getScreenshotsConfig } from '../resources/config';
 
 const screenshots = require('../resources/screenshots');
 
-export default async function getReceiptTransactions(page: Page, url: Url): Promise<ReadonlyArray<RawTransaction>> {
+export const parseElementText = (element: Element) =>
+    element
+        ? Just((prop('textContent', element).toString()))
+        : Nothing;
+
+export const parseElementTextAsFloat = pipe(
+    parseElementText,
+    (text) => text.isJust()
+        ? Just(parseFloat(text.extract()))
+        : Nothing
+);
+
+export const parseElementAttribute = (attrName: string, element: Element) =>
+    element && element.hasAttribute(attrName)
+        ? Just(element.getAttribute(attrName))
+        : Nothing;
+
+export default async function getReceiptTransactions(page: Page, url: Url) {
   await page.goto(url.toString());
   await screenshots.save(getScreenshotsConfig(), page, `receipts-${url.query}`);
 
   // Get table of transactions totals / date
-  const rawTransactions = await page.$$eval('.recall-table-set', rowParts =>
+  return await page.$$eval('.recall-table-set', rowParts =>
     Array.from(rowParts).map(row => {
       const quantityElem = row.querySelector('.date-time');
       const productElem = row.querySelector('.product-col a');
@@ -20,17 +38,14 @@ export default async function getReceiptTransactions(page: Page, url: Url): Prom
         '.myreceipt-savings-row .save-price',
       );
 
-      return <RawTransaction>{
-        quantity: quantityElem ? quantityElem.textContent.toString() : undefined,
-        productName: productElem ? productElem.textContent.toString() : undefined,
-        productUrl: productElem ? productElem.getAttribute('href') : undefined,
-        productCode: productCodeElem ? productCodeElem.textContent.toString() : undefined,
-        amount: amountElem ? parseFloat(amountElem.textContent.toString()) : undefined,
-        discount: discountElem ? discountElem.textContent.toString() : undefined,
+      return {
+        quantity: parseElementText(quantityElem),
+        productName: parseElementText(productElem),
+        productUrl: parseElementAttribute('href', productElem),
+        productCode: parseElementText(productCodeElem),
+        amount: parseElementTextAsFloat(amountElem),
+        discount: parseElementText(discountElem),
       };
     }),
   );
-
-  // TODO: Parse Transactions
-  return rawTransactions;
 }
