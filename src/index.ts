@@ -1,78 +1,92 @@
 import R from 'ramda';
-import puppeteer, { Browser } from 'puppeteer';
+import puppeteer, { Browser, ElementHandle, Page } from 'puppeteer';
 import signInPage from './page-objects/sign-in.page';
 import { Maybe } from 'purify-ts/adts/Maybe';
 import { getWegmansConfig } from './resources/config';
 
-const getBrowser = () => puppeteer.launch({headless: true});
+///
+/// "Browser Helpers"
+///
+const getBrowser = () => puppeteer.launch({headless: false});
 const getChromePage = (browser: Browser) => browser.newPage();
-const navigateToUrl = R.curry((url: string, page: puppeteer.Page) =>
-    page.goto(url)
-        .then(() => page));
+const navigateToUrl = R.curry(
+    (url: string, page: puppeteer.Page) =>
+        page.goto(url, { waitUntil: 'networkidle2' })
+            .then(() => page)
+);
+const closeBrowser = (page: puppeteer.Page) => page.browser().close();
 
+
+///
+/// Sign In Actions
+///
 const navigateToSignIn = navigateToUrl('https://www.wegmans.com/signin');
-
 const fillSignInForm = R.curry((username: string, password: string, page: puppeteer.Page) =>
     page.type(signInPage.usernameInput, 'wegmans@alexlapinski.name')
         .then(() => page.type(signInPage.passwordInput, 'momoiro72'))
         .then(() => page));
-
 const submitSignInForm = (page: puppeteer.Page) =>
     Promise.all([
         page.waitForNavigation(),
         page.click(signInPage.signInButton)
     ])
         .then(() => page);
+const signInWithPuppeteer = R.curry(
+    (username: string, password: string, page: Page) =>
+        navigateToSignIn(page)
+            .then(fillSignInForm(username, password))
+            .then(submitSignInForm)
+);
 
-const closeBrowserAndGetCookies = (page: puppeteer.Page) =>
-    page.cookies()
-        .then(cookies =>
-            page
-                .browser()
-                .close()
-                .then(() => cookies)
-        );
 
-const formatCookiesAsQuerystring = (cookies: {name: string, value: string}[]) => {
+///
+/// Get Receipts
+///
+const navigateToReceiptsPage = navigateToUrl('https://www.wegmans.com/my-receipts.html');
 
-    // TODO: Fix this and make it 'really functional'
-    const a = R.filter(cookie => R.startsWith('wegmans', R.prop('name', cookie)), cookies);
-    const b = R.map(cookie => `${R.prop('name', cookie)}=${R.prop('value', cookie)}`, a);
-    const c = R.join('; ', b);
+const parseReceiptRowElement = (row: ElementHandle) =>
+    Promise.all([
+        // TODO: Extract each of these 'element extractors' to their own configurable functions (passed in as options)
+        row.$eval('.date-time', el => el.textContent),
+        row.$eval('.product-recall', el => el.textContent),
+        row.$eval('.sold-view .sold-col', el => el.textContent),
+        row.$eval('.sold-view .view-col a', el => el.getAttribute('href'))])
+        .then(([ date, address, amount, url ]) => ({
+            date,
+            address,
+            amount,
+            url}));
 
-    return Promise.resolve(Maybe.fromNullable(c));
-};
+const parseReceiptPage = (page: Page) =>
+    page.$$('.myreceipt-table-body .recall-table-set:not(.total-row)')
+        .then(rows => Promise.all(R.map(parseReceiptRowElement, rows)))
+        .then(data => {
+            // TODO: Map this array of objects of element handles => array of objects of strings
+            // [{ ElementHandle, El... }, ...] ==> [{ string, string, ...}, ... ]
+            console.log(data);
+        })
+        .then(() => page);
 
-const signInWithPuppeteer = (username: string, password: string) =>
+
+///
+/// Main
+///
+const main = (username: string, password: string) =>
     getBrowser()
         .then(getChromePage)
+        .then(signInWithPuppeteer(username, password))
 
-        // Navigate to SignIn Page
-        .then(navigateToSignIn)
+        // Get Receipts Page
+        // TODO: Get Receipts Page (aka navigate to this page w/ cookies)
 
-        // Fill out Form
-        .then(fillSignInForm(username, password))
+        // Navigate to 'My Receipts Page
+        .then(navigateToReceiptsPage)
 
-        // Submit Form
-        .then(submitSignInForm)
+        // Parse Receipts Page
+        .then(parseReceiptPage)
 
-        // Close Browser and Return Cookies
-        .then(closeBrowserAndGetCookies)
-
-        // Format Cookies to QueryString
-        .then(formatCookiesAsQuerystring);
-
-const main = (username: string, password: string) =>
-    signInWithPuppeteer(username, password)
-
-    // Get Receipts Page
-    // TODO: Get REceipts Page (aka navigate to this page w/ cookies)
-
-        // Parse Response
-        .then(response => {
-            // TODO: Parse this REAL response.
-            // console.log(JSON.stringify(response.data, undefined, 2));
-        });
+        // Close Browser
+        .then(closeBrowser);
 
 
 if (module === require.main) {
