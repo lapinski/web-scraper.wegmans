@@ -1,65 +1,93 @@
-import puppeteer from 'puppeteer';
-import * as logger from './resources/logger';
-import { log, LogLevel } from './resources/logger';
-import actions from './actions';
-import { RawTransaction } from './types/receipt';
-import config, { getScreenshotsConfig, getWegmansConfig } from './resources/config';
+import R from 'ramda';
+import puppeteer, { Browser } from 'puppeteer';
 import signInPage from './page-objects/sign-in.page';
+import { Maybe } from 'purify-ts/adts/Maybe';
+import { getWegmansConfig } from './resources/config';
 
-// Setup Logging
-const logConfig = config.get('logging');
-logger.addTransport(logger.getFileTransport(logConfig.filename, logConfig.level));
-if (logConfig.console) {
-    logger.addTransport(logger.getConsoleTransport(LogLevel.Info));
-}
+const getBrowser = () => puppeteer.launch({headless: true});
+const getChromePage = (browser: Browser) => browser.newPage();
+const navigateToUrl = R.curry((url: string, page: puppeteer.Page) =>
+    page.goto(url)
+        .then(() => page));
 
-const main = async () => {
-  const browser = await puppeteer.launch({ headless: config.get('puppeteer.headless') });
-  const page = await browser.newPage();
-  await page.setViewport({
-    width: config.get('puppeteer.viewport.width'),
-    height: config.get('puppeteer.viewport.height'),
-  });
+const navigateToSignIn = navigateToUrl('https://www.wegmans.com/signin');
 
-  logger.log(LogLevel.Info, 'Signing In');
-  await actions.signIn(page, signInPage, getWegmansConfig(), getScreenshotsConfig());
+const fillSignInForm = R.curry((username: string, password: string, page: puppeteer.Page) =>
+    page.type(signInPage.usernameInput, 'wegmans@alexlapinski.name')
+        .then(() => page.type(signInPage.passwordInput, 'momoiro72'))
+        .then(() => page));
 
-  logger.log(LogLevel.Info, 'Navigating to Receipts Page');
-  const receipts = await actions.getReceiptList(page);
+const submitSignInForm = (page: puppeteer.Page) =>
+    Promise.all([
+        page.waitForNavigation(),
+        page.click(signInPage.signInButton)
+    ])
+        .then(() => page);
 
-    logger.log(LogLevel.Info, 'Saving Receipts to Database');
-  const savedReceipts = await actions.saveReceiptsToDb(receipts, 'Wegmans');
+const closeBrowserAndGetCookies = (page: puppeteer.Page) =>
+    page.cookies()
+        .then(cookies =>
+            page
+                .browser()
+                .close()
+                .then(() => cookies)
+        );
 
-  // TODO: Get all transactions for all receipts
+const formatCookiesAsQuerystring = (cookies: {name: string, value: string}[]) => {
 
-  const queue = [];
+    // TODO: Fix this and make it 'really functional'
+    const a = R.filter(cookie => R.startsWith('wegmans', R.prop('name', cookie)), cookies);
+    const b = R.map(cookie => `${R.prop('name', cookie)}=${R.prop('value', cookie)}`, a);
+    const c = R.join('; ', b);
 
-  for (let i = 0, len = savedReceipts.length; i < len; i += 1) {
-    const savedReceipt = savedReceipts[i];
-      logger.log(LogLevel.Info, 'Queueing Fetching Receipt Transaction');
-    queue.push(
-      actions
-        .getReceiptTransactions(page, new URL(savedReceipt.url))
-        .then((transactions: Array<RawTransaction>) =>
-          actions.saveTransactionsToDb(transactions, savedReceipt),
-        ),
-    );
-  }
-
-    logger.log(LogLevel.Info, 'Waiting for queue to complete');
-  try {
-    await Promise.all(queue);
-  } catch (error) {
-      logger.log(LogLevel.Error, 'An error occurred waiting for all queued tasks', { error });
-  }
-
-    logger.log(LogLevel.Info, 'closing browser');
-  await browser.close();
+    return Promise.resolve(Maybe.fromNullable(c));
 };
 
-try {
-  main();
-} catch (e) {
-  logger.log(LogLevel.Error, 'A top-level error occurred', { error: e });
-  process.exit(1);
+const signInWithPuppeteer = (username: string, password: string) =>
+    getBrowser()
+        .then(getChromePage)
+
+        // Navigate to SignIn Page
+        .then(navigateToSignIn)
+
+        // Fill out Form
+        .then(fillSignInForm(username, password))
+
+        // Submit Form
+        .then(submitSignInForm)
+
+        // Close Browser and Return Cookies
+        .then(closeBrowserAndGetCookies)
+
+        // Format Cookies to QueryString
+        .then(formatCookiesAsQuerystring);
+
+const main = (username: string, password: string) =>
+    signInWithPuppeteer(username, password)
+
+    // Get Receipts Page
+    // TODO: Get REceipts Page (aka navigate to this page w/ cookies)
+
+        // Parse Response
+        .then(response => {
+            // TODO: Parse this REAL response.
+            // console.log(JSON.stringify(response.data, undefined, 2));
+        });
+
+
+if (module === require.main) {
+
+    const { username, password } = getWegmansConfig();
+
+    main(username, password)
+        .then(() => {
+            console.log('Success');
+        })
+        .catch(err => {
+            console.error(`Error: ${err.message}`);
+        });
 }
+
+export {
+    main,
+};
