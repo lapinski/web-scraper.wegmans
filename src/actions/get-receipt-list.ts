@@ -2,10 +2,12 @@ import { Page } from 'puppeteer';
 import * as screenshots from '../resources/screenshots';
 import { getScreenshotsConfig, WegmansConfig } from '../resources/config';
 import { prop, map } from 'ramda';
-import { extractTextContent, extractAnchorUrl, sanitizeDate, sanitizeNumber } from './element-helpers';
+import { extractTextContent, sanitizeDate, sanitizeNumber } from './element-helpers';
 import url, { URL } from 'url';
-import { Maybe } from 'purify-ts/adts/Maybe';
+import { Maybe, Nothing } from 'purify-ts/adts/Maybe';
 
+
+const extractAnchorUrl = (el: any): Maybe<URL> => Nothing;
 
 const _receiptTableSelector = '.recall-table-set';
 const _dateFieldSelector = '.date-time';
