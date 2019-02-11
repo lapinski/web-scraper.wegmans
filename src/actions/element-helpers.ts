@@ -1,5 +1,4 @@
-import { URL } from 'url';
-import { tryCatch, curry, is, pipe, prop, replace } from 'ramda';
+import { curry, is, pipe, prop, replace } from 'ramda';
 import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import moment, { Moment } from 'moment';
 
@@ -11,17 +10,6 @@ export const extractTextContent = (element: Element) =>
     (!element || !prop('textContent', element))
         ? Nothing
         : Just(prop('textContent', element));
-
-export const elementIsValidLink = (element: Element) => element && element.hasAttribute('href');
-export const urlFromElement = (element: Element) => new URL(element.getAttribute('href'));
-export const tryGetUrl = tryCatch(
-    (element: Element) => (Maybe.fromNullable(urlFromElement(element))),
-    () => Nothing);
-
-export const extractAnchorUrl = (element: Element): Maybe<URL> =>
-    elementIsValidLink(element)
-        ? tryGetUrl(element)
-        : Nothing;
 
 export const removeNewline = (input: Maybe<string>) =>
     input.isJust()

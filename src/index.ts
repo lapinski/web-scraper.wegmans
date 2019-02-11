@@ -1,8 +1,10 @@
 import R from 'ramda';
+import cheerio from 'cheerio';
 import puppeteer, { Browser, ElementHandle, Page } from 'puppeteer';
 import signInPage from './page-objects/sign-in.page';
-import { Maybe } from 'purify-ts/adts/Maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import { getWegmansConfig } from './resources/config';
+import moment, { Moment } from 'moment';
 
 ///
 /// "Browser Helpers"
@@ -42,7 +44,7 @@ const signInWithPuppeteer = R.curry(
 ///
 /// Get Receipts
 ///
-const navigateToReceiptsPage = navigateToUrl('https://www.wegmans.com/my-receipts.html');
+const navigateToMyReceiptsPage = navigateToUrl('https://www.wegmans.com/my-receipts.html');
 
 const parseReceiptRowElement = (row: ElementHandle) =>
     Promise.all([
@@ -57,15 +59,116 @@ const parseReceiptRowElement = (row: ElementHandle) =>
             amount,
             url}));
 
-const parseReceiptPage = (page: Page) =>
+// Step 1.
+interface RawReceiptSummary {
+    date: string;
+    address: string;
+    amount: string;
+    url: string;
+}
+
+// Step 2.
+interface SanitizedReceiptSummary {
+    date: Maybe<Moment>;
+
+    // TODO: Maybe introduce nicely structured postal address?
+    address: Maybe<string>;
+    amount: Maybe<number>;
+    url: Maybe<URL>;
+}
+
+// Step 3. (if all props are 'Just' in Step 2)
+interface ReceiptSummary {
+    date: Moment;
+    address: string;
+    amount: number;
+    url: URL;
+}
+
+const parseMyReceiptsPage = (page: Page) =>
     page.$$('.myreceipt-table-body .recall-table-set:not(.total-row)')
         .then(rows => Promise.all(R.map(parseReceiptRowElement, rows)))
-        .then(data => {
-            // TODO: Map this array of objects of element handles => array of objects of strings
-            // [{ ElementHandle, El... }, ...] ==> [{ string, string, ...}, ... ]
-            console.log(data);
+        .then(rawReceipts => {
+
+            // TODO: Sanitize Receipt Summary Information
+            /*
+            const sanitizeReceiptSummaries = R.map((rawReceiptSummary: RawReceiptSummary) =>
+                (<SanitizedReceiptSummary>{
+                    // TODO: Implement 'maybeSanitize' funcs
+                    date: maybeSanitizeDate(rawReceiptSummary.date),
+                    address: maybeSanitizeAddress(rawReceiptSummary.address),
+                    amount: maybeSanitizeAmount(rawReceiptSummary.amount),
+                    url: maybeSanitizeUrl(rawReceiptSummary.url),
+                }));
+
+            const justCleanReceipts = R.filter(
+                (sanitizedReceipt: SanitizedReceiptSummary) =>
+                    sanitizedReceipt.address.isJust() &&
+                    sanitizedReceipt.amount.isJust() &&
+                    sanitizedReceipt.date.isJust() &&
+                    sanitizedReceipt.url.isJust()
+            );
+
+            const cleanReceipts = R.map( (sanitizeReceipt: SanitizedReceiptSummary) => ({
+                    address: sanitizeReceipt.address.extract(),
+                    amount: sanitizeReceipt.amount.extract(),
+                    date: sanitizeReceipt.date.extract(),
+                    url: sanitizeReceipt.url.extract(),
+                }),
+
+                // TODO: Refactor
+                justCleanReceipts(sanitizeReceiptSummaries(rawReceipts))
+            );
+
+                console.log(sanitizeReceiptSummaries(rawReceipts));
+
+            */
+            console.log(rawReceipts);
+
+
         })
         .then(() => page);
+
+const parseMyReceiptsPageWithCheerio = (page: Page) =>
+    page.content()
+        .then(cheerio.load)
+        .then($ => $('.myreceipt-table-body .recall-table-set:not(.total-row)'))
+        .then(rows => {
+            console.log(rows);
+
+            // TODO: Move all of these 'small' functions to the 'GetReceiptSummaries' Action (module)
+            const removeNewline = R.replace(/(\n|\r)?(\r|\n)/, '');
+
+            const maybeGetText = (selector: string) => R.pipe(
+                (ctx: CheerioElement) => cheerio(selector, ctx),
+                element => element ? Just(element.text()) : Nothing,
+            );
+
+            const extractDate = maybeGetText('.date-time label:not(.currency)');
+
+
+            const extract = R.map((row: CheerioElement) => ({
+
+                // TODO: Refactor to have a 'ParseDate' and/or 'ExtractDate' function
+                date: moment(removeNewline(cheerio('.date-time label:not(.currency)', row).text()), 'MMM. DD, YYYY hh:mma'),
+
+                // TODO: Extract 'ParseAddress' or 'ExtractAddress' function
+                postalAddress: {
+                    street: cheerio('.product-recall .address', row).text(),
+                    town: cheerio('.product-recall .company', row).text(),
+                },
+
+                // TODO: Extract 'ParseDollarAmount' and/or 'ExtractDollarAmount' function
+                totalAmount: parseFloat(cheerio('.sold-view .sold-col .currency', row).text()),
+
+                // TODO: Extract 'ParseUrl' or 'ExtractUrl' function
+                url: cheerio('.sold-view .view-col a', row).attr('href'),
+            }));
+
+            const parsedRows = extract(rows.toArray());
+
+            return page;
+        });
 
 
 ///
@@ -76,14 +179,17 @@ const main = (username: string, password: string) =>
         .then(getChromePage)
         .then(signInWithPuppeteer(username, password))
 
-        // Get Receipts Page
-        // TODO: Get Receipts Page (aka navigate to this page w/ cookies)
+        // Navigate to 'My Receipts' Page
+        // TODO: Allow filtering of Receipts by Date (Start Date / End Date)
+        .then(navigateToMyReceiptsPage)
 
-        // Navigate to 'My Receipts Page
-        .then(navigateToReceiptsPage)
+        // Parse 'My Receipts' Page
+        // .then(parseMyReceiptsPage)
+        .then(parseMyReceiptsPageWithCheerio)
 
-        // Parse Receipts Page
-        .then(parseReceiptPage)
+        // TODO: For each Receipt, Navigate to its' page containing transactions
+
+        // TODO: Parse each Receipt Page
 
         // Close Browser
         .then(closeBrowser);

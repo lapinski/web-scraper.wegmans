@@ -1,7 +1,6 @@
 import { URL } from 'url';
 import {
     extractTextContent,
-    extractAnchorUrl,
     removeNewline,
     parseDate,
     sanitizeDate,
@@ -31,39 +30,6 @@ describe('puppeteer element helpers', () => {
         // TODO: Convert to Property Test
         it('should return undefined for undefined input', () => {
             const output = extractTextContent(undefined);
-            expect(output).toBeNothing();
-        });
-    });
-
-    describe('extractAnchorUrl()', () => {
-        it('should return the url for valid input', () => {
-           const input = jest.fn<Element>(() => ({
-               hasAttribute: jest.fn().mockReturnValueOnce(true),
-               getAttribute: jest.fn().mockReturnValueOnce('http://aUrl'),
-           }));
-           const output = extractAnchorUrl(input());
-           expect(output).toBeJust(Just(new URL('http://aUrl')));
-        });
-
-        it('should return the null for valid input, but invalid Url', () => {
-            const input = jest.fn<Element>(() => ({
-                hasAttribute: jest.fn().mockReturnValueOnce(true),
-                getAttribute: jest.fn().mockReturnValueOnce('aUrl'),
-            }));
-            const output = extractAnchorUrl(input());
-            expect(output).toBeNothing();
-        });
-
-        it('should return undefined when no href exists', () => {
-           const input = jest.fn<Element>(() => ({
-               hasAttribute: jest.fn().mockReturnValueOnce(false),
-           }));
-           const output = extractAnchorUrl(input());
-            expect(output).toBeNothing();
-        });
-
-        it('should return undefined for undefined input', () => {
-            const output = extractAnchorUrl(undefined);
             expect(output).toBeNothing();
         });
     });
