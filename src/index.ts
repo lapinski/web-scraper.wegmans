@@ -1,33 +1,22 @@
 import R from 'ramda';
 import cheerio from 'cheerio';
-import puppeteer, { Browser, ElementHandle, Page } from 'puppeteer';
+import { ElementHandle, Page } from 'puppeteer';
 import signInPage from './page-objects/sign-in.page';
 import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import { getWegmansConfig } from './resources/config';
 import moment, { Moment } from 'moment';
-
-///
-/// "Browser Helpers"
-///
-const getBrowser = () => puppeteer.launch({headless: false});
-const getChromePage = (browser: Browser) => browser.newPage();
-const navigateToUrl = R.curry(
-    (url: string, page: puppeteer.Page) =>
-        page.goto(url, { waitUntil: 'networkidle2' })
-            .then(() => page)
-);
-const closeBrowser = (page: puppeteer.Page) => page.browser().close();
+import { getChromePage, getBrowser, navigateToUrlAndWait, closeBrowser } from './actions/browser-helpers';
 
 
 ///
 /// Sign In Actions
 ///
-const navigateToSignIn = navigateToUrl('https://www.wegmans.com/signin');
-const fillSignInForm = R.curry((username: string, password: string, page: puppeteer.Page) =>
-    page.type(signInPage.usernameInput, 'wegmans@alexlapinski.name')
-        .then(() => page.type(signInPage.passwordInput, 'momoiro72'))
+const navigateToSignIn = navigateToUrlAndWait('https://www.wegmans.com/signin');
+const fillSignInForm = R.curry((username: string, password: string, page: Page) =>
+    page.type(signInPage.usernameInput, username)
+        .then(() => page.type(signInPage.passwordInput, password))
         .then(() => page));
-const submitSignInForm = (page: puppeteer.Page) =>
+const submitSignInForm = (page: Page) =>
     Promise.all([
         page.waitForNavigation(),
         page.click(signInPage.signInButton)
@@ -44,7 +33,7 @@ const signInWithPuppeteer = R.curry(
 ///
 /// Get Receipts
 ///
-const navigateToMyReceiptsPage = navigateToUrl('https://www.wegmans.com/my-receipts.html');
+const navigateToMyReceiptsPage = navigateToUrlAndWait('https://www.wegmans.com/my-receipts.html');
 
 const parseReceiptRowElement = (row: ElementHandle) =>
     Promise.all([
