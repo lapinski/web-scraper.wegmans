@@ -1,33 +1,11 @@
 import R from 'ramda';
 import cheerio from 'cheerio';
 import { ElementHandle, Page } from 'puppeteer';
-import signInPage from './page-objects/sign-in.page';
 import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import { getWegmansConfig } from './resources/config';
 import moment, { Moment } from 'moment';
 import { getChromePage, getBrowser, navigateToUrlAndWait, closeBrowser } from './actions/browser-helpers';
-
-
-///
-/// Sign In Actions
-///
-const navigateToSignIn = navigateToUrlAndWait('https://www.wegmans.com/signin');
-const fillSignInForm = R.curry((username: string, password: string, page: Page) =>
-    page.type(signInPage.usernameInput, username)
-        .then(() => page.type(signInPage.passwordInput, password))
-        .then(() => page));
-const submitSignInForm = (page: Page) =>
-    Promise.all([
-        page.waitForNavigation(),
-        page.click(signInPage.signInButton)
-    ])
-        .then(() => page);
-const signInWithPuppeteer = R.curry(
-    (username: string, password: string, page: Page) =>
-        navigateToSignIn(page)
-            .then(fillSignInForm(username, password))
-            .then(submitSignInForm)
-);
+import signIn from './actions/sign-in';
 
 
 ///
@@ -166,7 +144,7 @@ const parseMyReceiptsPageWithCheerio = (page: Page) =>
 const main = (username: string, password: string) =>
     getBrowser()
         .then(getChromePage)
-        .then(signInWithPuppeteer(username, password))
+        .then(signIn(username, password))
 
         // Navigate to 'My Receipts' Page
         // TODO: Allow filtering of Receipts by Date (Start Date / End Date)
