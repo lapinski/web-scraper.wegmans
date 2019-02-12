@@ -84,7 +84,8 @@
       "ts",
       "tsx",
       "js",
-      "jsx"
+      "jsx",
+      "json"
     ],
     "rootDir": "src/",
     "testEnvironment": "node",
