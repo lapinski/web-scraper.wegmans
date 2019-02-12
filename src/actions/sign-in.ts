@@ -1,58 +1,63 @@
-import { URL } from 'url';
-import { WegmansConfig, ScreenshotsConfig }  from '../resources/config';
-import { SignInPageObjectModel } from '../page-objects/sign-in.page';
-import { log, LogLevel } from '../resources/logger';
-import { save } from '../resources/screenshots';
-import { Page } from 'puppeteer';
+import { navigateToUrlAndWait } from './browser-helpers';
 import R from 'ramda';
+import { Page } from 'puppeteer';
+import signInPage from '../page-objects/sign-in.page';
 
-const getSignInUrl = (baseUrl: string, relativePagePath: string) => (new URL(baseUrl, relativePagePath)).toString();
-const navigateToSignInPage = (baseUrl: string, relativePagePath: string, page: Page) => page.goto(getSignInUrl(baseUrl, relativePagePath));
-const waitForSignInButton = (buttonSelector: string, page: Page) => page.waitFor(buttonSelector);
+/**
+ * Navigate to the SignIn Page
+ */
+const navigateToSignIn = navigateToUrlAndWait('https://www.wegmans.com/signin');
 
-const fillOutSignInForm = (usernameSelector: string, passwordSelector: string, formSubmitSelector: string,  username: string, password: string, page: Page) =>
+/**
+ * Fill the Sign In page
+ *
+ * @param username  Wegmans.com username (email address)
+ * @param password  Wegmans.com password
+ * @param page      Puppeteer Page context
+ *
+ * @returns         The original Puppeteer Page context, with the sign-in form filled.
+ */
+const fillSignInForm = R.curry((username: string, password: string, page: Page) =>
+    page.type(signInPage.usernameInput, username)
+        .then(() => page.type(signInPage.passwordInput, password))
+        .then(() => page));
+
+/**
+ * Submit the Sign In form, and wait for the navigation to complete.
+ *
+ * @param page  Puppeteer Page context
+ * @returns     The original Page context, at the dashboard page.
+ */
+const submitSignInForm = (page: Page) =>
     Promise.all([
-        page.type(usernameSelector, username),
-        page.type(passwordSelector, password)
-    ]).then(() => Promise.all([
         page.waitForNavigation(),
-        page.click(formSubmitSelector)
-    ]));
+        page.click(signInPage.signInButton)
+    ])
+        .then(() => page);
 
-
-// TODO: Rearrange params to have it make sense for partial application (e.g. configureSignInAction)
-const signInAction = (page: Page, pom: SignInPageObjectModel, wegmansConfig: WegmansConfig, screenshotsConfig: ScreenshotsConfig) =>
-  // TODO: Add Logging: log(LogLevel.Info, 'Navigating to Login Page');
-  navigateToSignInPage(R.prop('paths.baseUrl', wegmansConfig), R.prop('path', pom), page)
-    // log(LogLevel.Info, 'Waiting for Sign In Button to appear', { selector: signInPage.signInButton });
-    .then(() => waitForSignInButton(R.prop('signInButton', pom), page))
-
-    // log(LogLevel.Info, 'Filling out Sign-In Form', { username: wegmansConfig.username });
-    .then(() =>
-        fillOutSignInForm(
-            R.prop('usernameInput', pom),
-            R.prop('passwordInput', pom),
-            R.prop('signInButton', pom),
-            R.prop('username', wegmansConfig),
-            R.prop('password', wegmansConfig),
-            page,
-        )
-    )
-    .then(() => log(LogLevel.Info, 'Sign-In Succeeded'))
-    // .catch(() => log(LogLevel.Error, 'Sign-In Failed'))
-    // log(LogLevel.Info, 'Saving screenshot');
-    .then(() => save(screenshotsConfig, page, 'signin'))
-    .then(() => page);
+/**
+ * The main sign-in action, taking a Page context, filling out the form and submitting it.
+ *
+ * @param username   Wegmans.com username
+ * @param password   Wegmans.com password
+ * @param page       Puppeteer Page to sign in.
+ *
+ * @returns          The original Page context
+ */
+const signIn = R.curry(
+    (username: string, password: string, page: Page) =>
+        navigateToSignIn(page)
+            .then(fillSignInForm(username, password))
+            .then(submitSignInForm)
+);
 
 
 // TODO: Unit Tests each method
 export {
-    getSignInUrl,
-    navigateToSignInPage,
-    waitForSignInButton,
-    fillOutSignInForm,
-    signInAction,
+    navigateToSignIn,
+    fillSignInForm,
+    submitSignInForm,
+    signIn,
 };
 
-// Entry Point
-export default signInAction;
+export default signIn;
