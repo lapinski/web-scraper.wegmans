@@ -13,126 +13,119 @@ import signIn from './actions/sign-in';
 ///
 const navigateToMyReceiptsPage = navigateToUrlAndWait('https://www.wegmans.com/my-receipts.html');
 
-const parseReceiptRowElement = (row: ElementHandle) =>
-    Promise.all([
-        // TODO: Extract each of these 'element extractors' to their own configurable functions (passed in as options)
-        row.$eval('.date-time', el => el.textContent),
-        row.$eval('.product-recall', el => el.textContent),
-        row.$eval('.sold-view .sold-col', el => el.textContent),
-        row.$eval('.sold-view .view-col a', el => el.getAttribute('href'))])
-        .then(([ date, address, amount, url ]) => ({
-            date,
-            address,
-            amount,
-            url}));
-
 // Step 1.
-interface RawReceiptSummary {
-    date: string;
-    address: string;
-    amount: string;
-    url: string;
-}
-
-// Step 2.
 interface SanitizedReceiptSummary {
     date: Maybe<Moment>;
 
     // TODO: Maybe introduce nicely structured postal address?
-    address: Maybe<string>;
+    postalAddress: {
+        street: Maybe<string>,
+        town: Maybe<string>,
+    };
     amount: Maybe<number>;
-    url: Maybe<URL>;
+    url: Maybe<string>;
 }
 
-// Step 3. (if all props are 'Just' in Step 2)
+// Step 2. (if all props are 'Just' in Step 2)
 interface ReceiptSummary {
     date: Moment;
-    address: string;
+    postalAddress: {
+        street: string,
+        town: string,
+    };
     amount: number;
-    url: URL;
+    url: string;
 }
 
-const parseMyReceiptsPage = (page: Page) =>
-    page.$$('.myreceipt-table-body .recall-table-set:not(.total-row)')
-        .then(rows => Promise.all(R.map(parseReceiptRowElement, rows)))
-        .then(rawReceipts => {
 
-            // TODO: Sanitize Receipt Summary Information
-            /*
-            const sanitizeReceiptSummaries = R.map((rawReceiptSummary: RawReceiptSummary) =>
-                (<SanitizedReceiptSummary>{
-                    // TODO: Implement 'maybeSanitize' funcs
-                    date: maybeSanitizeDate(rawReceiptSummary.date),
-                    address: maybeSanitizeAddress(rawReceiptSummary.address),
-                    amount: maybeSanitizeAmount(rawReceiptSummary.amount),
-                    url: maybeSanitizeUrl(rawReceiptSummary.url),
-                }));
+const parseText = R.curry(
+    (selector: string, ctx: CheerioElement) =>
+        R.pipe(
+            (ctx: CheerioElement) => cheerio(selector, ctx),
+                element => element ? Just(element.text()) : Nothing
+        )(ctx));
 
-            const justCleanReceipts = R.filter(
-                (sanitizedReceipt: SanitizedReceiptSummary) =>
-                    sanitizedReceipt.address.isJust() &&
-                    sanitizedReceipt.amount.isJust() &&
-                    sanitizedReceipt.date.isJust() &&
-                    sanitizedReceipt.url.isJust()
-            );
+const removeNewline = (text: Maybe<string>) =>
+    text.isJust()
+        ? Maybe.fromNullable(R.replace(/(\n|\r)?(\r|\n)/, '', text.extract()))
+        : Nothing;
 
-            const cleanReceipts = R.map( (sanitizeReceipt: SanitizedReceiptSummary) => ({
-                    address: sanitizeReceipt.address.extract(),
-                    amount: sanitizeReceipt.amount.extract(),
-                    date: sanitizeReceipt.date.extract(),
-                    url: sanitizeReceipt.url.extract(),
-                }),
+const extractText = R.curry(
+    (selector: string, ctx: CheerioElement) =>
+        R.pipe(
+            parseText(selector),
+            removeNewline,
+        )(ctx)
+);
 
-                // TODO: Refactor
-                justCleanReceipts(sanitizeReceiptSummaries(rawReceipts))
-            );
+const parseDate = (dateString: Maybe<string>): Maybe<Moment> =>
+    dateString.isJust()
+        ? Just(moment(dateString.extract(), 'MMM. DD, YYYY hh:mma'))
+        : Nothing;
 
-                console.log(sanitizeReceiptSummaries(rawReceipts));
+const extractDate = (selector: string, ctx: CheerioElement): Maybe<Moment> =>
+    R.pipe(
+        extractText(selector),
+        parseDate,
+        date => (date.isJust() && date.extract().isValid()) ? date : Nothing,
+    )(ctx);
 
-            */
-            console.log(rawReceipts);
+const extractFloat = (selector: string, ctx: CheerioElement) =>
+    R.pipe(
+        extractText(selector),
+        text => text.isJust() ? Maybe.fromNullable(parseFloat(text.extract())) : Nothing,
+    )(ctx);
 
+const extractHref = (selector: string, ctx: CheerioElement) =>
+    R.pipe(
+        (ctx: CheerioElement) => cheerio(selector, ctx),
+        element => element ? Just(element.attr('href')) : Nothing,
+    )(ctx);
 
-        })
-        .then(() => page);
+const isValidReceiptSummary = (input: SanitizedReceiptSummary): boolean =>
+    input ?
+        input.date.isJust() &&
+        input.postalAddress.street.isJust() &&
+        input.postalAddress.town.isJust() &&
+        input.amount.isJust() &&
+        input.url.isJust()
+        : false;
+
+const extractReceiptSummaryFromRow = (row: CheerioElement): SanitizedReceiptSummary => ({
+    date: extractDate('.date-time label:not(.currency)', row),
+    postalAddress: {
+        street: extractText('.product-recall .address', row),
+        town: extractText('.product-recall .company', row),
+    },
+    amount: extractFloat('.sold-view .sold-col .currency', row),
+    url: extractHref('.sold-view .view-col a', row),
+});
+
+const extractReceiptSummaryFromMaybe = (input: SanitizedReceiptSummary): ReceiptSummary =>
+    ({
+        date: R.prop('date', input).extract(),
+        postalAddress: {
+            street: input.postalAddress.street.extract(),
+            town: input.postalAddress.town.extract(),
+        },
+        amount: R.prop('amount', input).extract(),
+        url: R.prop('url', input).extract()
+    });
+
+const parseMyReceiptsRows = R.pipe(
+    (input: Cheerio) => input ? Just(input.toArray()) : Nothing,
+    rows => rows.isJust() ? Just(R.map(extractReceiptSummaryFromRow, rows.extract())) : Nothing,
+    rows => rows.isJust() ? Just(R.filter(isValidReceiptSummary, rows.extract())) : Nothing,
+    rows => rows.isJust() ? Just(R.map(extractReceiptSummaryFromMaybe, rows.extract())) : Nothing,
+);
 
 const parseMyReceiptsPageWithCheerio = (page: Page) =>
     page.content()
         .then(cheerio.load)
         .then($ => $('.myreceipt-table-body .recall-table-set:not(.total-row)'))
         .then(rows => {
-            console.log(rows);
 
-            // TODO: Move all of these 'small' functions to the 'GetReceiptSummaries' Action (module)
-            const removeNewline = R.replace(/(\n|\r)?(\r|\n)/, '');
-
-            const maybeGetText = (selector: string) => R.pipe(
-                (ctx: CheerioElement) => cheerio(selector, ctx),
-                element => element ? Just(element.text()) : Nothing,
-            );
-
-            const extractDate = maybeGetText('.date-time label:not(.currency)');
-
-
-            const extract = R.map((row: CheerioElement) => ({
-
-                // TODO: Refactor to have a 'ParseDate' and/or 'ExtractDate' function
-                date: moment(removeNewline(cheerio('.date-time label:not(.currency)', row).text()), 'MMM. DD, YYYY hh:mma'),
-
-                // TODO: Extract 'ParseAddress' or 'ExtractAddress' function
-                postalAddress: {
-                    street: cheerio('.product-recall .address', row).text(),
-                    town: cheerio('.product-recall .company', row).text(),
-                },
-
-                // TODO: Extract 'ParseDollarAmount' and/or 'ExtractDollarAmount' function
-                totalAmount: parseFloat(cheerio('.sold-view .sold-col .currency', row).text()),
-
-                // TODO: Extract 'ParseUrl' or 'ExtractUrl' function
-                url: cheerio('.sold-view .view-col a', row).attr('href'),
-            }));
-
-            const parsedRows = extract(rows.toArray());
+            const finalRows = parseMyReceiptsRows(rows);
 
             return page;
         });
