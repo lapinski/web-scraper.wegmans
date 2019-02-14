@@ -15,20 +15,20 @@ const getScreenshotPath = (dir: string, name: string) => path.resolve(dir, `${na
 const isErrNotExists = (err: object) => R.prop('errno', err) === NOT_EXISTS;
 const isDirectory = (stats: Stats) => stats && stats.isDirectory();
 const doesDirectoryExist = (path: PathLike) => new Promise((resolve, reject) => {
-   fs.stat(path, (err, stats) =>
-       isDirectory(stats)
+    fs.stat(path, (err, stats) =>
+        isDirectory(stats)
         ? resolve(true)
         : isErrNotExists(err)
             ? resolve(false)
             : reject(err)
-   );
+    );
 });
 
 const makeDirectory = (path: PathLike) => new Promise<void>((resolve, reject) => {
     fs.mkdir(path, (err) =>
-       err
-           ? reject(err)
-           : resolve()
+        err
+            ? reject(err)
+            : resolve()
     );
 });
 

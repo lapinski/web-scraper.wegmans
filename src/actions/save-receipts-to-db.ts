@@ -7,15 +7,15 @@ export default async function saveReceiptsToDatabase(receipts: any[], storeName:
   const storedReceipts: Array<Receipt> = [];
   try {
     for (let i = 0, len = receipts.length; i < len; i += 1) {
-      const receipt = receipts[i];
+    const receipt = receipts[i];
 
-      const existingReceipt = await receiptRepo.findOne({
+    const existingReceipt = await receiptRepo.findOne({
         where: {
-          date: receipt.dateTime,
+        date: receipt.dateTime,
         },
-      });
+    });
 
-      if (!existingReceipt) {
+    if (!existingReceipt) {
         const newReceipt = new Receipt();
         newReceipt.date = receipt.dateTime.toDate();
         newReceipt.amount = receipt.value;
@@ -24,9 +24,9 @@ export default async function saveReceiptsToDatabase(receipts: any[], storeName:
 
         const savedReceipt = await receiptRepo.save(newReceipt);
         storedReceipts.push(savedReceipt);
-      } else {
+    } else {
         storedReceipts.push(existingReceipt);
-      }
+    }
     }
   } catch (e) {
     throw new Error(`Error saving receipts: ${e.message}`);

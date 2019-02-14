@@ -34,9 +34,9 @@ describe('puppeteer browser helpers', () => {
 
     describe('getChromePage()', () => {
         const stubBrowser = <Browser>{
-          newPage: () => Promise.resolve(<Page>{
-              url: () => 'A New Chrome Page'
-          })
+        newPage: () => Promise.resolve(<Page>{
+            url: () => 'A New Chrome Page'
+        })
         };
 
         let output: Page;
@@ -131,7 +131,7 @@ describe('puppeteer browser helpers', () => {
         );
 
         it('should exhibit the side effect of closing the page\'s browser', () => {
-           expect(wasClosed).toBe(true);
+            expect(wasClosed).toBe(true);
         });
 
         // TODO: Test Negative Input

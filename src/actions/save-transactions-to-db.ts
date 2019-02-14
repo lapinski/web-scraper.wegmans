@@ -8,17 +8,17 @@ export default async function saveTransactionsToDb(transactions: ReadonlyArray<R
   const storedTransactions = [];
   try {
     for (let i = 0, len = transactions.length; i < len; i += 1) {
-      const transaction = transactions[i];
+    const transaction = transactions[i];
 
-      const existingTransaction = await transactionRepo.find({
+    const existingTransaction = await transactionRepo.find({
         where: {
-          productCode: transaction.productCode,
-          receipt: receipt,
-          // TODO: Find better matching criteria
+        productCode: transaction.productCode,
+        receipt: receipt,
+        // TODO: Find better matching criteria
         },
-      });
+    });
 
-      if (!existingTransaction) {
+    if (!existingTransaction) {
         const newTransaction = new Transaction();
         newTransaction.quantity = parseInt(transaction.quantity, 10);
         newTransaction.productName = transaction.productName;
@@ -29,9 +29,9 @@ export default async function saveTransactionsToDb(transactions: ReadonlyArray<R
         newTransaction.receipt  = receipt;
         const storedTransaction = await transactionRepo.save(newTransaction);
         storedTransactions.push(storedTransaction);
-      } else {
+    } else {
         storedTransactions.push(existingTransaction);
-      }
+    }
     }
   } catch (e) {
     throw new Error(`Error saving receipts: ${e.message}`);

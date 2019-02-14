@@ -16,8 +16,8 @@ const getConsoleTransport = (level: LogLevel) => new winston.transports.Console(
 });
 const getFileTransport = (filename: string, level: LogLevel) =>
     new winston.transports.File({
-       filename,
-       level,
+        filename,
+        level,
     });
 const addTransport = (transport: TransportStream) => logger.add(transport);
 const log = (level: LogLevel, msg: string, meta?: object) => logger.log(level, msg, meta);
