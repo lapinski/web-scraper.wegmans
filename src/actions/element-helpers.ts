@@ -1,44 +1,58 @@
-import { curry, is, pipe, prop, replace } from 'ramda';
 import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import moment, { Moment } from 'moment';
+import R from 'ramda';
+import cheerio from 'cheerio';
 
-// TODO: Refactor away this 'pseudo maybe'
-export const maybe = curry(<T>(test: (input: T) => Maybe<T>, value: T) =>
-    (test(value) ? Just(value) : Nothing));
-
-export const extractTextContent = (element: Element) =>
-    (!element || !prop('textContent', element))
-        ? Nothing
-        : Just(prop('textContent', element));
-
-export const removeNewline = (input: Maybe<string>) =>
-    input.isJust()
-        ? Just(replace(/\r?\n|\r/g, '', input.extract()))
-        : Nothing;
-
-export const parseDate = (input: Maybe<string>) =>
-    input.isJust()
-        ? pipe(
-            (input: Maybe<string>) => moment(input.extract(), 'MMM. DD, YYYY hh:mma'),
-            (input: Moment) => input.isValid() ? Just(input) : Nothing
-          )(input)
-        : Nothing;
-
-export const sanitizeDate =
-    pipe(
-        maybe(is(String)),
-        removeNewline,
+const extractDate = (selector: string, ctx: CheerioElement): Maybe<Moment> =>
+    R.pipe(
+        extractText(selector),
         parseDate,
-    );
+        date => (date.isJust() && date.extract().isValid()) ? date : Nothing,
+    )(ctx);
 
-const maybeParseFloat = (input: Maybe<string>) =>
-    input.isJust()
-        ? Just(parseFloat(input.extract()))
+const extractFloat = (selector: string, ctx: CheerioElement) =>
+    R.pipe(
+        extractText(selector),
+        text => text.isJust() ? Maybe.fromNullable(parseFloat(text.extract())) : Nothing,
+    )(ctx);
+
+const extractHref = (selector: string, ctx: CheerioElement) =>
+    R.pipe(
+        (ctx: CheerioElement) => cheerio(selector, ctx),
+        element => element ? Just(element.attr('href')) : Nothing,
+    )(ctx);
+
+const extractText = R.curry(
+    (selector: string, ctx: CheerioElement) =>
+        R.pipe(
+            parseText(selector),
+            removeNewline,
+        )(ctx),
+);
+
+const parseDate = (dateString: Maybe<string>): Maybe<Moment> =>
+    dateString.isJust()
+        ? Just(moment(dateString.extract(), 'MMM. DD, YYYY hh:mma'))
         : Nothing;
 
-export const sanitizeNumber =
-    pipe(
-        maybe(is(String)),
-        removeNewline,
-        maybeParseFloat,
-    );
+const parseText = R.curry(
+    (selector: string, ctx: CheerioElement) =>
+        R.pipe(
+            (ctx: CheerioElement) => cheerio(selector, ctx),
+            element => element ? Just(element.text()) : Nothing,
+        )(ctx));
+
+const removeNewline = (text: Maybe<string>) =>
+    text.isJust()
+        ? Maybe.fromNullable(R.replace(/(\n|\r)?(\r|\n)/, '', text.extract()))
+        : Nothing;
+
+export {
+    extractDate,
+    extractFloat,
+    extractHref,
+    extractText,
+    parseDate,
+    parseText,
+    removeNewline,
+};
