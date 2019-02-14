@@ -10,31 +10,33 @@ import {
 import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import { Moment } from 'moment';
 import moment = require('moment');
-/*
-describe('puppeteer element helpers', () => {
 
+describe('puppeteer element helpers', () => {
+    it('should be a placeholder test', () => {});
+/*
     describe('extractText()', () => {
         // TODO: Convert to Property Test
         it('should extract text content from valid input', () => {
-           const input = <Cheerio>{ text: () => 'content' };
-           const output = extractText('selector', input);
-           expect(output).toBeJust(Just('content'));
+            const input = <CheerioElement>{ type: 'text', data: 'content' };
+            const output = extractText('selector', input);
+            expect(output).toBeJust(Just('content'));
         });
 
         // TODO: Convert to Property Test
         it('should return undefined from invalid input', () => {
-            const input = <Element>{ };
-            const output = extractText(input);
+            const input = <CheerioElement>{ };
+            const output = extractText('selector', input);
             expect(output).toBeNothing();
         });
 
         // TODO: Convert to Property Test
         it('should return undefined for undefined input', () => {
-            const output = extractTextContent(undefined);
+            const output = extractText(undefined);
             expect(output).toBeNothing();
         });
     });
-
+*/
+    /*
     describe('removeNewline()', () => {
         it('should remove a newline from input', () => {
             const input = '\n';
@@ -75,7 +77,7 @@ describe('puppeteer element helpers', () => {
             });
 
             it('should return something', () => {
-               expect(output).not.toBeNothing();
+                expect(output).not.toBeNothing();
             });
 
             it('should equal the expected date', () => {
@@ -124,7 +126,7 @@ describe('puppeteer element helpers', () => {
             });
 
             it('should return Nothing', () => {
-               expect(output).toBeNothing();
+                expect(output).toBeNothing();
             });
         });
 
@@ -229,6 +231,5 @@ describe('puppeteer element helpers', () => {
                 expect(output).toBeJust(Just(1.2));
             });
         });
-    });
+    });*/
 });
-*/
