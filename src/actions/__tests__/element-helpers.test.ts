@@ -1,29 +1,30 @@
-import { URL } from 'url';
 import {
-    extractTextContent,
-    removeNewline,
+    extractDate,
+    extractFloat,
+    extractHref,
+    extractText,
     parseDate,
-    sanitizeDate,
-    sanitizeNumber,
+    parseText,
+    removeNewline,
 } from '../element-helpers';
 import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import { Moment } from 'moment';
 import moment = require('moment');
-
+/*
 describe('puppeteer element helpers', () => {
 
-    describe('extractTextContent()', () => {
+    describe('extractText()', () => {
         // TODO: Convert to Property Test
         it('should extract text content from valid input', () => {
-           const input = <Element>{ textContent: 'content' };
-           const output = extractTextContent(input);
+           const input = <Cheerio>{ text: () => 'content' };
+           const output = extractText('selector', input);
            expect(output).toBeJust(Just('content'));
         });
 
         // TODO: Convert to Property Test
         it('should return undefined from invalid input', () => {
             const input = <Element>{ };
-            const output = extractTextContent(input);
+            const output = extractText(input);
             expect(output).toBeNothing();
         });
 
@@ -230,3 +231,4 @@ describe('puppeteer element helpers', () => {
         });
     });
 });
+*/
