@@ -8,7 +8,7 @@ export async function getConnection(): Promise<Connection> {
     type: config.get('db.type'),
     url: config.get('db.url'),
     entities: [
-      path.resolve(__dirname, '..', 'entities', '*.js'),
+    path.resolve(__dirname, '..', 'entities', '*.js'),
     ],
     synchronize: true,
     logging: true,

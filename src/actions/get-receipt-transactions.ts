@@ -30,22 +30,22 @@ export default async function getReceiptTransactions(page: Page, url: Url) {
   // Get table of transactions totals / date
   return await page.$$eval('.recall-table-set', rowParts =>
     Array.from(rowParts).map(row => {
-      const quantityElem = row.querySelector('.date-time');
-      const productElem = row.querySelector('.product-col a');
-      const productCodeElem = row.querySelector('.product-col.ordernum');
-      const amountElem = row.querySelector('.price-view');
-      const discountElem = row.querySelector(
+    const quantityElem = row.querySelector('.date-time');
+    const productElem = row.querySelector('.product-col a');
+    const productCodeElem = row.querySelector('.product-col.ordernum');
+    const amountElem = row.querySelector('.price-view');
+    const discountElem = row.querySelector(
         '.myreceipt-savings-row .save-price',
-      );
+    );
 
-      return {
+    return {
         quantity: parseElementText(quantityElem),
         productName: parseElementText(productElem),
         productUrl: parseElementAttribute('href', productElem),
         productCode: parseElementText(productCodeElem),
         amount: parseElementTextAsFloat(amountElem),
         discount: parseElementText(discountElem),
-      };
+    };
     }),
   );
 }
