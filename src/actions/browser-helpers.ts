@@ -32,7 +32,7 @@ const getChromePage = (browser: Browser) => browser.newPage();
  * @returns The original page context, at the given url.
  */
 const navigateToUrl = R.curry(
-    (loadEvent: LoadEvent, url: string, page: Page) =>
+    (loadEvent: LoadEvent, url: string, page: Page): Promise<Page> =>
         page.goto(url, { waitUntil: loadEvent })
             .then(() => page)
 );

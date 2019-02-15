@@ -1,13 +1,14 @@
-import { getWegmansConfig } from './resources/config';
+import { getWegmansConfig, isDebugEnabled } from './resources/config';
 import { getChromePage, getBrowser, closeBrowser } from './actions/browser-helpers';
 import signIn from './actions/sign-in';
 import getReceiptSummaryList from './actions/get-receipt-summary-list';
 import MyReceiptsPage  from './page-objects/my-receipts.page';
+import SignInPage from './page-objects/sign-in.page';
 
-const main = (baseUrl: string, username: string, password: string) =>
-    getBrowser({ headless: false })
+const main = (baseUrl: string, username: string, password: string, debug: boolean = false) =>
+    getBrowser({ headless: debug })
         .then(getChromePage)
-        .then(signIn(username, password))
+        .then(signIn(baseUrl, SignInPage, username, password))
 
         // Navigate to 'My Receipts' Page
         // TODO: Allow filtering of Receipts by Date (Start Date / End Date)
@@ -29,8 +30,9 @@ const main = (baseUrl: string, username: string, password: string) =>
 if (module === require.main) {
 
     const { baseUrl, username, password } = getWegmansConfig();
+    const debug = isDebugEnabled();
 
-    main(baseUrl, username, password)
+    main(baseUrl, username, password, debug)
         .then(() => {
             console.log('Success');
         })
