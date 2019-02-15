@@ -11,21 +11,27 @@ const config = convict({
     default: LogicalEnvironment.Development,
     env: 'NODE_ENV',
   },
+  debug: {
+    env: 'DEBUG',
+    format: Boolean,
+    default: false,
+    args: 'debug',
+  },
   logging: {
     level: {
-    doc: 'Min level to write to logs',
-    format: [ LogLevel.Debug, LogLevel.Info, LogLevel.Warn, LogLevel.Error ],
-    default: LogLevel.Error,
+        doc: 'Min level to write to logs',
+        format: [ LogLevel.Debug, LogLevel.Info, LogLevel.Warn, LogLevel.Error ],
+        default: LogLevel.Error,
     },
     filename: {
-    doc: 'Filename/path to write log messages',
-    format: String,
-    default: 'wegmans-web-scraper.log',
+        doc: 'Filename/path to write log messages',
+        format: String,
+        default: 'wegmans-web-scraper.log',
     },
     console: {
-    doc: 'Flag indicating if log messages should be written to the console.',
-    format: Boolean,
-    default: true,
+        doc: 'Flag indicating if log messages should be written to the console.',
+        format: Boolean,
+        default: true,
     }
   },
   wegmans: {
@@ -142,10 +148,12 @@ export interface GetConfig<T extends BaseConfig> {
 
 const getWegmansConfig: GetConfig<WegmansConfig> = () => config.get('wegmans');
 const getScreenshotsConfig: GetConfig<ScreenshotsConfig> = () => config.get('screenshotsConfig');
+const isDebugEnabled = () => config.get('debug');
 
 export {
     getWegmansConfig,
     getScreenshotsConfig,
+    isDebugEnabled,
 };
 
 export default config;
