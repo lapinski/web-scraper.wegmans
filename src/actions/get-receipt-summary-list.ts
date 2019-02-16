@@ -57,7 +57,7 @@ const isValidReceiptSummary = (input: SanitizedReceiptSummary): boolean =>
 
 const extractReceiptSummaryFromRow = R.curry((
     pom: ReceiptSummaryRowSelectors,
-    row: CheerioElement): SanitizedReceiptSummary => ({
+    row: Cheerio): SanitizedReceiptSummary => ({
     amount: extractFloat(pom.amount, row),
     date: extractDate(pom.date, row),
     postalAddress: {
@@ -87,7 +87,7 @@ const extractReceiptSummaryFromMaybe = (input: SanitizedReceiptSummary): Receipt
 const parseRows = (pom: ReceiptSummaryRowSelectors, input: Cheerio): Maybe<ReceiptSummary[]> => R.pipe(
 
     // Convert to a CheerioElement array
-    (rawRows: Cheerio) => rawRows ? Just(rawRows.toArray()) : Nothing,
+    (rawRows: Cheerio) => rawRows ? Just(R.map(a => cheerio(a), rawRows.toArray())) : Nothing,
 
     // Extract the text from HTML Elements
     rows => rows.isJust() ? Just(R.map(extractReceiptSummaryFromRow(pom), rows.extract())) : Nothing,
