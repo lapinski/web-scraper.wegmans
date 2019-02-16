@@ -63,11 +63,11 @@ const extractReceiptSummaryFromRow = R.curry((
     postalAddress: {
         street: extractText(
             pom.postalAddress.street,
-            row
+            row,
         ),
         town: extractText(
             pom.postalAddress.town,
-            row
+            row,
         ),
     },
     url: extractHref(pom.url, row),
@@ -84,26 +84,33 @@ const extractReceiptSummaryFromMaybe = (input: SanitizedReceiptSummary): Receipt
         url: R.prop('url', input).extract(),
     });
 
-const parseRows = (pom: ReceiptSummaryRowSelectors, input: Cheerio) => R.pipe(
-    (input: Cheerio) => input ? Just(input.toArray()) : Nothing,
+const parseRows = (pom: ReceiptSummaryRowSelectors, input: Cheerio): Maybe<ReceiptSummary[]> => R.pipe(
+
+    // Convert to a CheerioElement array
+    (rawRows: Cheerio) => rawRows ? Just(rawRows.toArray()) : Nothing,
+
+    // Extract the text from HTML Elements
     rows => rows.isJust() ? Just(R.map(extractReceiptSummaryFromRow(pom), rows.extract())) : Nothing,
+
+    // Only get records that don't have 'Nothings' for values
     rows => rows.isJust() ? Just(R.filter(isValidReceiptSummary, rows.extract())) : Nothing,
+
+    // Extract the 'Maybe' values from each record
     rows => rows.isJust() ? Just(R.map(extractReceiptSummaryFromMaybe, rows.extract())) : Nothing,
 )(input);
 
 const parseMyReceiptsPage = R.curry(
-    (pom: MyReceiptsPageObjectModel, page: Page) =>
+    (pom: MyReceiptsPageObjectModel, page: Page): Promise<{page: Page, receiptSummaries: Maybe<ReceiptSummary[]>}> =>
         page.content()
             .then(cheerio.load)
             .then($ => $(pom.receiptSummaryRows))
-            .then(rows => [page, parseRows(pom.receiptSummary, rows)])
+            .then(rows => ({page, receiptSummaries: parseRows(pom.receiptSummary, rows)})),
 );
 
-const getReceiptSummaryList = R.curryN(
-    3,
-    (baseUrl: string, pom: MyReceiptsPageObjectModel, page: Page) =>
+const getReceiptSummaryList = R.curry(
+    (baseUrl: string, pom: MyReceiptsPageObjectModel, page: Page): Promise<{page: Page, receiptSummaries: Maybe<ReceiptSummary[]>}> =>
         navigateToUrlAndWait(url.resolve(baseUrl, pom.path), page)
-            .then(parseMyReceiptsPage(pom))
+            .then(parseMyReceiptsPage(pom)),
 );
 
 export {
