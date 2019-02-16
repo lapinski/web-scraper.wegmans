@@ -5,6 +5,7 @@ import { navigateToUrlAndWait } from './browser-helpers';
 import * as url from 'url';
 import { ReceiptDetailPageObjectModel } from '../page-objects/receipt-detail.page';
 import { Maybe, Nothing } from 'purify-ts/adts/Maybe';
+import { extractDate } from './element-helpers';
 
 export interface Receipt {
 
@@ -17,7 +18,7 @@ const parseReceiptPage = (page: Page, pom: ReceiptDetailPageObjectModel): Promis
         .then(($) => {
 
             return <Receipt>{
-
+                date: extractDate(pom.date, $(pom.contentContainer))
             };
         });
 

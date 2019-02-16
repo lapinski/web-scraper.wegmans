@@ -3,27 +3,27 @@ import moment, { Moment } from 'moment';
 import R from 'ramda';
 import cheerio from 'cheerio';
 
-const extractDate = (selector: string, ctx: CheerioElement): Maybe<Moment> =>
+const extractDate = (selector: string, ctx: Cheerio): Maybe<Moment> =>
     R.pipe(
         extractText(selector),
         parseDate,
         date => (date.isJust() && date.extract().isValid()) ? date : Nothing,
     )(ctx);
 
-const extractFloat = (selector: string, ctx: CheerioElement) =>
+const extractFloat = (selector: string, ctx: Cheerio) =>
     R.pipe(
         extractText(selector),
         text => text.isJust() ? Maybe.fromNullable(parseFloat(text.extract())) : Nothing,
     )(ctx);
 
-const extractHref = (selector: string, ctx: CheerioElement) =>
+const extractHref = (selector: string, ctx: Cheerio) =>
     R.pipe(
-        (ctx: CheerioElement) => cheerio(selector, ctx),
+        (ctx: Cheerio) => cheerio(selector, ctx),
         element => element ? Just(element.attr('href')) : Nothing,
     )(ctx);
 
 const extractText = R.curry(
-    (selector: string, ctx: CheerioElement) =>
+    (selector: string, ctx: Cheerio) =>
         R.pipe(
             parseText(selector),
             removeNewline,
@@ -36,9 +36,9 @@ const parseDate = (dateString: Maybe<string>): Maybe<Moment> =>
         : Nothing;
 
 const parseText = R.curry(
-    (selector: string, ctx: CheerioElement) => // TODO: Handle case where selector is null/empty
+    (selector: string, ctx: Cheerio) => // TODO: Handle case where selector is null/empty
         R.pipe(
-            (ctx: CheerioElement) => ctx ? Just(cheerio(selector, ctx)) : Nothing,
+            (ctx: Cheerio) => ctx ? Just(cheerio(selector, ctx)) : Nothing,
             element => element.isJust() ? Just(element.extract().text()) : Nothing,
             text => text.isJust() && text ? text : Nothing,
         )(ctx));
