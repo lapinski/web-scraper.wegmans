@@ -1,51 +1,90 @@
+import R from 'ramda';
+import { ReceiptSummary } from './get-receipt-summary-list';
 import { Page } from 'puppeteer';
-import { Url } from 'url';
-import { prop, pipe } from 'ramda';
-import { Just, Nothing } from 'purify-ts/adts/Maybe';
-import { getScreenshotsConfig } from '../resources/config';
+import { navigateToUrlAndWait } from './browser-helpers';
+import * as url from 'url';
+import { ReceiptDetailPageObjectModel } from '../page-objects/receipt-detail.page';
+import { Maybe, Nothing } from 'purify-ts/adts/Maybe';
 
-const screenshots = require('../resources/screenshots');
+export interface Receipt {
 
-export const parseElementText = (element: Element) =>
-    element
-        ? Just((prop('textContent', element).toString()))
-        : Nothing;
+}
 
-export const parseElementTextAsFloat = pipe(
-    parseElementText,
-    (text) => text.isJust()
-        ? Just(parseFloat(text.extract()))
-        : Nothing
+const parseReceiptPage = (page: Page, pom: ReceiptDetailPageObjectModel): Promise<Receipt> =>
+
+    page.content()
+        .then((html) => cheerio.load(html))
+        .then(($) => {
+
+            return <Receipt>{
+
+            };
+        });
+
+/**
+ * Navigate to a receipt summaries' detail page, and return the parsed Receipt
+ *
+ *
+ * @param baseUrl
+ * @param page
+ * @param pom
+ * @param receiptSummary
+ */
+const getReceiptDetails = R.curry(
+    (baseUrl: string,
+    page: Page,
+    pom: ReceiptDetailPageObjectModel,
+    receiptSummary: ReceiptSummary):
+    Promise<Maybe<Receipt>> =>
+
+        navigateToUrlAndWait(url.resolve(baseUrl, receiptSummary.url), page)
+            .then(() => parseReceiptPage(page, pom))
+            .then((receipt) => Maybe.fromNullable(receipt)),
 );
 
-export const parseElementAttribute = (attrName: string, element: Element) =>
-    element && element.hasAttribute(attrName)
-        ? Just(element.getAttribute(attrName))
-        : Nothing;
+/**
+ * Iterate over the given receipt summary objects then:
+ *  1. Execute the mapper to get the receipt detail
+ *  2. Filter out bad receipt detail objects
+ *  3. Remove the 'maybe' part
+ *
+ *  @param mapper
+ *  @param summaries
+ */
+const parseAndFilterReceipts = R.curry(
+    (mapper: (summary: ReceiptSummary) => Promise<Maybe<Receipt>>, summaries: ReceiptSummary[]) =>
+        R.pipe(
+            R.map(mapper),
+            Promise.all,
+            R.filter((maybeReceipt: Maybe<Receipt>) => maybeReceipt.isJust()),
+            Maybe.catMaybes, // list of maybes => list of values
+        )(summaries));
 
-export default async function getReceiptTransactions(page: Page, url: Url) {
-  await page.goto(url.toString());
-  await screenshots.save(getScreenshotsConfig(), page, `receipts-${url.query}`);
 
-  // Get table of transactions totals / date
-  return await page.$$eval('.recall-table-set', rowParts =>
-    Array.from(rowParts).map(row => {
-    const quantityElem = row.querySelector('.date-time');
-    const productElem = row.querySelector('.product-col a');
-    const productCodeElem = row.querySelector('.product-col.ordernum');
-    const amountElem = row.querySelector('.price-view');
-    const discountElem = row.querySelector(
-        '.myreceipt-savings-row .save-price',
-    );
+const getAllReceiptDetails = R.curry(
+    (baseUrl: string,
+    pom: ReceiptDetailPageObjectModel,
+    page: Page,
+    receiptSummaries: Maybe<ReceiptSummary[]>):
+    Promise<{ page: Page, receipts: Maybe<Receipt[]>}> =>
 
-    return {
-        quantity: parseElementText(quantityElem),
-        productName: parseElementText(productElem),
-        productUrl: parseElementAttribute('href', productElem),
-        productCode: parseElementText(productCodeElem),
-        amount: parseElementTextAsFloat(amountElem),
-        discount: parseElementText(discountElem),
-    };
-    }),
-  );
-}
+        receiptSummaries.isJust()
+            ? Promise.resolve({
+                page,
+                receipts: Maybe.fromNullable(
+                    parseAndFilterReceipts(
+                        getReceiptDetails(baseUrl, page, pom),
+                        receiptSummaries.extract()
+                    )
+                )
+            })
+            : Promise.resolve( { page, receipts: Nothing })
+);
+
+
+export {
+    getAllReceiptDetails,
+    getReceiptDetails,
+};
+
+export default getAllReceiptDetails;
