@@ -5,6 +5,7 @@ declare global {
         interface Matchers<R> {
             toBeNothing(): Matchers<R>;
             toBeJust(expected: R): Matchers<R>;
+            toBeJust(expected: R, using: (actual: R, expected: R) => boolean): Matchers<R>;
         }
     }
 }
@@ -26,9 +27,11 @@ expect.extend({
             };
         }
     },
-    toBeJust<T>(received: Maybe<T>, expected: Maybe<T>) {
+    toBeJust<T>(received: Maybe<T>, expected: Maybe<T>, using: (actual: Maybe<T>, expected: Maybe<T>) => boolean = undefined) {
+        const equals = using ? using : this.equals;
+
         const areBothJust = received.isJust() && expected.isJust();
-        const areEqual = this.equals(received.extract(), expected.extract());
+        const areEqual = equals(received.extract(), expected.extract());
         const pass = areBothJust && areEqual;
 
         if (pass) {

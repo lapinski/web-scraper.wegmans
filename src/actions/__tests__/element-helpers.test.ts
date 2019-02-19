@@ -1,5 +1,6 @@
-import { Just, Nothing } from 'purify-ts/adts/Maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import cheerio from 'cheerio';
+import moment, { Moment } from 'moment';
 import {
     extractDate,
     extractFloat,
@@ -11,6 +12,45 @@ import {
 } from '../element-helpers';
 
 describe('puppeteer element helpers', () => {
+
+    describe('extractDate()', () => {
+        describe('when given valid input', () => {
+            it('should return a valid date', () => {
+                const input = cheerio.load('<div>Aug. 20, 2000 10:23am');
+                const output = extractDate('div', input.root());
+
+                expect(output.isJust()).toEqual(true);
+
+                expect(output.extract()
+                    .isSame(moment({
+                        year: 2000,
+                        month: 7,
+                        day: 20,
+                        hour: 10,
+                        minute: 23,
+                    }))
+                ).toBe(true);
+            });
+        });
+
+        describe('when given null input', () => {
+            it('should return a Nothing', () => {
+                const input = cheerio.load('');
+                const output = extractDate('div', input.root());
+
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given an invalid date', () => {
+            it('should return a Nothing', () => {
+                const input = cheerio.load('<div>Junk Date</div>');
+                const output = extractDate('div', input.root());
+
+                expect(output).toBeNothing();
+            });
+        });
+    });
 
     describe('extractText()', () => {
         // TODO: Convert to Property Test
@@ -31,6 +71,48 @@ describe('puppeteer element helpers', () => {
         it('should return undefined for undefined input', () => {
             const output = extractText(undefined, undefined);
             expect(output).toBeNothing();
+        });
+    });
+
+    describe('parseDate()', () => {
+        describe('When input is valid', () => {
+            let output: Maybe<Moment>;
+            beforeAll(() => {
+                const input = 'Aug. 11, 2001 01:02am';
+                output = parseDate(Just(input));
+            });
+
+            it('should return something', () => {
+                expect(output).not.toBeNothing();
+            });
+
+            it('should equal the expected date', () => {
+                const value = output.extract();
+                expect(value.month()).toEqual(7); // August == 7
+                expect(value.date()).toEqual(11);
+                expect(value.year()).toEqual(2001);
+            });
+
+            it('should return the correct time', () => {
+                const value = output.extract();
+                expect(value.hour()).toEqual(1);
+                expect(value.minute()).toEqual(2);
+            });
+        });
+
+        describe('When input is null', () => {
+            it('should return nothing', () => {
+                const output = parseDate(Nothing);
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('When input is invalid', () => {
+            it('should return nothing', () => {
+                const invalidInput = 'AAA. 1231';
+                const output = parseDate(Just(invalidInput));
+                expect(output).toBeNothing();
+            });
         });
     });
 
@@ -99,116 +181,7 @@ describe('puppeteer element helpers', () => {
     });
 
     /*
-    describe('parseDate()', () => {
-        describe('When input is valid', () => {
-            let output: Maybe<Moment>;
-            beforeAll(() => {
-                const input = 'Aug. 11, 2001 01:02 am';
-                output = parseDate(Just(input));
-            });
 
-            it('should return something', () => {
-                expect(output).not.toBeNothing();
-            });
-
-            it('should equal the expected date', () => {
-                const value = output.extract();
-                expect(value.month()).toEqual(7); // August == 7
-                expect(value.date()).toEqual(11);
-                expect(value.year()).toEqual(2001);
-            });
-
-            it('should return the correct time', () => {
-                const value = output.extract();
-                expect(value.hour()).toEqual(1);
-                expect(value.minute()).toEqual(2);
-            });
-        });
-
-        describe('When input is null', () => {
-            let output: Maybe<Moment>;
-            beforeAll(() => {
-                output = parseDate(Nothing);
-            });
-
-            it('should return nothing', () => {
-                expect(output).toBeNothing();
-            });
-        });
-
-        describe('When input is invalid', () => {
-            let output: Maybe<Moment>;
-            beforeAll(() => {
-                const invalidInput = 'AAA. 1231';
-                output = parseDate(Just(invalidInput));
-            });
-
-            it('should return nothing', () => {
-                expect(output).toBeNothing();
-            });
-        });
-    });
-
-    describe('sanitizeDate()', () => {
-        describe('when given undefined', () => {
-            let output: Maybe<Moment>;
-            beforeAll(() => {
-                output = sanitizeDate(undefined);
-            });
-
-            it('should return Nothing', () => {
-                expect(output).toBeNothing();
-            });
-        });
-
-        describe('when given a boolean', () => {
-            let output: Maybe<Moment>;
-            beforeAll(() => {
-                output = sanitizeDate(true);
-            });
-
-            it('should return Nothing', () => {
-                expect(output).toBeNothing();
-            });
-        });
-
-        describe('when given a string with no newlines', () => {
-            let output: Maybe<Moment>;
-            beforeAll(() => {
-                output = sanitizeDate('Aug. 11 2000 01:02am');
-            });
-
-            it('should return Just()', () => {
-                expect(output).not.toBeNothing();
-            });
-
-            it('should return Just(Moment)', () => {
-                const value = output.extract();
-                expect(value).toBeInstanceOf(moment);
-            });
-        });
-
-        describe('when given a string with newline', () => {
-            let output: Maybe<Moment>;
-            beforeAll(() => {
-                output = sanitizeDate('Aug. 11 2000 01:02am\n');
-            });
-
-            it('should return Just()', () => {
-                expect(output).not.toBeNothing();
-            });
-
-            it('should return Just(Moment)', () => {
-                const value = output.extract();
-                expect(value).toBeInstanceOf(moment);
-            });
-
-            it('should return a valid date', () => {
-                const value = output.extract();
-                expect(value.isValid()).toBeTruthy();
-            });
-        });
-    });
 
     describe('sanitizeNumber()', () => {
         describe('when given undefined', () => {

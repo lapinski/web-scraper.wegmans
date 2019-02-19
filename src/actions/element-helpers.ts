@@ -7,7 +7,6 @@ const extractDate = (selector: string, ctx: Cheerio): Maybe<Moment> =>
     R.pipe(
         extractText(selector),
         parseDate,
-        date => (date.isJust() && date.extract().isValid()) ? date : Nothing,
     )(ctx);
 
 const extractFloat = (selector: string, ctx: Cheerio) =>
@@ -31,9 +30,9 @@ const extractText = R.curry(
 );
 
 const parseDate = (dateString: Maybe<string>): Maybe<Moment> =>
-    dateString.isJust()
-        ? Just(moment(dateString.extract(), 'MMM. DD, YYYY hh:mma'))
-        : Nothing;
+    dateString
+        .chain(value => Just(moment(value, 'MMM. DD, YYYY hh:mma', true)))
+        .chain(value => value.isValid() ? Just(value) : Nothing);
 
 const parseText = R.curry(
     R.pipe(
