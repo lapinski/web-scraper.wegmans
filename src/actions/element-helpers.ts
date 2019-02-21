@@ -13,12 +13,13 @@ const extractFloat = (selector: string, ctx: Cheerio) =>
     R.pipe(
         extractText(selector),
         text => text.isJust() ? Maybe.fromNullable(parseFloat(text.extract())) : Nothing,
+        num => num.isJust() && !R.identical(NaN, num.extract()) ? num : Nothing,
     )(ctx);
 
-const extractHref = (selector: string, ctx: Cheerio) =>
+const extractHref = (selector: string, ctx: Cheerio): Maybe<string> =>
     R.pipe(
         (ctx: Cheerio) => cheerio(selector, ctx),
-        element => element ? Just(element.attr('href')) : Nothing,
+        element => element.attr('href') ? Just(element.attr('href')) : Nothing,
     )(ctx);
 
 const extractText = R.curry(
