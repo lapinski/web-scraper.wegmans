@@ -52,6 +52,132 @@ describe('puppeteer element helpers', () => {
         });
     });
 
+    describe('extractFloat()', () => {
+
+        const validContext = cheerio.load('<div>0.123</div>');
+        const invalidContext = cheerio.load('<div>Junk Data</div>');
+
+        describe('when given undefined selector and context', () => {
+            it('should return Nothing', () => {
+                const output = extractFloat(undefined, undefined);
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given undefined selector and valid context', () => {
+            it('should return Nothing', () => {
+                const output = extractFloat(undefined, validContext.root());
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given a valid selector and undefined context', () => {
+            it('should return Nothing', () => {
+                const output = extractFloat('div', undefined);
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given valid inputs', () => {
+            let output: Maybe<number>;
+            beforeAll(() => {
+                output = extractFloat('div', validContext.root());
+            });
+
+            it('should return Just()', () => {
+                expect(output).not.toBeNothing();
+            });
+
+            it('should return Just(number)', () => {
+                expect(output).toBeJust(Just(0.123));
+            });
+        });
+
+        describe('when given valid inputs  with newline', () => {
+            let output: Maybe<number>;
+            beforeAll(() => {
+                const inputWithNewlines = cheerio.load('<div>\n 0.123</div>');
+                output = extractFloat('div', inputWithNewlines.root());
+            });
+
+            it('should return Just()', () => {
+                expect(output).not.toBeNothing();
+            });
+
+            it('should return Just(number)', () => {
+                expect(output).toBeJust(Just(0.123));
+            });
+        });
+
+        describe('when given valid context and invalid selector', () => {
+           it('should return nothing', () => {
+              const output = extractFloat('junk', validContext.root());
+              expect(output).toBeNothing();
+           });
+        });
+
+        describe('when given invalid inputs', () => {
+           it('should return nothing', () => {
+              const output = extractFloat('div', invalidContext.root());
+              expect(output).toBeNothing();
+           });
+        });
+    });
+
+    describe('extractHref()', () => {
+        const validContext = cheerio.load('<a href="https://www.site.com">Link</a>');
+        const invalidContext = cheerio.load('<a>Junk</a>');
+
+        describe('when given valid selector and context', () => {
+           it('should return a valid url', () => {
+               const output = extractHref('a', validContext.root());
+               expect(output).toBeJust(Just('https://www.site.com'));
+           });
+        });
+
+        describe('when given an invalid selector and valid context', () => {
+            it('should return Nothing', () => {
+                const output = extractHref('junk', validContext.root());
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given an invalid selector and valid context', () => {
+            it('should return Nothing', () => {
+                const output = extractHref('junk', cheerio.load('').root());
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given a valid selector and invalid context', () => {
+            it('should return Nothing', () => {
+                const output = extractHref('a', invalidContext.root());
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given an undefined selector and valid context', () => {
+            it('should return Nothing', () => {
+                const output = extractHref(undefined, validContext.root());
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given a valid selector and undefined context', () => {
+            it('should return Nothing', () => {
+                const output = extractHref('a', undefined);
+                expect(output).toBeNothing();
+            });
+        });
+
+        describe('when given undefined inputs', () => {
+            it('should return Nothing', () => {
+                const output = extractHref(undefined, undefined);
+                expect(output).toBeNothing();
+            });
+        });
+    });
+
     describe('extractText()', () => {
         // TODO: Convert to Property Test
         it('should extract text content from valid input', () => {
@@ -179,61 +305,4 @@ describe('puppeteer element helpers', () => {
             expect(output).toBeNothing();
         });
     });
-
-    /*
-
-
-    describe('sanitizeNumber()', () => {
-        describe('when given undefined', () => {
-            let output: Maybe<number>;
-            beforeAll(() => {
-                output = sanitizeNumber(undefined);
-            });
-
-            it('should return Nothing', () => {
-                expect(output).toBeNothing();
-            });
-        });
-
-        describe('when given a boolean', () => {
-            let output: Maybe<number>;
-            beforeAll(() => {
-                output = sanitizeNumber(true);
-            });
-
-            it('should return Nothing', () => {
-                expect(output).toBeNothing();
-            });
-        });
-
-        describe('when given a string with no newlines', () => {
-            let output: Maybe<number>;
-            beforeAll(() => {
-                output = sanitizeNumber('1.2');
-            });
-
-            it('should return Just()', () => {
-                expect(output).not.toBeNothing();
-            });
-
-            it('should return Just(number)', () => {
-                expect(output).toBeJust(Just(1.2));
-            });
-        });
-
-        describe('when given a string with newline', () => {
-            let output: Maybe<number>;
-            beforeAll(() => {
-                output = sanitizeNumber('1.2\n');
-            });
-
-            it('should return Just()', () => {
-                expect(output).not.toBeNothing();
-            });
-
-            it('should return Just(number)', () => {
-                expect(output).toBeJust(Just(1.2));
-            });
-        });
-    });*/
 });
