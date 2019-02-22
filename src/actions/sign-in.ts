@@ -17,11 +17,17 @@ import { navigateToUrlAndWait } from './browser-helpers';
  * @returns   The original Puppeteer Page context, with the sign-in form filled.
  */
 const fillSignInForm = R.curry(
-    (usernameInputSelector: string, passwordInputSelector: string,
-    username: string, password: string, page: Page) =>
+    (
+        usernameInputSelector: string,
+        passwordInputSelector: string,
+        username: string,
+        password: string,
+        page: Page
+    ): Promise<Page> =>
     page.type(usernameInputSelector, username)
         .then(() => page.type(passwordInputSelector, password))
-        .then(() => page));
+        .then(() => page)
+);
 
 /**
  * Submit the Sign In form, and wait for the navigation to complete.
