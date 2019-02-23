@@ -2,7 +2,7 @@ import { getConsoleTransport, LogLevel } from '../logger';
 import TransportStream from 'winston-transport';
 import { ConsoleTransportInstance } from 'winston/lib/winston/transports';
 import * as winston from 'winston';
-import jsc from 'jsverify';
+// import jsc from 'jsverify';
 import { itHolds } from '../../tests/jsverify-helpers';
 
 describe('Logger Module', () => {
@@ -27,7 +27,7 @@ describe('Logger Module', () => {
             expect(transport).toBeInstanceOf(winston.transports.Console);
         });
 
-        itHolds(
+        /*itHolds(
             'should create a transport with the correct level',
             jsc.oneof([
                 jsc.constant(LogLevel.Info),
@@ -39,6 +39,6 @@ describe('Logger Module', () => {
             (level: LogLevel) => {
                 const transport = getConsoleTransport(level);
                 expect(transport.level).toBe(level);
-        });
+        });*/
     });
 });
