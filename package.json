@@ -15,7 +15,7 @@
     "build": "npm run lint && npm run build-ts",
     "build-ts": "tsc",
     "test": "jest",
-    "test:coverage": "npm run test && cat ./src/coverage/lcov.info | coveralls",
+    "test:coverage": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "predb": "npm run build",
     "db": "typeorm",
     "db:generate": "npm run db -- migration:generate",
