@@ -3,6 +3,7 @@ import TransportStream from 'winston-transport';
 import { ConsoleTransportInstance } from 'winston/lib/winston/transports';
 import * as winston from 'winston';
 import jsc from 'jsverify';
+import { itHolds } from '../../tests/jsverify-helpers';
 
 describe('Logger Module', () => {
     describe('getConsoleTransport()', () => {
@@ -26,15 +27,18 @@ describe('Logger Module', () => {
             expect(transport).toBeInstanceOf(winston.transports.Console);
         });
 
-        it('should create a transport with the correct level', () => {
-            jsc.checkForall(
-                jsc.oneof([
-                    jsc.constant(LogLevel.Info),
-                    jsc.constant(LogLevel.Debug),
-                    jsc.constant(LogLevel.Warn),
-                    jsc.constant(LogLevel.Error)
-                ]), (level) => getConsoleTransport(level).level === level
-            );
+        itHolds(
+            'should create a transport with the correct level',
+            jsc.oneof([
+                jsc.constant(LogLevel.Info),
+                jsc.constant(LogLevel.Debug),
+                jsc.constant(LogLevel.Warn),
+                jsc.constant(LogLevel.Error)
+            ]),
+
+            (level: LogLevel) => {
+                const transport = getConsoleTransport(level);
+                expect(transport.level).toBe(level);
         });
     });
 });
