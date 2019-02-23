@@ -8,7 +8,7 @@ import {
 } from '../browser-helpers';
 
 
-describe('puppeteer browser helpers', () => {
+describe.skip('puppeteer browser helpers', () => {
 
     describe('getBrowser()', () => {
         let output: Browser;
@@ -34,9 +34,9 @@ describe('puppeteer browser helpers', () => {
 
     describe('getChromePage()', () => {
         const stubBrowser = <Browser>{
-        newPage: () => Promise.resolve(<Page>{
-            url: () => 'A New Chrome Page'
-        })
+            newPage: () => Promise.resolve(<Page>{
+                url: () => 'A New Chrome Page'
+            })
         };
 
         let output: Page;
