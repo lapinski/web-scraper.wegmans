@@ -11,7 +11,7 @@ import {
     removeNewline,
 } from '../element-helpers';
 
-describe.skip('puppeteer element helpers', () => {
+describe('puppeteer element helpers', () => {
 
     describe('extractDate()', () => {
         describe('when given valid input', () => {
@@ -110,17 +110,17 @@ describe.skip('puppeteer element helpers', () => {
         });
 
         describe('when given valid context and invalid selector', () => {
-           it('should return nothing', () => {
-              const output = extractFloat('junk', validContext.root());
-              expect(output).toBeNothing();
-           });
+            it('should return nothing', () => {
+            const output = extractFloat('junk', validContext.root());
+            expect(output).toBeNothing();
+            });
         });
 
         describe('when given invalid inputs', () => {
-           it('should return nothing', () => {
-              const output = extractFloat('div', invalidContext.root());
-              expect(output).toBeNothing();
-           });
+            it('should return nothing', () => {
+            const output = extractFloat('div', invalidContext.root());
+            expect(output).toBeNothing();
+            });
         });
     });
 
@@ -129,10 +129,10 @@ describe.skip('puppeteer element helpers', () => {
         const invalidContext = cheerio.load('<a>Junk</a>');
 
         describe('when given valid selector and context', () => {
-           it('should return a valid url', () => {
-               const output = extractHref('a', validContext.root());
-               expect(output).toBeJust(Just('https://www.site.com'));
-           });
+            it('should return a valid url', () => {
+                const output = extractHref('a', validContext.root());
+                expect(output).toBeJust(Just('https://www.site.com'));
+            });
         });
 
         describe('when given an invalid selector and valid context', () => {

@@ -7,7 +7,7 @@ import { Page } from 'puppeteer';
 import { SignInPageObjectModel } from '../../page-objects/sign-in.page';
 import { LoadEvent } from '../browser-helpers';
 
-describe.skip('Sign In Action', () => {
+describe('Sign In Action', () => {
 
     const MockedPage = jest.fn<Page>(() => ({
         goto: jest
