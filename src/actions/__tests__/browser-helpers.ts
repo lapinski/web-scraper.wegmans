@@ -8,7 +8,7 @@ import {
 } from '../browser-helpers';
 
 
-describe.skip('puppeteer browser helpers', () => {
+describe('puppeteer browser helpers', () => {
 
     describe('getBrowser()', () => {
         let output: Browser;

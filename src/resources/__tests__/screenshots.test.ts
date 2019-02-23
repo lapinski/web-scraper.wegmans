@@ -2,7 +2,7 @@ import jsc from 'jsverify';
 import * as screenshots from '../screenshots';
 
 
-describe.skip('Screenshots Module', () => {
+describe('Screenshots Module', () => {
     describe('getScreenshotdir', () => {
         it('combines valid strings', () => {
             const output = screenshots.getScreenshotDir('a', 'b');

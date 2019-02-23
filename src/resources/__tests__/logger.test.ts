@@ -5,7 +5,7 @@ import * as winston from 'winston';
 import jsc from 'jsverify';
 import { itHolds } from '../../tests/jsverify-helpers';
 
-describe.skip('Logger Module', () => {
+describe('Logger Module', () => {
     describe('getConsoleTransport()', () => {
 
         let transport: TransportStream;
