@@ -19,3 +19,5 @@ install:
     - npm install
 script:
     - npm run test:coverage
+after_success:
+    - cat ./src/coverage/lcov.info | npm run coveralls
