@@ -11,7 +11,7 @@ import {
     removeNewline,
 } from '../element-helpers';
 
-describe('puppeteer element helpers', () => {
+describe.skip('puppeteer element helpers', () => {
 
     describe('extractDate()', () => {
         describe('when given valid input', () => {
