@@ -15,7 +15,8 @@
     "build": "npm run lint && npm run build-ts",
     "build-ts": "tsc",
     "test": "jest",
-    "test:coverage": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "test:coverage": "jest --coverage --coverageReporters=html",
+    "test:coverage:ci": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "predb": "npm run build",
     "db": "typeorm",
     "db:generate": "npm run db -- migration:generate",
@@ -89,7 +90,6 @@
     ]
   },
   "jest": {
-    "collectCoverage": true,
     "coverageDirectory": "coverage",
     "coverageReporters": ["json", "html", "lcov"],
     "globals": {
