@@ -1,4 +1,5 @@
 import { Maybe } from 'purify-ts/adts/Maybe';
+import * as jsc from 'jsverify';
 
 declare global {
     namespace jest {
@@ -9,7 +10,6 @@ declare global {
         }
     }
 }
-
 
 expect.extend({
     toBeNothing<T>(received: Maybe<T>) {
