@@ -36,7 +36,7 @@ const parseDate = (dateString: Maybe<string>): Maybe<Moment> =>
         : Nothing;
 
 const parseText = R.curry(
-    (selector: string, ctx: Cheerio) => // TODO: Handle case where selector is null/empty
+    (selector: string, ctx: Cheerio): Maybe<string> => // TODO: Handle case where selector is null/empty
         R.pipe(
             (ctx: Cheerio) => ctx ? Just(cheerio(selector, ctx)) : Nothing,
             element => element.isJust() ? Just(element.extract().text()) : Nothing,
