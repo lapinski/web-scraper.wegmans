@@ -91,7 +91,11 @@
   "jest": {
     "collectCoverage": true,
     "coverageDirectory": "coverage",
-    "coverageReporters": ["json", "html", "lcov"],
+    "coverageReporters": [
+      "json",
+      "html",
+      "lcov"
+    ],
     "globals": {
       "ts-jest": {
         "tsConfig": "tsconfig.json"
