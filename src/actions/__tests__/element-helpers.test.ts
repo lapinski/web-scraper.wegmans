@@ -1,3 +1,5 @@
+import { Just, Nothing } from 'purify-ts/adts/Maybe';
+import cheerio from 'cheerio';
 import {
     extractDate,
     extractFloat,
@@ -7,36 +9,64 @@ import {
     parseText,
     removeNewline,
 } from '../element-helpers';
-import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
-import { Moment } from 'moment';
-import moment = require('moment');
 
 describe('puppeteer element helpers', () => {
-    it('should be a placeholder test', () => {});
-/*
+
     describe('extractText()', () => {
         // TODO: Convert to Property Test
         it('should extract text content from valid input', () => {
-            const input = <CheerioElement>{ type: 'text', data: 'content' };
-            const output = extractText('selector', input);
+            const input = cheerio.load('<div>content</div>');
+            const output = extractText('div', input.root());
             expect(output).toBeJust(Just('content'));
         });
 
         // TODO: Convert to Property Test
         it('should return undefined from invalid input', () => {
-            const input = <CheerioElement>{ };
-            const output = extractText('selector', input);
+            const input = cheerio.load('');
+            const output = extractText('div', input.root());
             expect(output).toBeNothing();
         });
 
         // TODO: Convert to Property Test
         it('should return undefined for undefined input', () => {
-            const output = extractText(undefined);
+            const output = extractText(undefined, undefined);
             expect(output).toBeNothing();
         });
     });
-*/
-    /*
+
+    describe('parseText()', () => {
+        // TODO: Convert to Property Test
+        it('should extract text content from valid input', () => {
+            const input = cheerio.load('<div>content</div>');
+            const output = parseText('div', input.root());
+            expect(output).toBeJust(Just('content'));
+        });
+
+        // TODO: Convert to Property Test
+        it('should return Nothing from invalid input (no text on element)', () => {
+            const input = cheerio.load('');
+            const output = parseText('div', input.root());
+            expect(output).toBeNothing();
+        });
+
+        // TODO: Convert to Property Test
+        it('should return Nothing for undefined input (selector)', () => {
+            const input = cheerio.load('<div>content</div>');
+            const output = parseText(undefined, input.root());
+            expect(output).toBeNothing();
+        });
+
+        it('should return undefined for undefined input (context)', () => {
+            const output = parseText('div', undefined);
+            expect(output).toBeNothing();
+        });
+
+        it('should return undefined for undefined input (both)', () => {
+            const output = parseText(undefined, undefined);
+            expect(output).toBeNothing();
+        });
+    });
+
     describe('removeNewline()', () => {
         it('should remove a newline from input', () => {
             const input = '\n';
@@ -68,6 +98,7 @@ describe('puppeteer element helpers', () => {
         });
     });
 
+    /*
     describe('parseDate()', () => {
         describe('When input is valid', () => {
             let output: Maybe<Moment>;
