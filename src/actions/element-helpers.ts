@@ -45,7 +45,7 @@ const parseText = R.curry(
 
 const removeNewline = (text: Maybe<string>) =>
     text.isJust()
-        ? Maybe.fromNullable(R.replace(/(\n|\r)?(\r|\n)/, '', text.extract()))
+        ? Maybe.fromNullable(R.replace(/(\n|\r)?(\r|\n)/g, '', text.extract()))
         : Nothing;
 
 export {
