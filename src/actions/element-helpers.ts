@@ -38,9 +38,18 @@ const parseDate = (dateString: Maybe<string>): Maybe<Moment> =>
 const parseText = R.curry(
     (selector: string, ctx: Cheerio): Maybe<string> => // TODO: Handle case where selector is null/empty
         R.pipe(
-            (ctx: Cheerio) => ctx ? Just(cheerio(selector, ctx)) : Nothing,
-            element => element.isJust() ? Just(element.extract().text()) : Nothing,
-            text => text.isJust() && text ? text : Nothing,
+            (ctx: Cheerio) =>
+                ctx && selector
+                    ? Just(cheerio(selector, ctx))
+                    : Nothing,
+            element =>
+                element.isJust()
+                    ? Just(element.extract().text())
+                    : Nothing,
+            text =>
+                text.isJust() && text
+                    ? text
+                    : Nothing,
         )(ctx));
 
 const removeNewline = (text: Maybe<string>) =>
