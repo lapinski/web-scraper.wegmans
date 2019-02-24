@@ -37,15 +37,15 @@ const parseDate = (dateString: Maybe<string>): Maybe<Moment> =>
 
 const parseText = R.curry(
     R.pipe(
-        (selector: string, ctx: Cheerio) =>
+        (selector: string, ctx: Cheerio): Maybe<Cheerio> =>
             ctx && selector && R.length(selector) > 0
                 ? Just(cheerio(selector, ctx))
                 : Nothing,
-        (element: Maybe<Cheerio>) =>
+        (element: Maybe<Cheerio>): Maybe<string> =>
             element.isJust()
                 ? Maybe.fromNullable(element.extract().text())
                 : Nothing,
-        (text: Maybe<string>) =>
+        (text: Maybe<string>): Maybe<string> =>
             text.isJust() && R.length(text.extract()) > 0
                 ? text
                 : Nothing,

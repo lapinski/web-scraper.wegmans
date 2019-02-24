@@ -5,22 +5,52 @@ import { navigateToUrlAndWait } from './browser-helpers';
 import * as url from 'url';
 import { ReceiptDetailPageObjectModel } from '../page-objects/receipt-detail.page';
 import { Maybe, Nothing } from 'purify-ts/adts/Maybe';
-import { extractDate } from './element-helpers';
+import { extractDate, extractFloat, extractText } from './element-helpers';
 
 export interface Receipt {
 
 }
 
-const parseReceiptPage = (page: Page, pom: ReceiptDetailPageObjectModel): Promise<Receipt> =>
+const extractPlace = (selector: string, context: Cheerio) =>
+    R.pipe(
+        extractText,
+        (str) => str, // TODO: Remove extra characters (e.g. ', ')
+    )(selector, context);
 
+const extractLane = (selector: string, context: Cheerio) =>
+    R.pipe(
+        extractText,
+        (str) => str, // TODO: Remove extra characters (e.g. ', #')
+    )(selector, context);
+
+const extractOperator = (selector: string, context: Cheerio) =>
+    R.pipe(
+        extractText,
+        (str) => str, // TODO: Remove extra characters (e.g. ', #')
+    )(selector, context);
+
+const extractTransactions = (selector: string, context: Cheerio) =>
+    cheerio(selector, context) &&
+    <{}[]>[]; // TODO: Extract Each Transaction row
+
+const parseReceiptPage = (page: Page, pom: ReceiptDetailPageObjectModel): Promise<Receipt> =>
     page.content()
         .then((html) => cheerio.load(html))
-        .then(($) => {
-
-            return <Receipt>{
-                date: extractDate(pom.date, $(pom.contentContainer))
-            };
-        });
+        .then($ => $(pom.contentContainer))
+        .then((content) =>
+            (<Receipt>{
+                date: extractDate(pom.date, content),
+                receiptInfo: {
+                    place: extractPlace(pom.receiptInfo.place, content),
+                    lane: extractLane(pom.receiptInfo.lane, content),
+                    operator: extractOperator(pom.receiptInfo.operator, content),
+                },
+                transactions: extractTransactions(pom.transactionRow, content),
+                totalSavings: extractFloat(pom.totalAmounts.totalSavings, content),
+                totalTax: extractFloat(pom.totalAmounts.tax, content),
+                totalAmount: extractFloat(pom.totalAmounts.total, content),
+            })
+        );
 
 /**
  * Navigate to a receipt summaries' detail page, and return the parsed Receipt
