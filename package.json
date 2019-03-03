@@ -110,7 +110,7 @@
       },
       "./src/actions": {
         "branches": 95,
-        "functions": 95,
+        "functions": 85,
         "lines": 95,
         "statements": 95
       },
