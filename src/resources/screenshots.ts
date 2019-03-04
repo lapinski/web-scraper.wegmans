@@ -9,11 +9,22 @@ import { ScreenshotsConfig } from './config';
 // Stat's 'Does not Exist' status code
 //
 const NOT_EXISTS = 34;
+const isString = R.is(String);
 
-const getScreenshotDir = (cwd: string, dir: string) => path.join(cwd, dir);
-const getScreenshotPath = (dir: string, name: string) => path.resolve(dir, `${name}.png`);
+const getScreenshotDir = (cwd: string, dir: string) =>
+    isString(cwd) && isString(dir)
+        ? Just(path.join(cwd, dir))
+        : Nothing;
+
+const getScreenshotPath = (dir: string, name: string) =>
+    isString(dir) && name
+        ? Just(path.resolve(dir, `${name}.png`))
+        : Nothing;
+
 const isErrNotExists = (err: object) => R.prop('errno', err) === NOT_EXISTS;
+
 const isDirectory = (stats: Stats) => stats && stats.isDirectory();
+
 const doesDirectoryExist = (path: PathLike) => new Promise((resolve, reject) => {
     fs.stat(path, (err, stats) =>
         isDirectory(stats)
@@ -46,24 +57,26 @@ function save(config: ScreenshotsConfig, page: Page, name: string): Promise<Mayb
     }
 
     const screenshotDir = getScreenshotDir(process.cwd(), R.prop('dir', config));
-    const screenshotPath = getScreenshotPath(screenshotDir, name);
+    const screenshotPath = getScreenshotPath(screenshotDir.extract(), name);
 
-    return doesDirectoryExist(screenshotDir)
-        .then(exists => exists
-            ? Promise.resolve()
-            : makeDirectory(screenshotDir)
-            // TODO: Add Logging (decorator?) logger.info('Screenshots Directory did not exist, creating it now.', { screenshotDir });
-        )
+    return (screenshotDir.isNothing() || screenshotPath.isNothing())
+        ? Promise.resolve(Nothing)
+        : doesDirectoryExist(screenshotDir.extract())
+            .then(exists => exists
+                ? Promise.resolve()
+                : makeDirectory(screenshotDir.extract())
+                // TODO: Add Logging (decorator?) logger.info('Screenshots Directory did not exist, creating it now.', { screenshotDir });
+            )
 
-        // TODO: Add 'functional' logging
-        // logger.info('Saving screenshot', { path: outputPath });
-        .then(() => page.screenshot({ path: screenshotPath }))
-        .then(() => Just(screenshotPath));
+            // TODO: Add 'functional' logging
+            // logger.info('Saving screenshot', { path: outputPath });
+            .then(() => page.screenshot({ path: screenshotPath.extract() }))
+            .then(() => screenshotPath);
 }
 
 export {
-    getScreenshotPath,
     getScreenshotDir,
+    getScreenshotPath,
     isErrNotExists,
     isDirectory,
     doesDirectoryExist,
