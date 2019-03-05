@@ -7,11 +7,11 @@ import {
     isErrNotExists,
     isDirectory,
     doesDirectoryExist,
-    save,
+    save, GetStats,
 } from '../screenshots';
 import { Just } from 'purify-ts/adts/Maybe';
-import { Stats } from 'fs';
-
+import { PathLike, Stats } from 'fs';
+import { Right } from 'purify-ts/adts/Either';
 
 describe('Screenshots Module', () => {
     describe('getScreenshotDir()', () => {
@@ -20,7 +20,7 @@ describe('Screenshots Module', () => {
             jsc.pair(jsc.string, jsc.string),
             ([ a, b ]: string[]) => {
                 expect(getScreenshotDir(a, b)).toBeJust(Just(path.join(a, b)));
-            }
+            },
         );
 
         it('should return nothing for invalid inputs', () => {
@@ -95,7 +95,42 @@ describe('Screenshots Module', () => {
         });
     });
 
-    describe('doesDirectoryExist()', () => { });
+    describe('doesDirectoryExist()', () => {
+        describe('a directory that exists', () => {
+            it('should return true given valid inputs', () => {
+                const getStatsStub: GetStats = (path, callback) => {
+                    callback(undefined, <Stats>({ isDirectory: () => true }));
+                };
+                const input = <PathLike>{ };
+
+                return doesDirectoryExist(getStatsStub, input)
+                    .then(result => {
+                        expect(result).toBeRight(Right(true));
+                    });
+            });
+
+            // TODO: Implement success for 'isDirectory' == false
+
+            it('should return false given valid inputs', () => {
+
+                const getStatsStub: GetStats = (path, callback) => {
+                    callback(<Error><unknown>({ errno: 34 }), <Stats>({ isDirectory: () => false }));
+                };
+                const input = <PathLike>{ };
+
+                return doesDirectoryExist(getStatsStub, input)
+                    .then(result => {
+                        expect(result).toBeRight(Right(false));
+                    });
+            });
+        });
+
+        describe('a directory that does not exist', () => {
+            // TODO: Implement this
+        });
+
+
+    });
 
     describe('save()', () => { });
 });

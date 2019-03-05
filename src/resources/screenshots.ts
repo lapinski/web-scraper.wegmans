@@ -4,6 +4,7 @@ import path from 'path';
 import { Page } from 'puppeteer';
 import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import { ScreenshotsConfig } from './config';
+import { Either, Left, Right } from 'purify-ts/adts/Either';
 
 //
 // Stat's 'Does not Exist' status code
@@ -21,19 +22,25 @@ const getScreenshotPath = (dir: string, name: string) =>
         ? Just(path.resolve(dir, `${name}.png`))
         : Nothing;
 
-const isErrNotExists = (err: object) => R.prop('errno', err) === NOT_EXISTS;
+const isErrNotExists = (err: object): boolean => R.prop('errno', err) === NOT_EXISTS;
 
-const isDirectory = (stats: Stats) => stats && stats.isDirectory();
+const isDirectory = (stats: Stats): boolean => stats && stats.isDirectory();
 
-const doesDirectoryExist = (path: PathLike) => new Promise((resolve, reject) => {
-    fs.stat(path, (err, stats) =>
-        isDirectory(stats)
-        ? resolve(true)
-        : isErrNotExists(err)
-            ? resolve(false)
-            : reject(err)
-    );
-});
+export interface GetStats {
+    (path: PathLike, callback: (error: Error, stats: Stats) => void): void;
+}
+
+const doesDirectoryExist = (getStats: GetStats, path: PathLike): Promise<Either<Error, boolean>> =>
+    new Promise((resolve, reject) =>
+        getStats
+            ? getStats(path, (err, stats) =>
+                isDirectory(stats)
+                    ? resolve(Right(true))
+                    : isErrNotExists(err)
+                        ? resolve(Right(false))
+                        : reject(Left(err))
+            )
+            : reject(Left(new Error('Invalid getStats'))));
 
 const makeDirectory = (path: PathLike) => new Promise<void>((resolve, reject) => {
     fs.mkdir(path, (err) =>
@@ -61,7 +68,7 @@ function save(config: ScreenshotsConfig, page: Page, name: string): Promise<Mayb
 
     return (screenshotDir.isNothing() || screenshotPath.isNothing())
         ? Promise.resolve(Nothing)
-        : doesDirectoryExist(screenshotDir.extract())
+        : doesDirectoryExist(fs.stat, screenshotDir.extract())
             .then(exists => exists
                 ? Promise.resolve()
                 : makeDirectory(screenshotDir.extract())

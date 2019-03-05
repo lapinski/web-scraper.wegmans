@@ -1,4 +1,5 @@
 import { Maybe } from 'purify-ts/adts/Maybe';
+import { Either } from 'purify-ts/adts/Either';
 
 declare global {
     namespace jest {
@@ -6,6 +7,9 @@ declare global {
             toBeNothing(): Matchers<R>;
             toBeJust(expected: R): Matchers<R>;
             toBeJust(expected: R, using: (actual: R, expected: R) => boolean): Matchers<R>;
+
+            toBeRight(expected: R): Matchers<R>;
+            toBeLeft(error: R): Matchers<R>;
         }
     }
 }
@@ -45,4 +49,42 @@ expect.extend({
             };
         }
     },
+
+    toBeRight<L, R>(received: Either<L, R>, expected: Either<L, R>) {
+        const areBothRight = received.isRight() && expected.isRight();
+        const areEqual = this.equals(received.extract(), expected.extract());
+
+        const pass = areBothRight && areEqual;
+
+        if (pass) {
+            return {
+                message: () => `Expected ${received} to not equal ${expected}`,
+                pass: true,
+            };
+        } else {
+            return {
+                message: () => `Expected ${received} to be equal to ${expected}`,
+                pass: false,
+            };
+        }
+    },
+
+    toBeLeft<L, R>(received: Either<L, R>, expected: Either<L, R>) {
+        const areBothLeft = received.isLeft() && expected.isLeft();
+        const areEqual = this.equals(received.extract(), expected.extract());
+
+        const pass = areBothLeft && areEqual;
+
+        if (pass) {
+            return {
+                message: () => `Expected ${received} to not equal ${expected}`,
+                pass: true,
+            };
+        } else {
+            return {
+                message: () => `Expected ${received} to be equal to ${expected}`,
+                pass: false,
+            };
+        }
+    }
 });
