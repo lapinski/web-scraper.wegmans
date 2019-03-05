@@ -69,7 +69,7 @@ function save(config: ScreenshotsConfig, page: Page, name: string): Promise<Mayb
     return (screenshotDir.isNothing() || screenshotPath.isNothing())
         ? Promise.resolve(Nothing)
         : doesDirectoryExist(fs.stat, screenshotDir.extract())
-            .then(exists => exists
+            .then(exists => exists.isRight() && exists.extract() === true
                 ? Promise.resolve()
                 : makeDirectory(screenshotDir.extract())
                 // TODO: Add Logging (decorator?) logger.info('Screenshots Directory did not exist, creating it now.', { screenshotDir });
