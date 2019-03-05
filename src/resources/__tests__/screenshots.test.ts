@@ -10,6 +10,7 @@ import {
     save,
 } from '../screenshots';
 import { Just } from 'purify-ts/adts/Maybe';
+import { Stats } from 'fs';
 
 
 describe('Screenshots Module', () => {
@@ -73,7 +74,26 @@ describe('Screenshots Module', () => {
         });
     });
 
-    describe('isDirectory()', () => { });
+    describe('isDirectory()', () => {
+        it('should return true when given object that is directory', () => {
+            const input = <Stats>{
+                isDirectory: () => true,
+            };
+
+            expect(isDirectory(input)).toBe(true);
+        });
+
+        it('should return false when given undefined', () => {
+            expect(isDirectory(undefined)).toBeFalsy();
+        });
+
+        it('should return false when given object that is not a directory', () => {
+            const input = <Stats>{
+            isDirectory: () => false,
+            };
+            expect(isDirectory(input)).toBe(false);
+        });
+    });
 
     describe('doesDirectoryExist()', () => { });
 
