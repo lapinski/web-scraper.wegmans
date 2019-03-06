@@ -96,40 +96,68 @@ describe('Screenshots Module', () => {
     });
 
     describe('doesDirectoryExist()', () => {
-        describe('a directory that exists', () => {
-            it('should return true given valid inputs', () => {
-                const getStatsStub: GetStats = (path, callback) => {
-                    callback(undefined, <Stats>({ isDirectory: () => true }));
-                };
-                const input = <PathLike>{ };
+        it('should return true given inputs for a directory that exists', () => {
+            const getStatsStub: GetStats = (path, callback) => {
+                callback(undefined, <Stats>({ isDirectory: () => true }));
+            };
+            const input = <PathLike>{ };
 
-                return doesDirectoryExist(getStatsStub, input)
-                    .then(result => {
-                        expect(result).toBeRight(Right(true));
-                    });
-            });
-
-            // TODO: Implement success for 'isDirectory' == false
-
-            it('should return false given valid inputs', () => {
-
-                const getStatsStub: GetStats = (path, callback) => {
-                    callback(<Error><unknown>({ errno: 34 }), <Stats>({ isDirectory: () => false }));
-                };
-                const input = <PathLike>{ };
-
-                return doesDirectoryExist(getStatsStub, input)
-                    .then(result => {
-                        expect(result).toBeRight(Right(false));
-                    });
-            });
+            return doesDirectoryExist(getStatsStub, input)
+                .then(result => {
+                    expect(result).toBeRight(Right(true));
+                });
         });
 
-        describe('a directory that does not exist', () => {
-            // TODO: Implement this
+        it('should return true given inputs for a file that exists, but isn\'t a directory', () => {
+            const getStatsStub: GetStats = (path, callback) => {
+                callback(undefined, <Stats>({ isDirectory: () => false }));
+            };
+            const input = <PathLike>{ };
+
+            return doesDirectoryExist(getStatsStub, input)
+                .then(result => {
+                    expect(result).toBeRight(Right(false));
+                });
         });
 
+        it('should return false given inputs for a directory that does not exist', () => {
 
+            const getStatsStub: GetStats = (path, callback) => {
+                callback(<Error><unknown>({ errno: 34 }), undefined);
+            };
+            const input = <PathLike>{ };
+
+            return doesDirectoryExist(getStatsStub, input)
+                .then(result => {
+                    expect(result).toBeRight(Right(false));
+                });
+        });
+
+        it('should return an error given inputs that return fs.stat for that isn\'t \'NotExists\'', () => {
+
+            const getStatsStub: GetStats = (path, callback) => {
+                callback(new Error(), undefined);
+            };
+            const input = <PathLike>{ };
+
+            return doesDirectoryExist(getStatsStub, input)
+                .then(result => {
+                    expect(result.isLeft()).toBe(true);
+                    expect(result.extract()).toBeInstanceOf(Error);
+                });
+        });
+
+        it('should return an error given invalid \'GetStats\'', () => {
+
+            const input = <PathLike>{ };
+
+            return doesDirectoryExist(undefined, input)
+                .then(result => {
+                    expect(result.isLeft()).toBe(true);
+                    expect(result.extract()).toBeInstanceOf(Error);
+                    expect(result.extract()).toHaveProperty('message', 'Invalid getStats');
+                });
+        });
     });
 
     describe('save()', () => { });

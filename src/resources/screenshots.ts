@@ -31,16 +31,16 @@ export interface GetStats {
 }
 
 const doesDirectoryExist = (getStats: GetStats, path: PathLike): Promise<Either<Error, boolean>> =>
-    new Promise((resolve, reject) =>
+    new Promise((resolve) =>
         getStats
             ? getStats(path, (err, stats) =>
-                isDirectory(stats)
-                    ? resolve(Right(true))
-                    : isErrNotExists(err)
+                err // TODO: Clean this up, it's nested too deep.
+                    ? isErrNotExists(err)
                         ? resolve(Right(false))
-                        : reject(Left(err))
+                        : resolve(Left(err))
+                    : resolve(Right(isDirectory(stats)))
             )
-            : reject(Left(new Error('Invalid getStats'))));
+            : resolve(Left(new Error('Invalid getStats'))));
 
 const makeDirectory = (path: PathLike) => new Promise<void>((resolve, reject) => {
     fs.mkdir(path, (err) =>
