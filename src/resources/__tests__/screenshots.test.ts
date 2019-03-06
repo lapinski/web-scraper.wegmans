@@ -12,6 +12,8 @@ import {
 import { Just } from 'purify-ts/adts/Maybe';
 import { PathLike, Stats } from 'fs';
 import { Right } from 'purify-ts/adts/Either';
+import { ScreenshotsConfig } from '../config';
+import { Page } from 'puppeteer';
 
 describe('Screenshots Module', () => {
     describe('getScreenshotDir()', () => {
@@ -160,5 +162,18 @@ describe('Screenshots Module', () => {
         });
     });
 
-    describe('save()', () => { });
+    describe('save()', () => {
+
+        it('should resolve Nothing when disabled', () => {
+            const config = <ScreenshotsConfig>{ enabled: false };
+            const mockPage = <Page>{};
+            const name = 'some-name';
+
+            return save(config, mockPage, name)
+                .then(response => {
+                    expect(response).toBeNothing();
+                });
+        });
+
+    });
 });

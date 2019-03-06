@@ -73,6 +73,7 @@ function save(config: ScreenshotsConfig, page: Page, name: string): Promise<Mayb
                 ? Promise.resolve()
                 : makeDirectory(screenshotDir.extract())
                 // TODO: Add Logging (decorator?) logger.info('Screenshots Directory did not exist, creating it now.', { screenshotDir });
+                // TODO: Try to make use of the chain of maybe / eithers
             )
 
             // TODO: Add 'functional' logging
