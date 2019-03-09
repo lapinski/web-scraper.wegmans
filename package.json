@@ -139,6 +139,6 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "setupTestFrameworkScriptFile": "<rootDir>/tests/jest.setup.ts"
+    "setupFilesAfterEnv": ["<rootDir>/tests/jest.setup.ts"]
   }
 }
