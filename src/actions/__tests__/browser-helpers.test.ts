@@ -2,7 +2,8 @@ import { Browser, DirectNavigationOptions, Page, Response } from 'puppeteer';
 import {
     closeBrowser,
     getBrowser,
-    getChromePage, LoadEvent,
+    getChromePage,
+    LoadEvent,
     navigateToUrl,
     navigateToUrlAndWait,
 } from '../browser-helpers';
@@ -11,25 +12,59 @@ import {
 describe('puppeteer browser helpers', () => {
 
     describe('getBrowser()', () => {
-        let output: Browser;
-        beforeAll(() =>
-            getBrowser()
-                .then(browser => {
-                    output = browser;
-                })
-        );
+        describe('with no options', () => {
+            let output: Browser;
+            beforeAll(() =>
+                getBrowser()
+                    .then(browser => {
+                        output = browser;
+                    })
+            );
+            afterAll(() => output.close());
 
-        it('should resolve a browser instance', () => {
-            expect(output).toBeTruthy();
+            it('should resolve a browser instance', () => {
+                expect(output).toBeTruthy();
+            });
+
+            it('should have a chrome-like useragent', () =>
+                output
+                    .userAgent()
+                    .then(ua => {
+                        expect(ua).toContain('Chrome');
+                    })
+            );
         });
 
-        it('should have a chrome-like useragent', () =>
-            output
-                .userAgent()
-                .then(ua => {
-                    expect(ua).toContain('Chrome');
+        describe('with options', () => {
+            let browser: Browser;
+
+            beforeAll(() =>
+                getBrowser({
+                    defaultViewport: {
+                        width: 100,
+                        height: 200
+                    }
                 })
-        );
+                    .then(aBrowser => {
+                        browser = aBrowser;
+                    })
+            );
+
+            afterAll(() => browser.close());
+
+            it('should get a browser that exists', () => {
+                expect(browser).not.toBeUndefined();
+                expect(browser).not.toBeNull();
+            });
+
+            it('should create a page with the expected viewport', () =>
+                browser.newPage()
+                    .then(page => {
+                        expect(page.viewport().width).toBe(100);
+                        expect(page.viewport().height).toBe(200);
+                    })
+            );
+        });
     });
 
     describe('getChromePage()', () => {
