@@ -1,7 +1,7 @@
 language: node_js
 node_js:
     - '10'
-    - '11'
+    - '11.10' # Node 11.11 introduced an error w/ Jest 23.... ts-jest only supports jest 23, not jest 24 (where the node issue was addressed)
 cache: npm
 env:
     global:
