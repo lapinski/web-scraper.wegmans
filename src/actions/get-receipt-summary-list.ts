@@ -73,15 +73,26 @@ const extractReceiptSummaryFromRow = R.curry((
     url: extractHref(pom.url, row),
 }));
 
+const extractOrDefault = <T>(aMaybe: Maybe<T>, aDefaultValue: T) =>
+    aMaybe
+        ? aMaybe.orDefault(aDefaultValue)
+        : aDefaultValue;
+
+
 const extractReceiptSummaryFromMaybe = (input: SanitizedReceiptSummary): ReceiptSummary =>
     ({
-        date: R.prop('date', input).extract(),
-        postalAddress: {
-            street: input.postalAddress.street.extract(),
-            town: input.postalAddress.town.extract(),
-        },
-        amount: R.prop('amount', input).extract(),
-        url: R.prop('url', input).extract(),
+        date: extractOrDefault(R.prop('date', input), undefined),
+        postalAddress: R.prop('postalAddress')
+            ? {
+                street: extractOrDefault(R.path(['postalAddress', 'street'], input), undefined),
+                town: extractOrDefault(R.path(['postalAddress', 'town'], input), undefined),
+            }
+            : {
+                street: undefined,
+                town: undefined,
+            },
+        amount: extractOrDefault(R.prop('amount', input), undefined),
+        url: extractOrDefault(R.prop('url', input), undefined),
     });
 
 const parseRows = (pom: ReceiptSummaryRowSelectors, input: Cheerio): Maybe<ReceiptSummary[]> => R.pipe(
