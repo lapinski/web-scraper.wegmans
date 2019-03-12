@@ -221,15 +221,15 @@ describe('get-receipt-list action', () => {
             url: '#url',
         };
 
-        const inputHtml = '<div>' +
+        describe('when given valid inputs', () => {
+            const inputHtml = '<div>' +
                 '<div id="amount">1234.5</div>' +
                 '<div id="date">Jan. 02, 1234 01:02am</div>' +
                 '<div id="street">1234 Main St.</div>' +
                 '<div id="town">Some Town</div>' +
                 '<a id="url" href="https://some.url">https://some.url</a>' +
-            '</div>';
+                '</div>';
 
-        describe('when given valid inputs', () => {
             let output: SanitizedReceiptSummary;
             beforeAll(() => {
                 const doc = cheerio.load(inputHtml);
@@ -269,10 +269,6 @@ describe('get-receipt-list action', () => {
             it('should return an object with the expected url', () => {
                 expect(output.url).toBeJust(Just('https://some.url'));
             });
-        });
-
-        describe('when given invalid inputs', () => {
-
         });
     });
 
