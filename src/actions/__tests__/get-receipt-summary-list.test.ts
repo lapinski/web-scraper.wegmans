@@ -1,11 +1,13 @@
 import moment from 'moment';
+import cheerio from 'cheerio';
+import { Just, Nothing } from 'purify-ts/adts/Maybe';
 import {
-    extractReceiptSummaryFromMaybe,
+    extractReceiptSummaryFromMaybe, extractReceiptSummaryFromRow,
     isValidReceiptSummary,
     ReceiptSummary,
     SanitizedReceiptSummary,
 } from '../get-receipt-summary-list';
-import { Just, Nothing } from 'purify-ts/adts/Maybe';
+import { ReceiptSummaryRowSelectors } from '../../page-objects/my-receipts.page';
 
 describe('get-receipt-list action', () => {
 
@@ -208,9 +210,64 @@ describe('get-receipt-list action', () => {
     });
 
     describe('extractReceiptSummaryFromRow()', () => {
-        describe('when given valid inputs', () => {
-            beforeAll(() => {
 
+        const pom = <ReceiptSummaryRowSelectors>{
+            amount: '#amount',
+            date: '#date',
+            postalAddress: {
+                street: '#street',
+                town: '#town'
+            },
+            url: '#url',
+        };
+
+        const inputHtml = '<div>' +
+                '<div id="amount">1234.5</div>' +
+                '<div id="date">Jan. 02, 1234 01:02am</div>' +
+                '<div id="street">1234 Main St.</div>' +
+                '<div id="town">Some Town</div>' +
+                '<a id="url" href="https://some.url">https://some.url</a>' +
+            '</div>';
+
+        describe('when given valid inputs', () => {
+            let output: SanitizedReceiptSummary;
+            beforeAll(() => {
+                const doc = cheerio.load(inputHtml);
+                const input = doc('div');
+
+                output = extractReceiptSummaryFromRow(pom, input);
+            });
+
+            it('should return a valid object', () => {
+                expect(output).not.toBeNull();
+                expect(output).not.toBeUndefined();
+            });
+
+            it('should return an object with the expected amount', () => {
+                expect(output.amount).toBeJust(Just(1234.5));
+            });
+
+            it('should return an object with the expected date', () => {
+                expect(output.date).not.toBeNothing();
+                expect(output.date.extract().valueOf())
+                    .toBe(moment('1234-01-02 01:02').valueOf());
+            });
+
+            it('should return an object with a valid postalAddress obj', () => {
+                expect(output.postalAddress).not.toBeNull();
+                expect(output.postalAddress).not.toBeUndefined();
+            });
+
+            it('should return an object with the expected street', () => {
+                expect(output.postalAddress.street).toBeJust(Just('1234 Main St.'));
+            });
+
+            it('should return an object with the expected town', () => {
+                expect(output.postalAddress.town).toBeJust(Just('Some Town'));
+            });
+
+            it('should return an object with the expected url', () => {
+                expect(output.url).toBeJust(Just('https://some.url'));
             });
         });
 

@@ -57,21 +57,17 @@ const isValidReceiptSummary = (input: SanitizedReceiptSummary): boolean =>
 
 const extractReceiptSummaryFromRow = R.curry((
     pom: ReceiptSummaryRowSelectors,
-    row: Cheerio): SanitizedReceiptSummary => ({
-    amount: extractFloat(pom.amount, row),
-    date: extractDate(pom.date, row),
-    postalAddress: {
-        street: extractText(
-            pom.postalAddress.street,
-            row,
-        ),
-        town: extractText(
-            pom.postalAddress.town,
-            row,
-        ),
-    },
-    url: extractHref(pom.url, row),
-}));
+    row: Cheerio): SanitizedReceiptSummary =>
+    ({
+        amount: extractFloat(pom.amount, row),
+        date: extractDate(pom.date, row),
+        postalAddress: {
+            street: extractText(pom.postalAddress.street, row),
+            town: extractText(pom.postalAddress.town, row),
+        },
+        url: extractHref(pom.url, row),
+    })
+);
 
 const extractOrDefault = <T>(aMaybe: Maybe<T>, aDefaultValue: T) =>
     aMaybe
