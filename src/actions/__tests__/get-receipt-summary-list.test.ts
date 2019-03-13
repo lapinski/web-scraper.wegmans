@@ -1,7 +1,7 @@
 import moment from 'moment';
 import cheerio from 'cheerio';
 import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
-import {
+import getReceiptSummaryList, {
     extractReceiptSummaryFromMaybe,
     extractReceiptSummaryFromRow,
     isValidReceiptSummary,
@@ -9,7 +9,8 @@ import {
     ReceiptSummary,
     SanitizedReceiptSummary,
 } from '../get-receipt-summary-list';
-import { ReceiptSummaryRowSelectors } from '../../page-objects/my-receipts.page';
+import { MyReceiptsPageObjectModel, ReceiptSummaryRowSelectors } from '../../page-objects/my-receipts.page';
+import puppeteer, { Page } from 'puppeteer';
 
 describe('get-receipt-list action', () => {
 
@@ -31,7 +32,7 @@ describe('get-receipt-list action', () => {
         '<a class="url" href="https://some.url">https://some.url</a>' +
     '</div>';
 
-    const pom = <ReceiptSummaryRowSelectors>{
+    const rowPOM = <ReceiptSummaryRowSelectors>{
         amount: '.amount',
         date: '.date',
         postalAddress: {
@@ -39,6 +40,12 @@ describe('get-receipt-list action', () => {
             town: '.town'
         },
         url: '.url',
+    };
+
+    const pom = <MyReceiptsPageObjectModel>{
+        path: 'my-receipts-page',
+        receiptSummaryRows: '.row',
+        receiptSummary: rowPOM,
     };
 
     describe('extractReceiptSummaryFromMaybe()', () => {
@@ -230,14 +237,13 @@ describe('get-receipt-list action', () => {
     });
 
     describe('extractReceiptSummaryFromRow()', () => {
-
         describe('when given valid inputs', () => {
             let output: SanitizedReceiptSummary;
             beforeAll(() => {
                 const doc = cheerio.load(anHtmlReceiptSummary);
                 const input = doc('div');
 
-                output = extractReceiptSummaryFromRow(pom, input);
+                output = extractReceiptSummaryFromRow(rowPOM, input);
             });
 
             it('should return a valid object', () => {
@@ -275,7 +281,31 @@ describe('get-receipt-list action', () => {
     });
 
     describe('getReceiptSummaryList()', () => {
-        // TODO: Figure out how to test this method
+        describe('When given valid inputs', () => {
+            let stubInputPage: Page;
+            let output: {page: Page, receiptSummaries: Maybe<ReceiptSummary[]>};
+            beforeAll(() => {
+                const baseUrl = 'http:/some.url';
+                stubInputPage = <Page>{
+                    goto: (url, opts) => Promise.resolve(<puppeteer.Response>{}),
+                    content: () =>
+                        Promise.resolve('<div>' +
+                            anHtmlReceiptSummary +
+                        '</div>')
+                };
+
+                return getReceiptSummaryList(baseUrl, pom, stubInputPage)
+                    .then(response => {
+                        output = response;
+                    });
+            });
+
+            it('should return the same input page', () => {
+                expect(output.page).toBe(stubInputPage);
+            });
+        });
+
+        // TODO: Fleshout other test cases
     });
 
     describe('isValidReceiptSummary()', () => {
@@ -313,7 +343,9 @@ describe('get-receipt-list action', () => {
     });
 
     describe('parseMyReceiptsPage()', () => {
-        // TODO: Figure out how to test this method
+        // TODO: Create A Stub Page that returns expected HTML
+
+
     });
 
     describe('parseRows()', () => {
@@ -328,7 +360,7 @@ describe('get-receipt-list action', () => {
             beforeAll(() => {
                 const inputDoc = cheerio.load(inputHtml);
                 const input = inputDoc('.row');
-                output = parseRows(pom, input);
+                output = parseRows(rowPOM, input);
             });
 
             it('should return a just value', () => {
@@ -356,7 +388,7 @@ describe('get-receipt-list action', () => {
             beforeAll(() => {
                 const inputDoc = cheerio.load(inputHtml);
                 const input = inputDoc('.row');
-                output = parseRows(pom, input);
+                output = parseRows(rowPOM, input);
             });
 
             it('should return a just value', () => {
@@ -376,7 +408,7 @@ describe('get-receipt-list action', () => {
             beforeAll(() => {
                 const inputDoc = cheerio.load(inputHtml);
                 const input = inputDoc('.row');
-                output = parseRows(pom, input);
+                output = parseRows(rowPOM, input);
             });
 
             it('should return a just value', () => {
@@ -392,7 +424,7 @@ describe('get-receipt-list action', () => {
             let output: Maybe<ReceiptSummary[]>;
 
             beforeAll(() => {
-                output = parseRows(pom, undefined);
+                output = parseRows(rowPOM, undefined);
             });
 
             it('should return a just value', () => {
