@@ -4,7 +4,7 @@ import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import getReceiptSummaryList, {
     extractReceiptSummaryFromMaybe,
     extractReceiptSummaryFromRow,
-    isValidReceiptSummary,
+    isValidReceiptSummary, parseMyReceiptsPage,
     parseRows,
     ReceiptSummary,
     SanitizedReceiptSummary,
@@ -345,6 +345,33 @@ describe('get-receipt-list action', () => {
     describe('parseMyReceiptsPage()', () => {
         // TODO: Create A Stub Page that returns expected HTML
 
+        describe('when given valid inputs', () => {
+            let stubPage: Page;
+            let output: {page: Page, receiptSummaries: Maybe<ReceiptSummary[]>};
+
+            beforeAll(() => {
+            stubPage = <Page>{
+                content: () => Promise.resolve('<div class="row">' + anHtmlReceiptSummary + '</div>')
+            };
+
+            parseMyReceiptsPage(pom, stubPage)
+                .then(response => {
+                    output = response;
+                });
+            });
+
+            it('should return the same page as input', () => {
+                expect(output.page).toBe(stubPage);
+            });
+
+            it('should return a Just value', () => {
+                expect(output.receiptSummaries.isJust()).toBe(true);
+            });
+
+            it('should return a single row', () => {
+                expect(output.receiptSummaries.extract()).toHaveLength(1);
+            });
+        });
 
     });
 

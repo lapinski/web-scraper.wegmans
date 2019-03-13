@@ -114,9 +114,11 @@ const parseMyReceiptsPage = R.curry(
             .then(rows => ({page, receiptSummaries: parseRows(pom.receiptSummary, rows)})),
 );
 
+const getAbsoluteUrl = (baseUrl: string, pom: MyReceiptsPageObjectModel) => url.resolve(baseUrl, pom.path);
+
 const getReceiptSummaryList = R.curry(
     (baseUrl: string, pom: MyReceiptsPageObjectModel, page: Page): Promise<{page: Page, receiptSummaries: Maybe<ReceiptSummary[]>}> =>
-        navigateToUrlAndWait(url.resolve(baseUrl, pom.path), page)
+        navigateToUrlAndWait(getAbsoluteUrl(baseUrl, pom), page)
             .then(parseMyReceiptsPage(pom)),
 );
 
