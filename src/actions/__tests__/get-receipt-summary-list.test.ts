@@ -1,9 +1,11 @@
 import moment from 'moment';
 import cheerio from 'cheerio';
-import { Just, Nothing } from 'purify-ts/adts/Maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import {
-    extractReceiptSummaryFromMaybe, extractReceiptSummaryFromRow,
+    extractReceiptSummaryFromMaybe,
+    extractReceiptSummaryFromRow,
     isValidReceiptSummary,
+    parseRows,
     ReceiptSummary,
     SanitizedReceiptSummary,
 } from '../get-receipt-summary-list';
@@ -19,6 +21,24 @@ describe('get-receipt-list action', () => {
         },
         amount: Just(1),
         url: Just('anUrl'),
+    };
+
+    const anHtmlReceiptSummary = '<div>' +
+        '<div class="amount">1234.5</div>' +
+        '<div class="date">Jan. 02, 1234 01:02am</div>' +
+        '<div class="street">1234 Main St.</div>' +
+        '<div class="town">Some Town</div>' +
+        '<a class="url" href="https://some.url">https://some.url</a>' +
+    '</div>';
+
+    const pom = <ReceiptSummaryRowSelectors>{
+        amount: '.amount',
+        date: '.date',
+        postalAddress: {
+            street: '.street',
+            town: '.town'
+        },
+        url: '.url',
     };
 
     describe('extractReceiptSummaryFromMaybe()', () => {
@@ -211,28 +231,10 @@ describe('get-receipt-list action', () => {
 
     describe('extractReceiptSummaryFromRow()', () => {
 
-        const pom = <ReceiptSummaryRowSelectors>{
-            amount: '#amount',
-            date: '#date',
-            postalAddress: {
-                street: '#street',
-                town: '#town'
-            },
-            url: '#url',
-        };
-
         describe('when given valid inputs', () => {
-            const inputHtml = '<div>' +
-                '<div id="amount">1234.5</div>' +
-                '<div id="date">Jan. 02, 1234 01:02am</div>' +
-                '<div id="street">1234 Main St.</div>' +
-                '<div id="town">Some Town</div>' +
-                '<a id="url" href="https://some.url">https://some.url</a>' +
-                '</div>';
-
             let output: SanitizedReceiptSummary;
             beforeAll(() => {
-                const doc = cheerio.load(inputHtml);
+                const doc = cheerio.load(anHtmlReceiptSummary);
                 const input = doc('div');
 
                 output = extractReceiptSummaryFromRow(pom, input);
@@ -273,7 +275,7 @@ describe('get-receipt-list action', () => {
     });
 
     describe('getReceiptSummaryList()', () => {
-
+        // TODO: Figure out how to test this method
     });
 
     describe('isValidReceiptSummary()', () => {
@@ -290,31 +292,112 @@ describe('get-receipt-list action', () => {
         });
 
         it('should return false for invalid date', () => {
-
+            // TODO
         });
 
         it('should return false for invalid street', () => {
-
+            // TODO
         });
 
         it('should return false for invalid town', () => {
-
+            // TODO
         });
 
         it('should return false for invalid amount', () => {
-
+            // TODO
         });
 
         it('should return false for invalid url', () => {
-
+            // TODO
         });
     });
 
     describe('parseMyReceiptsPage()', () => {
-
+        // TODO: Figure out how to test this method
     });
 
     describe('parseRows()', () => {
+        describe('Positive Use Case', () => {
+            const inputHtml = '<div>' +
+                    '<div class="row">' +
+                        anHtmlReceiptSummary +
+                    '</div>';
+                '</div>';
+            let output: Maybe<ReceiptSummary[]>;
 
+            beforeAll(() => {
+                const inputDoc = cheerio.load(inputHtml);
+                const input = inputDoc('.row');
+                output = parseRows(pom, input);
+            });
+
+            it('should return a just value', () => {
+                expect(output.isJust()).toBe(true);
+            });
+
+            it('should return a single record', () => {
+                const value = output.extract();
+                expect(value).toHaveLength(1);
+            });
+        });
+
+        describe('when some of input is invalid', () => {
+            const inputHtml = '<div>' +
+                '<div class="row">' +
+                anHtmlReceiptSummary +
+                '</div>' +
+                '<div class="row">' +
+                anHtmlReceiptSummary +
+                '</div>' +
+                '<div class="row">Something Else</div>';
+            '</div>';
+            let output: Maybe<ReceiptSummary[]>;
+
+            beforeAll(() => {
+                const inputDoc = cheerio.load(inputHtml);
+                const input = inputDoc('.row');
+                output = parseRows(pom, input);
+            });
+
+            it('should return a just value', () => {
+                expect(output.isJust()).toBe(true);
+            });
+
+            it('should return a single record', () => {
+                const value = output.extract();
+                expect(value).toHaveLength(2);
+            });
+        });
+
+        describe('when input has no rows, but is valid html', () => {
+            const inputHtml = '<div></div>';
+            let output: Maybe<ReceiptSummary[]>;
+
+            beforeAll(() => {
+                const inputDoc = cheerio.load(inputHtml);
+                const input = inputDoc('.row');
+                output = parseRows(pom, input);
+            });
+
+            it('should return a just value', () => {
+                expect(output.isJust()).toBe(true);
+            });
+
+            it('should return an array with no elements', () => {
+                expect(output.extract()).toHaveLength(0);
+            });
+        });
+
+        describe('when input is undefined', () => {
+            let output: Maybe<ReceiptSummary[]>;
+
+            beforeAll(() => {
+                output = parseRows(pom, undefined);
+            });
+
+            it('should return a just value', () => {
+                expect(output.isNothing()).toBe(true);
+            });
+        });
     });
 });
