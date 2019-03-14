@@ -4,6 +4,9 @@ import signIn from '../../actions/sign-in';
 import SignInPage from '../../page-objects/sign-in.page';
 import { getWegmansConfig } from '../../resources/config';
 
+
+jest.setTimeout(7000);
+
 /**
  * Load up the login action and login to Wegmans.com
  * Make sure the page has loaded
@@ -13,10 +16,10 @@ describe('Login to Wegmans', () => {
     let inputPage: Page;
     let outputPage: Page;
 
-    beforeAll(() => {
+    beforeAll((done) => {
         const { baseUrl, username, password } = getWegmansConfig();
 
-        return getBrowser({ headless: true })
+        getBrowser({ headless: true })
             .then(aBrowser => {
                 browser = aBrowser;
                 return getChromePage(aBrowser);
@@ -27,8 +30,13 @@ describe('Login to Wegmans', () => {
             })
             .then(aPage => {
                 outputPage = aPage;
-                return browser.close();
-            });
+            })
+            .then(() => done());
+    });
+
+    afterAll((done) => {
+        browser.close()
+            .then(() => done());
     });
 
     it('should not have the username input present', (done) =>
@@ -40,26 +48,42 @@ describe('Login to Wegmans', () => {
             })
     );
 
-    it('should not have the password input present', (done) =>
+    it('should not have the password input present', (done) => {
+        expect(outputPage).not.toBeUndefined();
+
         outputPage
             .$(SignInPage.passwordInput)
             .then(element => {
                 expect(element).toBeNull();
                 done();
-            })
-    );
+            });
+    });
 
-    it('should not have the login button present', (done) =>
+    it('should not have the login button present', (done) => {
+        expect(outputPage).not.toBeUndefined();
+
         outputPage
             .$(SignInPage.signInButton)
             .then(element => {
                 expect(element).toBeNull();
                 done();
-            })
-    );
+            });
+    });
 
     it('should be at the expected path', () => {
+        expect(outputPage).not.toBeUndefined();
+
         const currentUrl = outputPage.url();
-        expect(currentUrl).toContain(SignInPage.path);
+        expect(currentUrl).toBe('https://www.wegmans.com/');
+    });
+
+    it('should have returned the expected cookies', (done) => {
+        expect(outputPage).not.toBeUndefined();
+
+        outputPage.cookies()
+            .then(cookies => {
+                expect(cookies).not.toBeNull();
+                done();
+            });
     });
 });
