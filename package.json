@@ -15,6 +15,7 @@
     "build": "npm run lint && npm run build-ts",
     "build-ts": "tsc",
     "test": "jest .*\\.test\\.ts",
+    "test:integration": "jest ./src/tests/integration/.*\\.test\\.ts",
     "test:coverage": "npm run test -- --collectCoverage && cat ./src/coverage/lcov.info | coveralls",
     "predb": "npm run build",
     "db": "typeorm",

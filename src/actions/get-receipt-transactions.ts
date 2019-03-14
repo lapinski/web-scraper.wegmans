@@ -1,11 +1,13 @@
-import R from 'ramda';
-import { ReceiptSummary } from './get-receipt-summary-list';
-import { Page } from 'puppeteer';
-import { navigateToUrlAndWait } from './browser-helpers';
-import * as url from 'url';
-import { ReceiptDetailPageObjectModel } from '../page-objects/receipt-detail.page';
 import { Maybe, Nothing } from 'purify-ts/adts/Maybe';
+import { Page } from 'puppeteer';
+import R from 'ramda';
+import * as url from 'url';
+
 import { extractDate, extractFloat, extractText } from './element-helpers';
+import { ReceiptSummary } from './get-receipt-summary-list';
+import { navigateToUrlAndWait } from './browser-helpers';
+import { ReceiptDetailPageObjectModel } from '../page-objects/receipt-detail.page';
+
 
 export interface Receipt {
 
@@ -91,7 +93,6 @@ const parseAndFilterReceipts = R.curry(
             Maybe.catMaybes, // list of maybes => list of values
         )(summaries));
 
-
 const getAllReceiptDetails = R.curry(
     (baseUrl: string,
     pom: ReceiptDetailPageObjectModel,
@@ -114,8 +115,14 @@ const getAllReceiptDetails = R.curry(
 
 
 export {
+    extractLane,
+    extractOperator,
+    extractPlace,
+    extractTransactions,
     getAllReceiptDetails,
     getReceiptDetails,
+    parseAndFilterReceipts,
+    parseReceiptPage,
 };
 
 export default getAllReceiptDetails;
