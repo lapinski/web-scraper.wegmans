@@ -1,20 +1,25 @@
-import { Browser, Page } from 'puppeteer';
+import { Browser, Cookie, Page } from 'puppeteer';
+import R from 'ramda';
+import jwtDecode from 'jwt-decode';
 import { getBrowser, getChromePage } from '../../actions/browser-helpers';
 import signIn from '../../actions/sign-in';
 import SignInPage from '../../page-objects/sign-in.page';
 import { getWegmansConfig } from '../../resources/config';
 
 
-jest.setTimeout(7000);
+jest.setTimeout(10000);
 
 /**
  * Load up the login action and login to Wegmans.com
  * Make sure the page has loaded
  */
 describe('Login to Wegmans', () => {
+    const getCookieByName = (name: string) => R.find(R.propEq('name', name));
+
     let browser: Browser;
     let inputPage: Page;
     let outputPage: Page;
+    let cookies: Cookie[];
 
     beforeAll((done) => {
         const { baseUrl, username, password } = getWegmansConfig();
@@ -30,6 +35,10 @@ describe('Login to Wegmans', () => {
             })
             .then(aPage => {
                 outputPage = aPage;
+                return aPage.cookies();
+            })
+            .then(pageCookies => {
+                cookies = pageCookies;
             })
             .then(() => done());
     });
@@ -77,13 +86,20 @@ describe('Login to Wegmans', () => {
         expect(currentUrl).toBe('https://www.wegmans.com/');
     });
 
-    it('should have returned the expected cookies', (done) => {
-        expect(outputPage).not.toBeUndefined();
+    it('should have returned the expected number of cookies', () => {
+        expect(cookies).toHaveLength(24);
+    });
 
-        outputPage.cookies()
-            .then(cookies => {
-                expect(cookies).not.toBeNull();
-                done();
-            });
+    it('should have the wegmans_access cookie', () => {
+        const accessCookie = getCookieByName('wegmans_access')(cookies);
+        expect(accessCookie).not.toBeUndefined();
+
+        const decodedAccessCookie = jwtDecode(R.prop('value', accessCookie));
+        expect(decodedAccessCookie)
+            .toHaveProperty('iss', 'https://idp.api.wegmans.com/');
+    });
+
+    it('should have the wegmans_refresh cookie', () => {
+        expect(getCookieByName('wegmans_refresh')(cookies)).not.toBeUndefined();
     });
 });
