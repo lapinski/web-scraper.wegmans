@@ -18,5 +18,9 @@ env:
         - secure: bU32ZuI2co5bql0HZrL7zFckqUAdjLOVFqcz6wiinjJSz/w0kGqCVRHsgXPGnYkYzxH42+GB7a4Urx6karVbj8ZQ/3tHyrPJRz1irC+lB6QDsL6D99E1Hx7Jz2fog3FrPOlHgJboC8YDmFbCgyqnmn9BKXChEKUph2+Xni44b1Fk40YR3qlnPbTrJj39164eZEiZ1UXdXpN+aimONoBWYdWGpwLerd2fsoHVlbfqog+mMCT3EVEVkSjnGwhdOyHiYVNhUnBg3xAL/xgbBOjsbtFwnBPnOewvT03iOjqrQc21sDdQwKmiB55xKtLk0xOJHKQCZgeVPyuZe0nlTLjvI0Gc4I6EYYT8REH1Er+cknpoJ7GRDT0+P03RxqSJK50Srd4bYYfJVCQ60B8rr9OpOqKmZw9HAtkk/UoWvjDtpHZ4RQ/gfOjzZd+ahKxkPUo+vZdeTMaKVLKvxI7iwmEIEX86n8lE517B1xCtXmavtv6kcbryUer1s4rM9gnwvjGLL3hAwpR5YcZrCs88hi+5GlSI0pJN7anYzvuPXwN0HBj58ehwGT9MVixyUB9SfasUwgqgcGTsZKZveW20e8z2kCxSCTf7UFSsniCRZy1JyMHCnbBLOtnRpDIuYR68YBm7g9zaiWZ5b4J7VcYXWawnqd6wMJdmlGwurmtgTfsTybs=
 install:
     - npm install
-script:
-    - npm run test:coverage
+jobs:
+    include:
+        - stage: Unit Tests & Coverage
+        script: npm run test:coverage
+        - stage: Integration Tests
+        script: npm run test:integration
