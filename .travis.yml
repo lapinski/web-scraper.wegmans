@@ -20,7 +20,8 @@ install:
     - npm install
 jobs:
     include:
-        - stage: Unit Tests & Coverage
-        script: npm run test:coverage
-        - stage: Integration Tests
-        script: npm run test:integration
+        - stage: "Tests"
+          name: "Unit Tests and Coverage"
+          script: npm run test:coverage
+        - name: "Integration Tests"
+          script: npm run test:integration

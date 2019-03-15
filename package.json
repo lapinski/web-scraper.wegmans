@@ -85,10 +85,6 @@
     "*.json": [
       "npx eclint fix ./*.json",
       "git add"
-    ],
-    "*.yml": [
-      "npx eclint fix ./*.yml",
-      "git add"
     ]
   },
   "jest": {
