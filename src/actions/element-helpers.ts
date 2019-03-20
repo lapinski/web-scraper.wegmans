@@ -6,7 +6,15 @@ import cheerio from 'cheerio';
 const extractDate = (selector: string, ctx: Cheerio): Maybe<Moment> =>
     R.pipe(
         extractText(selector),
+        text => {
+            console.log(`Extracted Date: ${text}`);
+            return text;
+        },
         parseDate,
+        date => {
+            console.log(`Parsed Date: ${date.toString()}`);
+            return date;
+        }
     )(ctx);
 
 const extractFloat = (selector: string, ctx: Cheerio) =>
@@ -32,7 +40,7 @@ const extractText = R.curry(
 
 const parseDate = (dateString: Maybe<string>): Maybe<Moment> =>
     dateString
-        .chain(value => Just(moment(value, 'MMM. DD, YYYY hh:mma', true)))
+        .chain(value => Just(moment(value, 'MMM. DD, YYYY hh:mma')))
         .chain(value => value.isValid() ? Just(value) : Nothing);
 
 const parseText = R.curry(

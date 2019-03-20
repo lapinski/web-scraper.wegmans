@@ -119,7 +119,8 @@ const getAbsoluteUrl = (baseUrl: string, pom: MyReceiptsPageObjectModel) => url.
 const getReceiptSummaryList = R.curry(
     (baseUrl: string, pom: MyReceiptsPageObjectModel, page: Page): Promise<{page: Page, receiptSummaries: Maybe<ReceiptSummary[]>}> =>
         navigateToUrlAndWait(getAbsoluteUrl(baseUrl, pom), page)
-            .then(parseMyReceiptsPage(pom)),
+            .then(p => p)
+            .then(page => parseMyReceiptsPage(pom, page)),
 );
 
 export {
