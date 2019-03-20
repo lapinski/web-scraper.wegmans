@@ -6,15 +6,7 @@ import cheerio from 'cheerio';
 const extractDate = (selector: string, ctx: Cheerio): Maybe<Moment> =>
     R.pipe(
         extractText(selector),
-        text => {
-            console.log(`Extracted Date: ${text}`);
-            return text;
-        },
         parseDate,
-        date => {
-            console.log(`Parsed Date: ${date.toString()}`);
-            return date;
-        }
     )(ctx);
 
 const extractFloat = (selector: string, ctx: Cheerio) =>
