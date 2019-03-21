@@ -62,13 +62,14 @@ describe('puppeteer browser helpers', () => {
                 expect(browser).not.toBeNull();
             });
 
-            it('should create a page with the expected viewport', () =>
+            it('should create a page with the expected viewport', (done) => {
                 browser.newPage()
                     .then(page => {
                         expect(page.viewport().width).toBe(100);
                         expect(page.viewport().height).toBe(200);
                     })
-            );
+                    .then(() => done());
+            });
         });
     });
 
