@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="127" failures="0" time="6.672">
+  <testsuite name="puppeteer browser helpers" errors="0" failures="0" skipped="0" timestamp="2019-03-21T01:34:06" time="4.583" tests="11">
+    <testcase classname="puppeteer browser helpers getBrowser() with no options should resolve a browser instance" name="puppeteer browser helpers getBrowser() with no options should resolve a browser instance" time="0.002">
+    </testcase>
+    <testcase classname="puppeteer browser helpers getBrowser() with no options should have a chrome-like useragent" name="puppeteer browser helpers getBrowser() with no options should have a chrome-like useragent" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer browser helpers getBrowser() with options should get a browser that exists" name="puppeteer browser helpers getBrowser() with options should get a browser that exists" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer browser helpers getBrowser() with options should create a page with the expected viewport" name="puppeteer browser helpers getBrowser() with options should create a page with the expected viewport" time="0.128">
+    </testcase>
+    <testcase classname="puppeteer browser helpers getChromePage() should resolve a Page instance" name="puppeteer browser helpers getChromePage() should resolve a Page instance" time="0">
+    </testcase>
+    <testcase classname="puppeteer browser helpers getChromePage() should resolve a Page at a Bogus Url" name="puppeteer browser helpers getChromePage() should resolve a Page at a Bogus Url" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer browser helpers Navigation Functions navigateToUrl() should return the same input page context" name="puppeteer browser helpers Navigation Functions navigateToUrl() should return the same input page context" time="0">
+    </testcase>
+    <testcase classname="puppeteer browser helpers Navigation Functions navigateToUrl() should return a page at the specified url" name="puppeteer browser helpers Navigation Functions navigateToUrl() should return a page at the specified url" time="0">
+    </testcase>
+    <testcase classname="puppeteer browser helpers Navigation Functions navigateToUrlAndWait() should return the same input page context" name="puppeteer browser helpers Navigation Functions navigateToUrlAndWait() should return the same input page context" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer browser helpers Navigation Functions navigateToUrlAndWait() should return a page at the specified url" name="puppeteer browser helpers Navigation Functions navigateToUrlAndWait() should return a page at the specified url" time="0">
+    </testcase>
+    <testcase classname="puppeteer browser helpers closeBrowser() should exhibit the side effect of closing the page&apos;s browser" name="puppeteer browser helpers closeBrowser() should exhibit the side effect of closing the page&apos;s browser" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="get-receipt-list action" errors="0" failures="0" skipped="0" timestamp="2019-03-21T01:34:11" time="0.736" tests="39">
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given valid inputs should have a date property" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given valid inputs should have a date property" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given valid inputs should have a postalAddress property" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given valid inputs should have a postalAddress property" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given valid inputs should have a postalAddress.street property" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given valid inputs should have a postalAddress.street property" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given valid inputs should have a postalAddress.town property" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given valid inputs should have a postalAddress.town property" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given valid inputs should have a amount property" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given valid inputs should have a amount property" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given valid inputs should have a url property" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given valid inputs should have a url property" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a &apos;Nothing&apos; date property should have the date property as undefined" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a &apos;Nothing&apos; date property should have the date property as undefined" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a missing date property should have the date property as undefined" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a missing date property should have the date property as undefined" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a missing postalAddress property should have the stub property obj with undefined value for street" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a missing postalAddress property should have the stub property obj with undefined value for street" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a missing postalAddress property should have the stub postalAddress obj, with undefined value for town" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a missing postalAddress property should have the stub postalAddress obj, with undefined value for town" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a undefined postalAddress.street property should have the postalAddress.street property as undefined" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a undefined postalAddress.street property should have the postalAddress.street property as undefined" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a missing postalAddress.town property should have the property as undefined" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a missing postalAddress.town property should have the property as undefined" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a missing amount property should have the property as undefined" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a missing amount property should have the property as undefined" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a missing url property should have the property as undefined" name="get-receipt-list action extractReceiptSummaryFromMaybe() when given invalid inputs when given a missing url property should have the property as undefined" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return a valid object" name="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return a valid object" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return an object with the expected amount" name="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return an object with the expected amount" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return an object with the expected date" name="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return an object with the expected date" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return an object with a valid postalAddress obj" name="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return an object with a valid postalAddress obj" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return an object with the expected street" name="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return an object with the expected street" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return an object with the expected town" name="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return an object with the expected town" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return an object with the expected url" name="get-receipt-list action extractReceiptSummaryFromRow() when given valid inputs should return an object with the expected url" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action getReceiptSummaryList() When given valid inputs should return the same input page" name="get-receipt-list action getReceiptSummaryList() When given valid inputs should return the same input page" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action isValidReceiptSummary() should return true for valid inputs" name="get-receipt-list action isValidReceiptSummary() should return true for valid inputs" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action isValidReceiptSummary() should return false for invalid obj" name="get-receipt-list action isValidReceiptSummary() should return false for invalid obj" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action isValidReceiptSummary() should return false for invalid date" name="get-receipt-list action isValidReceiptSummary() should return false for invalid date" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action isValidReceiptSummary() should return false for invalid street" name="get-receipt-list action isValidReceiptSummary() should return false for invalid street" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action isValidReceiptSummary() should return false for invalid town" name="get-receipt-list action isValidReceiptSummary() should return false for invalid town" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action isValidReceiptSummary() should return false for invalid amount" name="get-receipt-list action isValidReceiptSummary() should return false for invalid amount" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action isValidReceiptSummary() should return false for invalid url" name="get-receipt-list action isValidReceiptSummary() should return false for invalid url" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action parseMyReceiptsPage() when given valid inputs should return the same page as input" name="get-receipt-list action parseMyReceiptsPage() when given valid inputs should return the same page as input" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action parseMyReceiptsPage() when given valid inputs should return a Just value" name="get-receipt-list action parseMyReceiptsPage() when given valid inputs should return a Just value" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action parseMyReceiptsPage() when given valid inputs should return a single row" name="get-receipt-list action parseMyReceiptsPage() when given valid inputs should return a single row" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action parseRows() Positive Use Case should return a just value" name="get-receipt-list action parseRows() Positive Use Case should return a just value" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action parseRows() Positive Use Case should return a single record" name="get-receipt-list action parseRows() Positive Use Case should return a single record" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action parseRows() when some of input is invalid should return a just value" name="get-receipt-list action parseRows() when some of input is invalid should return a just value" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action parseRows() when some of input is invalid should return a single record" name="get-receipt-list action parseRows() when some of input is invalid should return a single record" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action parseRows() when input has no rows, but is valid html should return a just value" name="get-receipt-list action parseRows() when input has no rows, but is valid html should return a just value" time="0">
+    </testcase>
+    <testcase classname="get-receipt-list action parseRows() when input has no rows, but is valid html should return an array with no elements" name="get-receipt-list action parseRows() when input has no rows, but is valid html should return an array with no elements" time="0.001">
+    </testcase>
+    <testcase classname="get-receipt-list action parseRows() when input is undefined should return a just value" name="get-receipt-list action parseRows() when input is undefined should return a just value" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="puppeteer element helpers" errors="0" failures="0" skipped="0" timestamp="2019-03-21T01:34:12" time="0.189" tests="37">
+    <testcase classname="puppeteer element helpers extractDate() when given valid input should return a valid date" name="puppeteer element helpers extractDate() when given valid input should return a valid date" time="0.004">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractDate() when given null input should return a Nothing" name="puppeteer element helpers extractDate() when given null input should return a Nothing" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractDate() when given an invalid date should return a Nothing" name="puppeteer element helpers extractDate() when given an invalid date should return a Nothing" time="0.002">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractFloat() when given undefined selector and context should return Nothing" name="puppeteer element helpers extractFloat() when given undefined selector and context should return Nothing" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractFloat() when given undefined selector and valid context should return Nothing" name="puppeteer element helpers extractFloat() when given undefined selector and valid context should return Nothing" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractFloat() when given a valid selector and undefined context should return Nothing" name="puppeteer element helpers extractFloat() when given a valid selector and undefined context should return Nothing" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractFloat() when given valid inputs should return Just()" name="puppeteer element helpers extractFloat() when given valid inputs should return Just()" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractFloat() when given valid inputs should return Just(number)" name="puppeteer element helpers extractFloat() when given valid inputs should return Just(number)" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractFloat() when given valid inputs  with newline should return Just()" name="puppeteer element helpers extractFloat() when given valid inputs  with newline should return Just()" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractFloat() when given valid inputs  with newline should return Just(number)" name="puppeteer element helpers extractFloat() when given valid inputs  with newline should return Just(number)" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractFloat() when given valid context and invalid selector should return nothing" name="puppeteer element helpers extractFloat() when given valid context and invalid selector should return nothing" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractFloat() when given invalid inputs should return nothing" name="puppeteer element helpers extractFloat() when given invalid inputs should return nothing" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractHref() when given valid selector and context should return a valid url" name="puppeteer element helpers extractHref() when given valid selector and context should return a valid url" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractHref() when given an invalid selector and valid context should return Nothing" name="puppeteer element helpers extractHref() when given an invalid selector and valid context should return Nothing" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractHref() when given an invalid selector and valid context should return Nothing" name="puppeteer element helpers extractHref() when given an invalid selector and valid context should return Nothing" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractHref() when given a valid selector and invalid context should return Nothing" name="puppeteer element helpers extractHref() when given a valid selector and invalid context should return Nothing" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractHref() when given an undefined selector and valid context should return Nothing" name="puppeteer element helpers extractHref() when given an undefined selector and valid context should return Nothing" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractHref() when given a valid selector and undefined context should return Nothing" name="puppeteer element helpers extractHref() when given a valid selector and undefined context should return Nothing" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractHref() when given undefined inputs should return Nothing" name="puppeteer element helpers extractHref() when given undefined inputs should return Nothing" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractText() should extract text content from valid input" name="puppeteer element helpers extractText() should extract text content from valid input" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractText() should return undefined from invalid input" name="puppeteer element helpers extractText() should return undefined from invalid input" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers extractText() should return undefined for undefined input" name="puppeteer element helpers extractText() should return undefined for undefined input" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers parseDate() When input is valid should return something" name="puppeteer element helpers parseDate() When input is valid should return something" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers parseDate() When input is valid should equal the expected date" name="puppeteer element helpers parseDate() When input is valid should equal the expected date" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers parseDate() When input is valid should return the correct time" name="puppeteer element helpers parseDate() When input is valid should return the correct time" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers parseDate() When input is null should return nothing" name="puppeteer element helpers parseDate() When input is null should return nothing" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers parseDate() When input is invalid should return nothing" name="puppeteer element helpers parseDate() When input is invalid should return nothing" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers parseText() should extract text content from valid input" name="puppeteer element helpers parseText() should extract text content from valid input" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers parseText() should return Nothing from invalid input (no text on element)" name="puppeteer element helpers parseText() should return Nothing from invalid input (no text on element)" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers parseText() should return Nothing for undefined input (selector)" name="puppeteer element helpers parseText() should return Nothing for undefined input (selector)" time="0.001">
+    </testcase>
+    <testcase classname="puppeteer element helpers parseText() should return undefined for undefined input (context)" name="puppeteer element helpers parseText() should return undefined for undefined input (context)" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers parseText() should return undefined for undefined input (both)" name="puppeteer element helpers parseText() should return undefined for undefined input (both)" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers removeNewline() should remove a newline from input" name="puppeteer element helpers removeNewline() should remove a newline from input" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers removeNewline() should remove a carriage return from input" name="puppeteer element helpers removeNewline() should remove a carriage return from input" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers removeNewline() should remove a carriage return and newline from input" name="puppeteer element helpers removeNewline() should remove a carriage return and newline from input" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers removeNewline() should remove all newlines from input" name="puppeteer element helpers removeNewline() should remove all newlines from input" time="0">
+    </testcase>
+    <testcase classname="puppeteer element helpers removeNewline() should return empty string, when input is Nothing" name="puppeteer element helpers removeNewline() should return empty string, when input is Nothing" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Sign In Action" errors="0" failures="0" skipped="0" timestamp="2019-03-21T01:34:12" time="0.183" tests="10">
+    <testcase classname="Sign In Action fillSignInForm() should have typed username" name="Sign In Action fillSignInForm() should have typed username" time="0.002">
+    </testcase>
+    <testcase classname="Sign In Action fillSignInForm() should have typed password" name="Sign In Action fillSignInForm() should have typed password" time="0">
+    </testcase>
+    <testcase classname="Sign In Action fillSignInForm() should have returned the original page" name="Sign In Action fillSignInForm() should have returned the original page" time="0">
+    </testcase>
+    <testcase classname="Sign In Action submitSignInForm() should clicked Submit Button" name="Sign In Action submitSignInForm() should clicked Submit Button" time="0">
+    </testcase>
+    <testcase classname="Sign In Action submitSignInForm() should return the same page" name="Sign In Action submitSignInForm() should return the same page" time="0">
+    </testcase>
+    <testcase classname="Sign In Action signIn() should navigate to the correct url" name="Sign In Action signIn() should navigate to the correct url" time="0">
+    </testcase>
+    <testcase classname="Sign In Action signIn() should type the username with the correct selector" name="Sign In Action signIn() should type the username with the correct selector" time="0">
+    </testcase>
+    <testcase classname="Sign In Action signIn() should type the password with the correct selector" name="Sign In Action signIn() should type the password with the correct selector" time="0.001">
+    </testcase>
+    <testcase classname="Sign In Action signIn() should clicked Submit Button with the correct selector" name="Sign In Action signIn() should clicked Submit Button with the correct selector" time="0">
+    </testcase>
+    <testcase classname="Sign In Action signIn() should return the same page" name="Sign In Action signIn() should return the same page" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Screenshots Module" errors="0" failures="0" skipped="0" timestamp="2019-03-21T01:34:12" time="0.289" tests="22">
+    <testcase classname="Screenshots Module getScreenshotDir() combines valid strings" name="Screenshots Module getScreenshotDir() combines valid strings" time="0.023">
+    </testcase>
+    <testcase classname="Screenshots Module getScreenshotDir() should return nothing for invalid inputs" name="Screenshots Module getScreenshotDir() should return nothing for invalid inputs" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module getScreenshotPath() should create a valid path for an image, given valid inputs" name="Screenshots Module getScreenshotPath() should create a valid path for an image, given valid inputs" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module getScreenshotPath() should return a valid path for empty dir and a valid name" name="Screenshots Module getScreenshotPath() should return a valid path for empty dir and a valid name" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module getScreenshotPath() should return nothing for empty inputs" name="Screenshots Module getScreenshotPath() should return nothing for empty inputs" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module getScreenshotPath() should return nothing for undefined inputs" name="Screenshots Module getScreenshotPath() should return nothing for undefined inputs" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module isErrNotExists() should return true for valid &apos;Error Not Exists&apos;" name="Screenshots Module isErrNotExists() should return true for valid &apos;Error Not Exists&apos;" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module isErrNotExists() should return false for valid object, wrong code" name="Screenshots Module isErrNotExists() should return false for valid object, wrong code" time="0.001">
+    </testcase>
+    <testcase classname="Screenshots Module isErrNotExists() should return false for valid object, missing prop" name="Screenshots Module isErrNotExists() should return false for valid object, missing prop" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module isErrNotExists() should return false for undefined" name="Screenshots Module isErrNotExists() should return false for undefined" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module isDirectory() should return true when given object that is directory" name="Screenshots Module isDirectory() should return true when given object that is directory" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module isDirectory() should return false when given undefined" name="Screenshots Module isDirectory() should return false when given undefined" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module isDirectory() should return false when given object that is not a directory" name="Screenshots Module isDirectory() should return false when given object that is not a directory" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module doesDirectoryExist() should return true given inputs for a directory that exists" name="Screenshots Module doesDirectoryExist() should return true given inputs for a directory that exists" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module doesDirectoryExist() should return true given inputs for a file that exists, but isn&apos;t a directory" name="Screenshots Module doesDirectoryExist() should return true given inputs for a file that exists, but isn&apos;t a directory" time="0.001">
+    </testcase>
+    <testcase classname="Screenshots Module doesDirectoryExist() should return false given inputs for a directory that does not exist" name="Screenshots Module doesDirectoryExist() should return false given inputs for a directory that does not exist" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module doesDirectoryExist() should return an error given inputs that return fs.stat for that isn&apos;t &apos;NotExists&apos;" name="Screenshots Module doesDirectoryExist() should return an error given inputs that return fs.stat for that isn&apos;t &apos;NotExists&apos;" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module doesDirectoryExist() should return an error given invalid &apos;GetStats&apos;" name="Screenshots Module doesDirectoryExist() should return an error given invalid &apos;GetStats&apos;" time="0.001">
+    </testcase>
+    <testcase classname="Screenshots Module save() should resolve Nothing when disabled" name="Screenshots Module save() should resolve Nothing when disabled" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module save() should resolve the screenshotPath when enabled" name="Screenshots Module save() should resolve the screenshotPath when enabled" time="0">
+    </testcase>
+    <testcase classname="Screenshots Module save() when fs.mkdir fails should resolve Nothing" name="Screenshots Module save() when fs.mkdir fails should resolve Nothing" time="0.001">
+    </testcase>
+    <testcase classname="Screenshots Module save() when getScreenshotDir fails should resolve Nothing" name="Screenshots Module save() when getScreenshotDir fails should resolve Nothing" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Logger Module" errors="0" failures="0" skipped="0" timestamp="2019-03-21T01:34:12" time="0.213" tests="3">
+    <testcase classname="Logger Module getConsoleTransport() should create a TransportStream object" name="Logger Module getConsoleTransport() should create a TransportStream object" time="0.001">
+    </testcase>
+    <testcase classname="Logger Module getConsoleTransport() should have a name of console" name="Logger Module getConsoleTransport() should have a name of console" time="0">
+    </testcase>
+    <testcase classname="Logger Module getConsoleTransport() should create an instance of ConsoleTransport" name="Logger Module getConsoleTransport() should create an instance of ConsoleTransport" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="save-transactions-to-db" errors="0" failures="0" skipped="1" timestamp="2019-03-21T01:34:13" time="0.048" tests="1">
+    <testcase classname="save-transactions-to-db placeholder" name="save-transactions-to-db placeholder" time="0">
+      <skipped/>
+    </testcase>
+  </testsuite>
+  <testsuite name="get-receipt-transactions" errors="0" failures="0" skipped="1" timestamp="2019-03-21T01:34:13" time="0.044" tests="1">
+    <testcase classname="get-receipt-transactions placeholder" name="get-receipt-transactions placeholder" time="0">
+      <skipped/>
+    </testcase>
+  </testsuite>
+  <testsuite name="save-receipts-to-db" errors="0" failures="0" skipped="1" timestamp="2019-03-21T01:34:13" time="0.045" tests="1">
+    <testcase classname="save-receipts-to-db placeholder" name="save-receipts-to-db placeholder" time="0">
+      <skipped/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Config Module" errors="0" failures="0" skipped="1" timestamp="2019-03-21T01:34:13" time="0.048" tests="1">
+    <testcase classname="Config Module placeholder" name="Config Module placeholder" time="0">
+      <skipped/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Database Module" errors="0" failures="0" skipped="1" timestamp="2019-03-21T01:34:13" time="0.042" tests="1">
+    <testcase classname="Database Module placeholder" name="Database Module placeholder" time="0">
+      <skipped/>
+    </testcase>
+  </testsuite>
+</testsuites>
