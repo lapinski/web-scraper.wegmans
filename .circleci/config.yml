@@ -17,6 +17,8 @@ jobs:
                 key: v1-dependencies0{{ checksum "package.json" }}
                 paths:
                     - node_modules
-            - run: npm run test:ci
-                  environment:
+            - run:
+                name: Run Unit Tests
+                command: npm run test:ci
+                environment:
                     JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
