@@ -8,6 +8,10 @@ import {
     navigateToUrlAndWait,
 } from '../browser-helpers';
 
+const chromiumArgs = [
+    '–no-sandbox',
+    '–disable-setuid-sandbox'
+];
 
 describe('puppeteer browser helpers', () => {
 
@@ -15,7 +19,7 @@ describe('puppeteer browser helpers', () => {
         describe('with no options', () => {
             let output: Browser;
             beforeAll(() =>
-                getBrowser()
+                getBrowser({ args: chromiumArgs })
                     .then(browser => {
                         output = browser;
                     })
@@ -40,6 +44,7 @@ describe('puppeteer browser helpers', () => {
 
             beforeAll(() =>
                 getBrowser({
+                    args: chromiumArgs,
                     defaultViewport: {
                         width: 100,
                         height: 200
