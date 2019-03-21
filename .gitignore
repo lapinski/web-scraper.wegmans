@@ -1,3 +1,6 @@
+# CircleCI
+test-results/
+
 # Terraform
 .terraform/
 *.tfstate

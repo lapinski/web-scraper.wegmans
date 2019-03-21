@@ -23,4 +23,6 @@ jobs:
                 name: Run Unit Tests
                 command: npm run test:ci
                 environment:
-                    JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
+                    JEST_JUNIT_OUTPUT: "test-reports/junit/results.xml"
+            - store_test_results:
+                  path: test-reports
