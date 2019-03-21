@@ -43,7 +43,7 @@ describe('Navigate to MyReceipts Page', () => {
 
     it('should return something', () => {
         expect(output.isJust()).toBe(true);
-        expect(output.extract()).toHaveLength(10);
+        expect(output.extract()).toHaveLength(34);
     });
 
     it.skip('I\'ll write some tests later', () => {
