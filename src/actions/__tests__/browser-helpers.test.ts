@@ -9,8 +9,8 @@ import {
 } from '../browser-helpers';
 
 const chromiumArgs = [
-    '–no-sandbox',
-    '–disable-setuid-sandbox'
+    '--no-sandbox',
+    '--disable-setuid-sandbox'
 ];
 
 describe('puppeteer browser helpers', () => {
@@ -24,7 +24,7 @@ describe('puppeteer browser helpers', () => {
                         output = browser;
                     })
             );
-            afterAll(() => output.close());
+            afterAll((done) => output.close().then(() => done()));
 
             it('should resolve a browser instance', () => {
                 expect(output).toBeTruthy();
@@ -55,7 +55,7 @@ describe('puppeteer browser helpers', () => {
                     })
             );
 
-            afterAll(() => browser.close());
+            afterAll((done) => browser.close().then(() => done()));
 
             it('should get a browser that exists', () => {
                 expect(browser).not.toBeUndefined();
@@ -67,7 +67,9 @@ describe('puppeteer browser helpers', () => {
                     .then(page => {
                         expect(page.viewport().width).toBe(100);
                         expect(page.viewport().height).toBe(200);
+                        return page;
                     })
+                    .then(page => page.close())
                     .then(() => done());
             });
         });
