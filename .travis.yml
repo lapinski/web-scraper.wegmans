@@ -2,7 +2,8 @@ language: node_js
 node_js:
     - '10'
     - '11.10' # Node 11.11 introduced an error w/ Jest 23.... ts-jest only supports jest 23, not jest 24 (where the node issue was addressed)
-cache: npm
+cache:
+    - npm
 env:
     global:
         - TYPEORM_HOST=localhost
@@ -21,7 +22,13 @@ install:
 jobs:
     include:
         - stage: "Tests"
+          node_js: 11.10
           name: "Unit Tests and Coverage"
           script: npm run test:coverage
+          env:
+              - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
         - name: "Integration Tests"
+          node_js: 11.10
           script: npm run test:integration
+          env:
+              - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
