@@ -5,7 +5,7 @@ import { getBrowser, getChromePage } from '../../actions/browser-helpers';
 import signIn from '../../actions/sign-in';
 import SignInPage from '../../page-objects/sign-in.page';
 import { getWegmansConfig } from '../../resources/config';
-
+import { args } from '../chromium-args';
 
 jest.setTimeout(10000);
 
@@ -24,7 +24,7 @@ describe('Login to Wegmans', () => {
     beforeAll((done) => {
         const { baseUrl, username, password } = getWegmansConfig();
 
-        getBrowser({ headless: true })
+        getBrowser({ headless: true, args })
             .then(aBrowser => {
                 browser = aBrowser;
                 return getChromePage(aBrowser);

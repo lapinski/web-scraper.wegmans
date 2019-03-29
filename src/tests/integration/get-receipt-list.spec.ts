@@ -5,6 +5,7 @@ import signIn from '../../actions/sign-in';
 import SignInPage from '../../page-objects/sign-in.page';
 import getReceiptSummaryList, { ReceiptSummary } from '../../actions/get-receipt-summary-list';
 import MyReceiptsPage from '../../page-objects/my-receipts.page';
+import { args } from '../chromium-args';
 import { Maybe } from 'purify-ts/adts/Maybe';
 
 jest.setTimeout(15000);
@@ -19,7 +20,7 @@ describe('Navigate to MyReceipts Page', () => {
     beforeAll((done) => {
         const { baseUrl, username, password } = getWegmansConfig();
 
-        getBrowser({ headless: true })
+        getBrowser({ headless: true, args })
             .then(aBrowser => {
                 browser = aBrowser;
                 return getChromePage(aBrowser);
