@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import { Receipt } from '../entities/Receipt';
+import { Receipt } from '../entities';
 import { getRepository } from '../resources/database';
 
 export default async function saveReceiptsToDatabase(receipts: any[], storeName: string): Promise<Array<Receipt>> {
