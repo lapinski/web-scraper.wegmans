@@ -10,6 +10,7 @@ import getReceiptSummaryList, {
     SanitizedReceiptSummary,
 } from '../get-receipt-summary-list';
 import { MyReceiptsPageObjectModel, ReceiptSummaryRowSelectors } from '../../page-objects/my-receipts.page';
+import { ActionResponse } from '../types';
 import puppeteer, { Page } from 'puppeteer';
 
 describe('get-receipt-list action', () => {
@@ -283,7 +284,7 @@ describe('get-receipt-list action', () => {
     describe('getReceiptSummaryList()', () => {
         describe('When given valid inputs', () => {
             let stubInputPage: Page;
-            let output: {page: Page, receiptSummaries: Maybe<ReceiptSummary[]>};
+            let output: ActionResponse<ReceiptSummary[]>;
             beforeAll(() => {
                 const baseUrl = 'http:/some.url';
                 stubInputPage = <Page>{
@@ -347,7 +348,7 @@ describe('get-receipt-list action', () => {
 
         describe('when given valid inputs', () => {
             let stubPage: Page;
-            let output: {page: Page, receiptSummaries: Maybe<ReceiptSummary[]>};
+            let output: ActionResponse<ReceiptSummary[]>;
 
             beforeAll(() => {
             stubPage = <Page>{
@@ -365,11 +366,11 @@ describe('get-receipt-list action', () => {
             });
 
             it('should return a Just value', () => {
-                expect(output.receiptSummaries.isJust()).toBe(true);
+                expect(output.result.isJust()).toBe(true);
             });
 
             it('should return a single row', () => {
-                expect(output.receiptSummaries.extract()).toHaveLength(1);
+                expect(output.result.extract()).toHaveLength(1);
             });
         });
 

@@ -15,6 +15,7 @@ import {
     MyReceiptsPageObjectModel,
     ReceiptSummaryRowSelectors,
 } from '../page-objects/my-receipts.page';
+import { ActionResponse } from './types';
 
 /**
  * A cleaned up Receipt Summary.
@@ -107,17 +108,17 @@ const parseRows = (pom: ReceiptSummaryRowSelectors, input: Cheerio): Maybe<Recei
 )(input);
 
 const parseMyReceiptsPage = R.curry(
-    (pom: MyReceiptsPageObjectModel, page: Page): Promise<{page: Page, receiptSummaries: Maybe<ReceiptSummary[]>}> =>
+    (pom: MyReceiptsPageObjectModel, page: Page): Promise<ActionResponse<ReceiptSummary[]>> =>
         page.content()
             .then(cheerio.load)
             .then($ => $(pom.receiptSummaryRows))
-            .then(rows => ({page, receiptSummaries: parseRows(pom.receiptSummary, rows)})),
+            .then(rows => ({page, result: parseRows(pom.receiptSummary, rows)})),
 );
 
 const getAbsoluteUrl = (baseUrl: string, pom: MyReceiptsPageObjectModel) => url.resolve(baseUrl, pom.path);
 
 const getReceiptSummaryList = R.curry(
-    (baseUrl: string, pom: MyReceiptsPageObjectModel, page: Page): Promise<{page: Page, receiptSummaries: Maybe<ReceiptSummary[]>}> =>
+    (baseUrl: string, pom: MyReceiptsPageObjectModel, page: Page): Promise<ActionResponse<ReceiptSummary[]>> =>
         navigateToUrlAndWait(getAbsoluteUrl(baseUrl, pom), page)
             .then(p => p)
             .then(page => parseMyReceiptsPage(pom, page)),

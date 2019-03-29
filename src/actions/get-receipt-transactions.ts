@@ -7,6 +7,7 @@ import { extractDate, extractFloat, extractText } from './element-helpers';
 import { ReceiptSummary } from './get-receipt-summary-list';
 import { navigateToUrlAndWait } from './browser-helpers';
 import { ReceiptDetailPageObjectModel } from '../page-objects/receipt-detail.page';
+import { ActionResponse } from './types';
 
 
 export interface Receipt {
@@ -98,19 +99,19 @@ const getAllReceiptDetails = R.curry(
     pom: ReceiptDetailPageObjectModel,
     page: Page,
     receiptSummaries: Maybe<ReceiptSummary[]>):
-    Promise<{ page: Page, receipts: Maybe<Receipt[]>}> =>
+    Promise<ActionResponse<Receipt[]>> =>
 
         receiptSummaries.isJust()
             ? Promise.resolve({
                 page,
-                receipts: Maybe.fromNullable(
+                result: Maybe.fromNullable(
                     parseAndFilterReceipts(
                         getReceiptDetails(baseUrl, page, pom),
                         receiptSummaries.extract()
                     )
                 )
             })
-            : Promise.resolve( { page, receipts: Nothing })
+            : Promise.resolve( { page, result: Nothing })
 );
 
 

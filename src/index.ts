@@ -1,33 +1,53 @@
 import { getWegmansConfig, isDebugEnabled } from './resources/config';
 import { getChromePage, getBrowser, closeBrowser } from './actions/browser-helpers';
 import signIn from './actions/sign-in';
-import getReceiptSummaryList from './actions/get-receipt-summary-list';
+import getReceiptSummaryList, { ReceiptSummary } from './actions/get-receipt-summary-list';
 import MyReceiptsPage  from './page-objects/my-receipts.page';
 import SignInPage from './page-objects/sign-in.page';
 import ReceiptDetailPage from './page-objects/receipt-detail.page';
 import getAllReceiptDetails, { Receipt } from './actions/get-receipt-transactions';
-import { Page } from 'puppeteer';
-import { Maybe, Nothing } from 'purify-ts/adts/Maybe';
+import { Nothing } from 'purify-ts/adts/Maybe';
+import R from 'ramda';
+import { ActionResponse } from './actions/types';
 
+const tap = R.curry(<T>(f: (input: T) => void, input: T): T => { f(input); return input; });
+const tapLogger = (message: string) => tap(() => console.log(message));
+
+// @ts-ignore
 const main = (baseUrl: string, username: string, password: string, debug: boolean = false) =>
     getBrowser({ headless: debug })
         .then(getChromePage)
+
+        .then(tapLogger('Signing In to Wegmans.com'))
+
         .then(signIn(baseUrl, SignInPage, username, password))
+
+        .then(tapLogger('DONE - SignedIn\n\n'))
 
         // Navigate to 'My Receipts' Page
         // TODO: Allow filtering of Receipts by Date (Start Date / End Date)
+        .then(tapLogger('Getting List of Receipts'))
         .then(getReceiptSummaryList(baseUrl, MyReceiptsPage))
+        .then(tapLogger('DONE'))
+
+        .then(
+            tap((content: ActionResponse<ReceiptSummary[]>) => {
+                console.log(`Receipts Returned? ${content.result.isJust()}`);
+                console.log(`Number of Receipts: ${content.result.extract().length}`);
+            })
+        )
+
 
         // TODO: For each Receipt, Navigate to its' page containing transactions
         // TODO: Parse each Receipt Page
-        .then(({ page, receiptSummaries }): Promise<{page: Page, receipts: Maybe<Receipt[]>}> =>
-            receiptSummaries.isJust()
-                ? getAllReceiptDetails(baseUrl, ReceiptDetailPage, page, receiptSummaries)
-                : Promise.resolve({ page, receipts: Nothing })
+        .then((content: ActionResponse<ReceiptSummary[]>): Promise<ActionResponse<Receipt[]>> =>
+            content.result.isJust()
+                ? getAllReceiptDetails(baseUrl, ReceiptDetailPage, content.page, content.result)
+                : Promise.resolve({ page: content.page, result: Nothing })
         )
 
-        .then(({ page, receipts }) => {
-            return page;
+        .then((content: ActionResponse<Receipt[]>) => {
+            return content.page;
         })
 
         // Close Browser
