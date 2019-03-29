@@ -8,7 +8,7 @@ import MyReceiptsPage from '../../page-objects/my-receipts.page';
 import { args } from '../chromium-args';
 import { Maybe } from 'purify-ts/adts/Maybe';
 
-jest.setTimeout(15000);
+jest.setTimeout(20000);
 
 describe('Navigate to MyReceipts Page', () => {
 

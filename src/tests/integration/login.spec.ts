@@ -7,7 +7,7 @@ import SignInPage from '../../page-objects/sign-in.page';
 import { getWegmansConfig } from '../../resources/config';
 import { args } from '../chromium-args';
 
-jest.setTimeout(10000);
+jest.setTimeout(20000);
 
 /**
  * Load up the login action and login to Wegmans.com
