@@ -31,7 +31,7 @@ describe('Navigate to MyReceipts Page', () => {
             .then(page => getReceiptSummaryList(baseUrl, MyReceiptsPage, page))
             .then(response  => {
                 outputPage = response.page;
-                output = response.receiptSummaries;
+                output = response.result;
             })
             .then(() => done());
     });
