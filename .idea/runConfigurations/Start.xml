@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Start" type="NodeJSConfigurationType" path-to-node="$USER_HOME$/.nvm/versions/node/v11.10.1/bin/node" path-to-js-file="src/index.ts" working-dir="$PROJECT_DIR$">
+    <method v="2">
+      <option name="NpmBeforeRunTask" enabled="true">
+        <package-json value="$PROJECT_DIR$/package.json" />
+        <command value="run" />
+        <scripts>
+          <script value="build" />
+        </scripts>
+        <node-interpreter value="$USER_HOME$/.nvm/versions/node/v11.10.1/bin/node" />
+        <envs />
+      </option>
+    </method>
+  </configuration>
+</component>
