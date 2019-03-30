@@ -1,4 +1,8 @@
 version: 2
+workflows:
+    build-test:
+        - build
+        - unit-test
 jobs:
     build:
         docker:
@@ -22,19 +26,33 @@ jobs:
             - run:
                 name: Build Typescript Files
                 command: npm run build
-
-            - run:
-                name: Run Unit Tests
-                command: npm run test:ci
-                environment:
-                    JEST_JUNIT_OUTPUT: ./test-results/results.xml
-
-            - store_test_results:
-                  path: test-results
-            # - run: npm run test:integration
-    test:
+# - run: npm run test:integration
+    unit-test:
+        name: Unit Tests
         docker:
             - image: circleci/node:11.10-browsers
         working_directory: ~/repo
         steps:
-            - checkout
+            - run:
+                  name: Run Tests
+                  command: npm run test:ci
+                  environment:
+                      JEST_JUNIT_OUTPUT: ./test-results/results.xml
+
+            - store_test_results:
+                  path: test-results
+
+    integration-test:
+        name: Integration Tests
+        docker:
+            - image: circleci/node:11.10-browsers
+        working_directory: ~/repo
+        steps:
+            - run:
+                  name: Run Tests
+                  command: npm run test:integration
+                  environment:
+                      JEST_JUNIT_OUTPUT: ./test-results/results.xml
+
+            - store_test_results:
+                  path: test-results
