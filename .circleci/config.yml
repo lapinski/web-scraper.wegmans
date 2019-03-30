@@ -28,7 +28,6 @@ jobs:
                 command: npm run build
 # - run: npm run test:integration
     unit-test:
-        name: Unit Tests
         docker:
             - image: circleci/node:11.10-browsers
         working_directory: ~/repo
@@ -43,7 +42,6 @@ jobs:
                   path: test-results
 
     integration-test:
-        name: Integration Tests
         docker:
             - image: circleci/node:11.10-browsers
         working_directory: ~/repo
