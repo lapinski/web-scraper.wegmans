@@ -1,9 +1,15 @@
 version: 2.1
+
 workflows:
-    build-test:
+    build-and-test:
         jobs:
             - build
-            - unit-test
+            - unit-test:
+                requires:
+                    - build
+            - integration-test:
+                requires:
+                    - build
 jobs:
     build:
         docker:
@@ -11,9 +17,14 @@ jobs:
         working_directory: ~/repo
         steps:
             - checkout
+            - save_cache:
+                paths:
+                    - ~/repo
+                key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+
             - restore_cache:
                   keys:
-                      - v1-dependencies-{{ checksum "package.json" }}
+                      - v1-dependencies-{{ checksum "package-lock.json" }}
                       - v1-dependencies-
             - run:
                 name: Install Dependencies
@@ -22,33 +33,25 @@ jobs:
             - save_cache:
                   paths:
                       - node_modules
-                  key: v1-dependencies-{{ checksum "package.json" }}
+                  key: v1-dependencies-{{ checksum "package-lock.json" }}
 
             - run:
                 name: Build Typescript Files
                 command: npm run build
-# - run: npm run test:integration
+
     unit-test:
         docker:
-            - image: circleci/node:11.10-browsers
+            - image: circle-ci/node:11.10-browsers
         working_directory: ~/repo
         steps:
-            - checkout
+            - restore_cache:
+                  keys:
+                      - v1-dependencies-{{ .Environment.CIRCLE_SHA1 }}
             - restore_cache:
                 keys:
-                    - v1-dependencies-{{ checksum "package.json" }}
-                    - v1-dependencies-
+                    - v1-dependencies-{{ checksum "package-lock.json" }}
             - run:
-                name: Install Dependencies
-                command: npm install
-
-            - save_cache:
-                paths:
-                    - node_modules
-                key: v1-dependencies-{{ checksum "package.json" }}
-
-            - run:
-                  name: Run Tests
+                  name: Run Unit Tests
                   command: npm run test:ci
                   environment:
                       JEST_JUNIT_OUTPUT: ./test-results/results.xml
@@ -58,26 +61,17 @@ jobs:
 
     integration-test:
         docker:
-            - image: circleci/node:11.10-browsers
+            - image: circle-ci/node:11.10-browsers
         working_directory: ~/repo
         steps:
-            - checkout
             - restore_cache:
-                keys:
-                    - v1-dependencies-{{ checksum "package.json" }}
-                    - v1-dependencies-
+                  keys:
+                      - v1-dependencies-{{ .Environment.CIRCLE_SHA1 }}
+            - restore_cache:
+                  keys:
+                      - v1-dependencies-{{ checksum "package-lock.json" }}
             - run:
-                name: Install Dependencies
-                command: npm install
-
-            - save_cache:
-                paths:
-                    - node_modules
-                key: v1-dependencies-{{ checksum "package.json" }}
-
-
-            - run:
-                  name: Run Tests
+                  name: Run Integration Tests
                   command: npm run test:integration
                   environment:
                       JEST_JUNIT_OUTPUT: ./test-results/results.xml
