@@ -10,13 +10,27 @@ jobs:
                   keys:
                       - v1-dependencies-{{ checksum "package.json" }}
                       - v1-dependencies-
-            - run: npm install
+            - run:
+                name: Install Dependencies
+                command: npm install
+
             - save_cache:
                   paths:
                       - node_modules
                   key: v1-dependencies-{{ checksum "package.json" }}
-            - run: npm run build
-            - run: npm run test:ci
+
+            - run:
+                name: Build Typescript Files
+                command: npm run build
+
+            - run:
+                name: Run Unit Tests
+                command: npm run test:ci
+                environment:
+                    JEST_JUNIT_OUTPUT: ./test-results/results.xml
+
+            - store_test_results:
+                  path: test-results
             # - run: npm run test:integration
     test:
         docker:
