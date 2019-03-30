@@ -1,8 +1,9 @@
 version: 2.1
 workflows:
     build-test:
-        - build
-        - unit-test
+        jobs:
+            - build
+            - unit-test
 jobs:
     build:
         docker:
