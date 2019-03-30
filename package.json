@@ -16,7 +16,7 @@
     "build-ts": "tsc",
     "test": "jest ./src/.*\\.test\\.ts",
     "test:ci": "jest ./src/.*\\.test\\.ts --runInBand --reporters=default --reporters=jest-junit",
-    "test:integration": "jest ./src/tests/integration/.*\\.spec\\.ts",
+    "test:integration": "jest ./src/tests/integration/.*\\.spec\\.ts --runInBand --reporters=default --reporters=jest-junit",
     "test:coverage": "npm run test -- --collectCoverage && cat ./src/coverage/lcov.info | coveralls",
     "predb": "npm run build",
     "db": "typeorm",
@@ -104,22 +104,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "branches": 75,
-        "functions": 75,
-        "lines": 75,
-        "statements": 75
-      },
-      "./src/actions": {
-        "branches": 95,
-        "functions": 85,
-        "lines": 95,
-        "statements": 95
-      },
-      "./src/resources": {
-        "branches": 10,
-        "functions": 15,
-        "lines": 70,
-        "statements": 60
+        "branches": 50,
+        "functions": 25,
+        "lines": 25,
+        "statements": 25
       }
     },
     "globals": {

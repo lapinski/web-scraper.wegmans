@@ -10,7 +10,7 @@ import { Maybe } from 'purify-ts/adts/Maybe';
 
 jest.setTimeout(20000);
 
-describe('Navigate to MyReceipts Page', () => {
+describe.skip('Navigate to MyReceipts Page', () => {
 
     let browser: Browser;
     let inputPage: Page;
