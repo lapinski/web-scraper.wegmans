@@ -25,13 +25,19 @@ describe('Login to Wegmans', () => {
     beforeAll((done) => {
         const { baseUrl, username, password } = getWegmansConfig();
 
-        getBrowser({ headless: true, args })
+        expect(baseUrl).not.toBeUndefined();
+        expect(username).not.toBeUndefined();
+        expect(password).not.toBeUndefined();
+
+        getBrowser({ args })
             .then(aBrowser => {
                 browser = aBrowser;
+                expect(browser).not.toBeUndefined();
                 return getChromePage(aBrowser);
             })
             .then(aPage => {
                 inputPage = aPage;
+                expect(inputPage).not.toBeUndefined();
                 return signIn(baseUrl, SignInPage, username, password, aPage);
             })
             .then(aPage => {
@@ -51,18 +57,21 @@ describe('Login to Wegmans', () => {
     });
 
     afterAll((done) => {
-        browser.close()
+        outputPage.close()
+            .then(() => browser.close())
             .then(() => done());
     });
 
-    it('should not have the username input present', (done) =>
+    it('should not have the username input present', (done) => {
+        expect(outputPage).not.toBeUndefined();
+
         outputPage
             .$(SignInPage.usernameInput)
             .then(element => {
                 expect(element).toBeNull();
                 done();
-            })
-    );
+            });
+    });
 
     it('should not have the password input present', (done) => {
         expect(outputPage).not.toBeUndefined();
