@@ -6,6 +6,7 @@ import signIn from '../../actions/sign-in';
 import SignInPage from '../../page-objects/sign-in.page';
 import { getWegmansConfig } from '../../resources/config';
 import { args } from '../chromium-args';
+import * as path from 'path';
 
 jest.setTimeout(20000);
 
@@ -39,6 +40,12 @@ describe('Login to Wegmans', () => {
             })
             .then(pageCookies => {
                 cookies = pageCookies;
+            })
+            .catch(error => {
+                return inputPage.screenshot({
+                    path: path.join(__dirname, '..', 'screenshots', 'error.png'),
+                    type: 'png',
+                }).then(() => done(error));
             })
             .then(() => done());
     });
