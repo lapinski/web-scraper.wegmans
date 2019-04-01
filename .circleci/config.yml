@@ -7,9 +7,9 @@ workflows:
             - unit-test:
                 requires:
                     - build
-            - integration-test:
-                requires:
-                    - build
+            # - integration-test:
+            #    requires:
+            #        - build
 jobs:
     build:
         docker:
