@@ -33,7 +33,7 @@ const extractText = R.curry(
 const parseDate = (dateString: Maybe<string>): Maybe<Moment> =>
     dateString
         .map(value => value.replace(/\s{2,}/g, ' '))
-        .map(value => moment(value, 'MMM. DD, YYYY hh:mma', true))
+        .map(value => moment(value, 'MMM. DD, YYYY hh:mma'))
         .chain(value => value.isValid() ? Just(value) : Nothing);
 
 const parseText = R.curry(

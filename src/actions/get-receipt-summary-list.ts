@@ -16,6 +16,7 @@ import {
     ReceiptSummaryRowSelectors,
 } from '../page-objects/my-receipts.page';
 import { ActionResponse } from './types';
+import moment from 'moment';
 
 /**
  * A cleaned up Receipt Summary.
@@ -118,9 +119,22 @@ const parseMyReceiptsPage = R.curry(
 const getAbsoluteUrl = (baseUrl: string, pom: MyReceiptsPageObjectModel) => url.resolve(baseUrl, pom.path);
 
 const getReceiptSummaryList = R.curry(
-    (baseUrl: string, pom: MyReceiptsPageObjectModel, page: Page): Promise<ActionResponse<ReceiptSummary[]>> =>
+    (baseUrl: string,
+    pom: MyReceiptsPageObjectModel,
+    startDate: Date,
+    endDate: Date,
+    page: Page): Promise<ActionResponse<ReceiptSummary[]>> =>
         navigateToUrlAndWait(getAbsoluteUrl(baseUrl, pom), page)
-            .then(p => p)
+            .then(page =>
+                Promise.all([
+                    // @ts-ignore
+                    page.type(pom.startDateInput, moment(startDate).toString('MM/DD/YYYY')),
+
+                    // @ts-ignore
+                    page.type(pom.endDateInput, moment(endDate).toString('MM/DD/YYYY')),
+                ])
+                    .then(() => page)
+            )
             .then(page => parseMyReceiptsPage(pom, page)),
 );
 

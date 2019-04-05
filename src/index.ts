@@ -9,13 +9,15 @@ import getAllReceiptDetails, { Receipt } from './actions/get-receipt-transaction
 import { Nothing } from 'purify-ts/adts/Maybe';
 import R from 'ramda';
 import { ActionResponse } from './actions/types';
+import moment from 'moment';
 
 const tap = R.curry(<T>(f: (input: T) => void, input: T): T => { f(input); return input; });
 const tapLogger = (message: string) => tap(() => console.log(message));
 
 // @ts-ignore
 const main = (baseUrl: string, username: string, password: string, debug: boolean = false) =>
-    getBrowser({ headless: debug })
+    // TODO" Test This out, it should set the date inputs correctly
+    getBrowser({ headless: true || debug })
         .then(getChromePage)
 
         .then(tapLogger('Signing In to Wegmans.com'))
@@ -27,7 +29,8 @@ const main = (baseUrl: string, username: string, password: string, debug: boolea
         // Navigate to 'My Receipts' Page
         // TODO: Allow filtering of Receipts by Date (Start Date / End Date)
         .then(tapLogger('Getting List of Receipts'))
-        .then(getReceiptSummaryList(baseUrl, MyReceiptsPage))
+        // @ts-ignore
+        .then(getReceiptSummaryList(baseUrl, MyReceiptsPage, moment('01/01/2012').valueOf(), moment('01/01/2020').valueOf()))
         .then(tapLogger('DONE'))
 
         .then(
