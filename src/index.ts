@@ -10,6 +10,8 @@ import { Nothing } from 'purify-ts/adts/Maybe';
 import R from 'ramda';
 import { ActionResponse } from './actions/types';
 import moment from 'moment';
+import writeReceiptsToDisk from './actions/write-receipts-to-disk';
+import { Either } from 'purify-ts/adts/Either';
 
 const tap = R.curry(<T>(f: (input: T) => void, input: T): T => { f(input); return input; });
 const tapLogger = (message: string) => tap(() => console.log(message));
@@ -31,6 +33,18 @@ const main = (baseUrl: string, username: string, password: string, debug: boolea
         .then(tapLogger('Getting List of Receipts'))
         // @ts-ignore
         .then(getReceiptSummaryList(baseUrl, MyReceiptsPage, moment('01/01/2012').valueOf(), moment('01/01/2020').valueOf()))
+
+        .then(
+            tap(
+                (receipts: ReceiptSummary[]) =>
+                    writeReceiptsToDisk(receipts)
+                        .then(eithers => {
+                            const lefts = Either.lefts(eithers);
+                            console.log('Errors: ' + JSON.stringify(lefts));
+                        })
+            )
+        )
+
         .then(tapLogger('DONE'))
 
         .then(

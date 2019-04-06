@@ -1,13 +1,17 @@
 import R from 'ramda';
 import { prettyObjToString, objToString, writeObjToDisk } from './fs-helpers';
-import { Receipt } from '../entities';
+import { ReceiptSummary } from './get-receipt-summary-list';
+import * as path from 'path';
+import { Either } from 'purify-ts/adts/Either';
 
-const getPath = (receipt: Receipt): string => `${receipt.id}.json`;
+const getPath = (receipt: ReceiptSummary): string =>
+    path.join('data', `${receipt.date.format('MMDDYYYY_HHMMa')}.json`)
+;
 
-const writeReceiptToDisk = (receipt: Receipt) =>
+const writeReceiptToDisk = (receipt: ReceiptSummary) =>
     writeObjToDisk(prettyObjToString, getPath(receipt), receipt);
 
-const writeReceiptsToDisk = (receipts: Receipt[]) => Promise.all(R.map(writeReceiptToDisk, receipts));
+const writeReceiptsToDisk = (receipts: ReceiptSummary[]): Promise<Either<Error, string>[]> => Promise.all(R.map(writeReceiptToDisk, receipts));
 
 export {
     getPath,
