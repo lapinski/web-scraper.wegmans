@@ -15,6 +15,9 @@ import puppeteer, { Page } from 'puppeteer';
 
 describe('get-receipt-list action', () => {
 
+    const startDate = new Date();
+    const endDate = new Date();
+
     const aValidSanitizedReceiptSummary = <SanitizedReceiptSummary>{
         date: Just(moment()),
         postalAddress: {
@@ -295,7 +298,7 @@ describe('get-receipt-list action', () => {
                         '</div>')
                 };
 
-                return getReceiptSummaryList(baseUrl, pom, stubInputPage)
+                return getReceiptSummaryList(baseUrl, pom, startDate, endDate, stubInputPage)
                     .then(response => {
                         output = response;
                     });
