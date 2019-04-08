@@ -16,6 +16,9 @@ import { Either } from 'purify-ts/adts/Either';
 const tap = R.curry(<T>(f: (input: T) => void, input: T): T => { f(input); return input; });
 const tapLogger = (message: string) => tap(() => console.log(message));
 
+const getStartDate = () => moment().startOf('month').subtract(3, 'months').toDate();
+const getEndDate = () => moment().startOf('month').add(1, 'month').toDate();
+
 // @ts-ignore
 const main = (baseUrl: string, username: string, password: string, debug: boolean = false) =>
     // TODO" Test This out, it should set the date inputs correctly
@@ -32,7 +35,7 @@ const main = (baseUrl: string, username: string, password: string, debug: boolea
         // TODO: Allow filtering of Receipts by Date (Start Date / End Date)
         .then(tapLogger('Getting List of Receipts'))
         // @ts-ignore
-        .then(getReceiptSummaryList(baseUrl, MyReceiptsPage, moment('01/01/2012').valueOf(), moment('01/01/2020').valueOf()))
+        .then(getReceiptSummaryList(baseUrl, MyReceiptsPage, getStartDate(), getEndDate()))
 
         .then(
             tap(
