@@ -295,7 +295,8 @@ describe('get-receipt-list action', () => {
                     content: () =>
                         Promise.resolve('<div>' +
                             anHtmlReceiptSummary +
-                        '</div>')
+                        '</div>'),
+                    type: (selector: string, value: string) => Promise.resolve(),
                 };
 
                 return getReceiptSummaryList(baseUrl, pom, startDate, endDate, stubInputPage)

@@ -17,6 +17,7 @@ import {
 } from '../page-objects/my-receipts.page';
 import { ActionResponse } from './types';
 import moment from 'moment';
+import { start } from 'repl';
 
 /**
  * A cleaned up Receipt Summary.
@@ -118,24 +119,44 @@ const parseMyReceiptsPage = R.curry(
 
 const getAbsoluteUrl = (baseUrl: string, pom: MyReceiptsPageObjectModel) => url.resolve(baseUrl, pom.path);
 
-const getReceiptSummaryList = R.curry(
+interface GetReceiptSummaryList {
+    (
+        baseUrl: string,
+        pom: MyReceiptsPageObjectModel,
+        startDate: Date,
+        endDate: Date,
+        page: Page
+    ): Promise<ActionResponse<ReceiptSummary[]>>;
+
+    (
+        baseUrl: string,
+        pom: MyReceiptsPageObjectModel,
+        startDate: Date,
+        endDate: Date,
+    ): (page: Page) => Promise<ActionResponse<ReceiptSummary[]>>;
+}
+
+const setDateRangeSelectors = R.curry(
+    (pom: MyReceiptsPageObjectModel, from: Date, to: Date, page: Page) =>
+        Promise.all([
+            // @ts-ignore
+            page.type(pom.startDateInput, moment(from).toString('MM/DD/YYYY')),
+
+            // @ts-ignore
+            page.type(pom.endDateInput, moment(to).toString('MM/DD/YYYY')),
+        ])
+            .then(() => page)
+);
+
+const getReceiptSummaryList: GetReceiptSummaryList = R.curry(
     (baseUrl: string,
     pom: MyReceiptsPageObjectModel,
     startDate: Date,
     endDate: Date,
     page: Page): Promise<ActionResponse<ReceiptSummary[]>> =>
         navigateToUrlAndWait(getAbsoluteUrl(baseUrl, pom), page)
-            .then(page =>
-                Promise.all([
-                    // @ts-ignore
-                    page.type(pom.startDateInput, moment(startDate).toString('MM/DD/YYYY')),
-
-                    // @ts-ignore
-                    page.type(pom.endDateInput, moment(endDate).toString('MM/DD/YYYY')),
-                ])
-                    .then(() => page)
-            )
-            .then(page => parseMyReceiptsPage(pom, page)),
+            .then(setDateRangeSelectors(pom, startDate, endDate))
+            .then(parseMyReceiptsPage(pom)),
 );
 
 export {

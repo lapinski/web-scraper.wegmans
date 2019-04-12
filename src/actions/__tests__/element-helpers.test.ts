@@ -16,7 +16,7 @@ describe('puppeteer element helpers', () => {
     describe('extractDate()', () => {
         describe('when given valid input', () => {
             it('should return a valid date', () => {
-                const input = cheerio.load('<div>Aug. 20, 2000 10:23am');
+                const input = cheerio.load('<div>Aug. 20, 2000 10:23am</div>');
                 const output = extractDate('div', input.root());
 
                 expect(output.isJust()).toEqual(true);
