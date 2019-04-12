@@ -34,8 +34,14 @@ const parseDate = (dateString: Maybe<string>): Maybe<Moment> =>
     dateString
         // Filter checks to see if we roughly have the right date format (allow spaces & case difference)
         .filter(R.test(/\s*\w{3}\.?\s*\d{1,2},\s*\d{4}\s*\d{1,2}:\d{1,2}[aApP][mM]\s*/))
+
+        // Remove the spaces
         .map(R.replace(/\s{2,}/g, ' '))
+
+        // Now feed the cleaned & checked value tp moment
         .map(value => moment(value, 'MMM. DD, YYYY hh:mma'))
+
+        // Only if we get a valid date
         .filter(date => date.isValid());
 
 const parseText = R.curry(
