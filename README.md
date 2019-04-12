@@ -1,4 +1,5 @@
 # Wegmans.com Web Scraper 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5f0a016bee9e4a31ba5a0cbc14c378bf)](https://app.codacy.com/app/lapinski/web-scraper.wegmans?utm_source=github.com&utm_medium=referral&utm_content=lapinski/web-scraper.wegmans&utm_campaign=Badge_Grade_Dashboard)
 [![CircleCI](https://circleci.com/gh/lapinski/web-scraper.wegmans/tree/master.svg?style=svg)](https://circleci.com/gh/lapinski/web-scraper.wegmans/tree/master)
 [![Coverage Status](https://coveralls.io/repos/github/lapinski/web-scraper.wegmans/badge.svg?branch=master)](https://coveralls.io/github/lapinski/web-scraper.wegmans?branch=master)
 
