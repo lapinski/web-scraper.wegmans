@@ -67,7 +67,11 @@ const main = (baseUrl: string, username: string, password: string, debug: boolea
         .then((content: ActionResponse<ReceiptSummary[]>): Promise<ActionResponse<Receipt[]>> =>
             content.result.isJust()
                 ? getAllReceiptDetails(baseUrl, ReceiptDetailPage, content.page, content.result)
-                : Promise.resolve(content)
+                : Promise.resolve(
+                    <ActionResponse<Receipt[]>>{
+                        page: content.page,
+                        result: Nothing,
+                    })
         )
 
         .then((content: ActionResponse<Receipt[]>) => {
