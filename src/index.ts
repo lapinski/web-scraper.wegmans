@@ -36,20 +36,6 @@ const main = (baseUrl: string, username: string, password: string, debug: boolea
         .then(tapLogger('Getting List of Receipts'))
         // @ts-ignore
         .then(getReceiptSummaryList(baseUrl, MyReceiptsPage, getStartDate(), getEndDate()))
-
-        .then(
-            tap(
-                (receipts: ReceiptSummary[]) =>
-                    writeReceiptsToDisk(receipts)
-                        .then(eithers => {
-                            const lefts = Either.lefts(eithers);
-                            console.log('Errors: ' + JSON.stringify(lefts));
-                        })
-            )
-        )
-
-        .then(tapLogger('DONE'))
-
         .then(
             tap((content: ActionResponse<ReceiptSummary[]>) => {
                 console.log(`Receipts Returned? ${content.result.isJust()}`);
@@ -57,16 +43,35 @@ const main = (baseUrl: string, username: string, password: string, debug: boolea
             })
         )
 
+        .then(tapLogger('Writing Receipts to Disk'))
+        .then(
+            tap(
+                (response: ActionResponse<ReceiptSummary[]>) =>
+                    writeReceiptsToDisk(response.result.extract())
+                        .then(eithers => {
+                            console.log('Finished Writing Receipts to disk.');
+                            const lefts = Either.lefts(eithers);
+                            if (lefts.length > 0) {
+                                console.log(`Some Errors occured ${lefts.length} writting to disk.`);
+                                console.log('Errors from writing to disk');
+                                console.log(R.map(err => `${err}\n`, lefts));
+                            }
+                        })
+            )
+        )
+
 
         // TODO: For each Receipt, Navigate to its' page containing transactions
         // TODO: Parse each Receipt Page
+        .then(tapLogger('Fetching Receipt Details'))
         .then((content: ActionResponse<ReceiptSummary[]>): Promise<ActionResponse<Receipt[]>> =>
             content.result.isJust()
                 ? getAllReceiptDetails(baseUrl, ReceiptDetailPage, content.page, content.result)
-                : Promise.resolve({ page: content.page, result: Nothing })
+                : Promise.resolve(content)
         )
 
         .then((content: ActionResponse<Receipt[]>) => {
+            // TODO: Save Full Receipt Details (and transactions) to disk
             return content.page;
         })
 
