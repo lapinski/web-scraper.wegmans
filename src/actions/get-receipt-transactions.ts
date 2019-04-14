@@ -85,33 +85,52 @@ const getReceiptDetails = R.curry(
  *  @param mapper
  *  @param summaries
  */
-const parseAndFilterReceipts = R.curry(
-    (mapper: (summary: ReceiptSummary) => Promise<Maybe<Receipt>>, summaries: ReceiptSummary[]) =>
-        R.pipe(
-            R.map(mapper),
-            Promise.all,
-            R.filter((maybeReceipt: Maybe<Receipt>) => maybeReceipt.isJust()),
-            Maybe.catMaybes, // list of maybes => list of values
-        )(summaries));
+const fetchTransactionsForEachReceipt = R.curry(
+    (receiptTransactionsFetcher: (summaries: ReceiptSummary) => Promise<Maybe<Receipt>>, summaries: ReceiptSummary[]) => {
+
+    /// TODO: Really refactor this mapper, this is way too hard to understand, and doesn't work at all
+
+    const details = R.map(receiptTransactionsFetcher, summaries);
+
+    const promises = Promise.all(details);
+
+    return promises
+        .then(result => {
+            return R.filter((maybeReceipt: Maybe<Receipt>) => maybeReceipt.isJust(), result);
+        })
+        .then( result => {
+            return Maybe.catMaybes(result);
+        })
+        .then( result => {
+            return Maybe.fromNullable(result);
+        });
+});
+
+
 
 const getAllReceiptDetails = R.curry(
-    (baseUrl: string,
-    pom: ReceiptDetailPageObjectModel,
-    page: Page,
-    receiptSummaries: Maybe<ReceiptSummary[]>):
-    Promise<ActionResponse<Receipt[]>> =>
+    (
+        baseUrl: string,
+        pom: ReceiptDetailPageObjectModel,
+        page: Page,
+        receiptSummaries: Maybe<ReceiptSummary[]>
+    ): Promise<ActionResponse<Receipt[]>> =>
 
-        receiptSummaries.isJust()
-            ? Promise.resolve({
-                page,
-                result: Maybe.fromNullable(
-                    parseAndFilterReceipts(
-                        getReceiptDetails(baseUrl, page, pom),
-                        receiptSummaries.extract()
-                    )
-                )
-            })
-            : Promise.resolve( { page, result: Nothing })
+        receiptSummaries.isNothing()
+            ? Promise.resolve( { page, result: Nothing })
+
+            // TODO: This might just need to be a small wrapper function that operates on all receiptSummaries
+            // EG: R.map(fetchReceiptTransactions, receiptSummaries.extract());
+            // Need to handle the promises though....
+            : fetchTransactionsForEachReceipt(
+                getReceiptDetails(baseUrl, page, pom),
+                receiptSummaries.extract()
+            )
+                .then(result => ({
+                    page,
+                    result,
+                }))
+
 );
 
 
@@ -122,7 +141,7 @@ export {
     extractTransactions,
     getAllReceiptDetails,
     getReceiptDetails,
-    parseAndFilterReceipts,
+    fetchTransactionsForEachReceipt,
     parseReceiptPage,
 };
 
