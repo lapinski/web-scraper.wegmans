@@ -2,13 +2,17 @@ import { Just, Maybe, Nothing } from 'purify-ts/adts/Maybe';
 import { Page } from 'puppeteer';
 import R from 'ramda';
 import * as url from 'url';
+import { Moment } from 'moment';
 
 import { extractDate, extractFloat, extractText } from './element-helpers';
 import { ReceiptSummary } from './get-receipt-summary-list';
 import { navigateToUrlAndWait } from './browser-helpers';
 import { ReceiptDetailPageObjectModel } from '../page-objects/receipt-detail.page';
 import { ActionResponse } from './types';
-import { Moment } from 'moment';
+import serialPromise from '../promise-serial';
+import { tap, tapLogger } from '../promise-tap';
+
+
 
 export interface Transaction {
 
@@ -130,8 +134,20 @@ const getReceiptTransactions = R.curry(
         receiptSummary: ReceiptSummary
     ): Promise<Maybe<Receipt>> =>
 
-        navigateToReceiptDetailsPage(baseUrl, receiptSummary.url, page)
-            .then(parseReceiptTransactionsPage(pom)),
+        Promise.resolve()
+            .then(() => console.log(`Fetching Transactions for ${receiptSummary.url}`))
+            .then(() => navigateToReceiptDetailsPage(baseUrl, receiptSummary.url, page))
+            .then((result) => {
+                // TODO: Replace w/ generic 'Tap'
+                console.log(`Parsing Transactions for ${receiptSummary.url}`);
+                return result;
+            })
+            .then(parseReceiptTransactionsPage(pom))
+            .then((result) => {
+                // TODO: Replace w/ generic 'Tap'
+                console.log(`Parse Complete for ${receiptSummary.url}, Success?: ${result.isJust()}`);
+                return result;
+            }),
 );
 
 /**
@@ -148,7 +164,8 @@ const fetchTransactionsForEachReceipt = R.curry(
 
         /// TODO: Really refactor this mapper, this is way too hard to understand, and doesn't work at all
         // Get the Transactions for Each Receipt Summary
-        Promise.all(R.map(receiptTransactionsFetcher, summaries))
+        // TODO: Make this sequential, it can't happen in parallel (unless we 'clone' the page objects)
+        serialPromise(R.map(receiptTransactionsFetcher, summaries))
 
             // Filter out the transactions that returned as 'Nothing'
             .then(result => R.filter((maybeReceipt: Maybe<Receipt>) => maybeReceipt.isJust(), result))

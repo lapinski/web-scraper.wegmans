@@ -13,6 +13,8 @@ import moment from 'moment';
 import writeReceiptsToDisk from './actions/write-receipts-to-disk';
 import { Either } from 'purify-ts/adts/Either';
 
+
+// TODO: Replace w/ generic 'Tap'
 const tap = R.curry(<T>(f: (input: T) => void, input: T): T => { f(input); return input; });
 const tapLogger = (message: string) => tap(() => console.log(message));
 
@@ -57,6 +59,7 @@ const main = (baseUrl: string, username: string, password: string, debug: boolea
                                 console.log(R.map(err => `${err}\n`, lefts));
                             }
                         })
+                        .then(() => console.log('\n'))
             )
         )
 
