@@ -1,6 +1,6 @@
 import 'jest-extended';
 
-import promiseSerial from '../promise-serial';
+import pSeries from 'p-series';
 
 const makeMockPromise = (
     config: {
@@ -20,6 +20,8 @@ const makeMockPromise = (
     });
 });
 
+jest.setTimeout(10000);
+
 describe('Promise serial helper', () => {
     describe('promiseSerial()', () => {
         //
@@ -30,9 +32,9 @@ describe('Promise serial helper', () => {
 
         describe('when given a single promise', () => {
             it('should resolve the single promise', (done) => {
-                const input = Promise.resolve('value');
+                const input = () => Promise.resolve('value');
 
-                promiseSerial([input])
+                pSeries([input])
                     .then((output) => {
 
                         expect(output).toBeInstanceOf(Array);
@@ -81,14 +83,14 @@ describe('Promise serial helper', () => {
             const MockPromiseTwo = makeMockPromise(config.two);
 
             const input = [
-                new MockPromiseOne(),
-                new MockPromiseTwo(),
+                () => new MockPromiseOne(),
+                () => new MockPromiseTwo(),
             ];
 
             let output: any[];
 
             beforeAll((done) => {
-                promiseSerial(input)
+                pSeries(input)
                     .then((result) => {
                         output = result;
                         done();

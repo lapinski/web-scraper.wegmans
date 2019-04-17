@@ -9,8 +9,7 @@ import { ReceiptSummary } from './get-receipt-summary-list';
 import { navigateToUrlAndWait } from './browser-helpers';
 import { ReceiptDetailPageObjectModel } from '../page-objects/receipt-detail.page';
 import { ActionResponse } from './types';
-import serialPromise from '../promise-serial';
-import { tap, tapLogger } from '../promise-tap';
+import pMapSeries from 'p-map-series';
 
 
 
@@ -165,7 +164,7 @@ const fetchTransactionsForEachReceipt = R.curry(
         /// TODO: Really refactor this mapper, this is way too hard to understand, and doesn't work at all
         // Get the Transactions for Each Receipt Summary
         // TODO: Make this sequential, it can't happen in parallel (unless we 'clone' the page objects)
-        serialPromise(R.map(receiptTransactionsFetcher, summaries))
+        pMapSeries(summaries, receiptTransactionsFetcher)
 
             // Filter out the transactions that returned as 'Nothing'
             .then(result => R.filter((maybeReceipt: Maybe<Receipt>) => maybeReceipt.isJust(), result))
