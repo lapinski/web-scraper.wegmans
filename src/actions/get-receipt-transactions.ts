@@ -3,6 +3,7 @@ import { Page } from 'puppeteer';
 import R from 'ramda';
 import * as url from 'url';
 import { Moment } from 'moment';
+import cheerio from 'cheerio';
 
 import { extractDate, extractFloat, extractText } from './element-helpers';
 import { ReceiptSummary } from './get-receipt-summary-list';
@@ -10,7 +11,6 @@ import { navigateToUrlAndWait } from './browser-helpers';
 import { ReceiptDetailPageObjectModel } from '../page-objects/receipt-detail.page';
 import { ActionResponse } from './types';
 import pMapSeries from 'p-map-series';
-
 
 
 export interface Transaction {
