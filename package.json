@@ -41,7 +41,7 @@
     "cheerio": "^1.0.0-rc.2",
     "convict": "^4.4.0",
     "dotenv": "^6.2.0",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.21",
     "moment": "^2.22.2",
     "p-map-series": "^2.1.0",
     "p-series": "^2.1.0",
