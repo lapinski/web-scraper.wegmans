@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
-    "convict": "^4.4.0",
+    "convict": "^6.2.4",
     "dotenv": "^6.2.0",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
